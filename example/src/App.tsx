@@ -1,12 +1,13 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { StyleSheet, View } from 'react-native';
-import { MediapipeView } from 'react-native-mediapipe';
+import { StyleSheet, View } from "react-native";
+import { MediapipeCamera } from "react-native-mediapipe";
 
-export default function App() {
+export default function App(): React.ReactElement | null {
   return (
     <View style={styles.container}>
-      <MediapipeView color="#32a852" style={styles.box} />
+      <MediapipeCamera color="#32a852" style={styles.box} />
+      <View />
     </View>
   );
 }
@@ -14,8 +15,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   box: {
     width: 60,
