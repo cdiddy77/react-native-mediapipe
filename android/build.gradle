@@ -44,7 +44,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.mediapipe"
+    namespace "com.reactnativemediapipe"
 
     sourceSets {
       main {
@@ -90,5 +90,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation project(':react-native-vision-camera')
+  implementation 'com.google.mediapipe:tasks-vision:0.10.2'
 }
 
