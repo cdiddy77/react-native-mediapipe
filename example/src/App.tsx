@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MediapipeCamera } from "react-native-mediapipe";
 import {
   useCameraPermission,
