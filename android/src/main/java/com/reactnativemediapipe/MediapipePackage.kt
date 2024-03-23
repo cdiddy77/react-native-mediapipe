@@ -1,0 +1,25 @@
+package com.reactnativemediapipe
+
+import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.uimanager.ViewManager
+import com.mrousavy.camera.frameprocessor.FrameProcessorPluginRegistry
+import com.reactnativemediapipe.objectdetection.ObjectDetectionFrameProcessorPlugin
+import com.reactnativemediapipe.objectdetection.ObjectDetectionModule
+
+class MediapipePackage : ReactPackage {
+  companion object {
+    init {
+      FrameProcessorPluginRegistry.addFrameProcessorPlugin("objectDetection") { _, _ ->
+        ObjectDetectionFrameProcessorPlugin()
+      }
+    }
+  } override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+    return listOf(ObjectDetectionModule(reactContext))
+  }
+
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
+    return listOf(MediapipeViewManager())
+  }
+}
