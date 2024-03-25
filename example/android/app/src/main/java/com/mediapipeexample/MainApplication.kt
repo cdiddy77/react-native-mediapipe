@@ -1,4 +1,4 @@
-package com.mediapipeexample
+package com.reactnativemediapipeexample
 
 import android.app.Application
 import com.facebook.react.PackageList

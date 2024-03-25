@@ -28,7 +28,7 @@ module.exports = {
   rules: {
     // eslint
     semi: "off",
-    curly: ["warn", "multi-or-nest", "consistent"],
+    curly: ["error", "all"],
     "no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],
     "no-async-promise-executor": "warn",
     "require-await": "warn",
@@ -56,7 +56,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/explicit-function-return-type": [
-      "warn",
+      "off",
       {
         allowExpressions: true,
       },
@@ -78,7 +78,7 @@ module.exports = {
       "error",
       {
         allowString: false,
-        allowNullableObject: false,
+        allowNullableObject: true,
         allowNumber: false,
         allowNullableBoolean: true,
       },

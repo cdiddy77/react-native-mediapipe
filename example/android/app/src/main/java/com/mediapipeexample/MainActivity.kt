@@ -1,4 +1,4 @@
-package com.mediapipeexample
+package com.reactnativemediapipeexample
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

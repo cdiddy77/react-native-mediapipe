@@ -8,5 +8,10 @@
       ]
     },
     "composite": true
-  }
+  },
+  "exclude": [
+    ".eslintrc.js",
+    "babel.config.js",
+    "react-native.config.js",
+  ]
 }

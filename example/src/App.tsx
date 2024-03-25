@@ -1,13 +1,51 @@
 import * as React from "react";
 
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MediapipeCamera } from "react-native-mediapipe";
+import {
+  useCameraPermission,
+  useMicrophonePermission,
+} from "react-native-vision-camera";
 
 export default function App(): React.ReactElement | null {
+  const camPerm = useCameraPermission();
+  const micPerm = useMicrophonePermission();
+  const [permsGranted, setPermsGranted] = React.useState<{
+    cam: boolean;
+    mic: boolean;
+  }>({ cam: camPerm.hasPermission, mic: micPerm.hasPermission });
+
+  const askForPermissions = React.useCallback(() => {
+    if (camPerm.hasPermission) {
+      setPermsGranted((prev) => ({ ...prev, cam: true }));
+    } else {
+      camPerm.requestPermission().then((granted) => {
+        setPermsGranted((prev) => ({ ...prev, cam: granted }));
+      });
+    }
+    if (micPerm.hasPermission) {
+      setPermsGranted((prev) => ({ ...prev, mic: true }));
+    } else {
+      micPerm.requestPermission().then((granted) => {
+        setPermsGranted((prev) => ({ ...prev, mic: granted }));
+      });
+    }
+  }, [camPerm, micPerm]);
+  console.log("App", permsGranted);
   return (
     <View style={styles.container}>
-      <MediapipeCamera color="#32a852" style={styles.box} />
-      <View />
+      {permsGranted.cam && permsGranted.mic ? (
+        <MediapipeCamera style={styles.box} />
+      ) : (
+        <>
+          <Text style={styles.noPermsText}>
+            Camera and Mic permissions required
+          </Text>
+          <Pressable onPress={askForPermissions}>
+            <Text>Request</Text>
+          </Pressable>
+        </>
+      )}
     </View>
   );
 }
@@ -19,8 +57,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    flex: 1,
+    alignSelf: "stretch",
+  },
+  permsButton: {},
+  noPermsText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "red",
   },
 });
