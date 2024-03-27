@@ -1,5 +1,5 @@
 import React from "react";
-import { type ViewStyle, Text } from "react-native";
+import { type ViewStyle, Text, Platform } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import { RunningMode, useObjectDetection } from "./objectDetection";
 
@@ -23,7 +23,7 @@ export const MediapipeCamera: React.FC<MediapipeProps> = ({ style }) => {
     <Camera
       style={style}
       device={device}
-      pixelFormat="yuv"
+      pixelFormat={Platform.select({ ios: "rgb", android: "yuv" })}
       isActive={true}
       frameProcessor={frameProcessor}
     />
