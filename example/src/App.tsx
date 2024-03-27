@@ -42,7 +42,7 @@ export default function App(): React.ReactElement | null {
             Camera and Mic permissions required
           </Text>
           <Pressable onPress={askForPermissions}>
-            <Text>Request</Text>
+            <Text style={styles.permsButton}>Request</Text>
           </Pressable>
         </>
       )}
@@ -60,7 +60,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: "stretch",
   },
-  permsButton: {},
+  permsButton: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   noPermsText: {
     fontSize: 20,
     fontWeight: "bold",
