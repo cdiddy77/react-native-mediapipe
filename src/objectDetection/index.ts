@@ -101,9 +101,14 @@ const detectorMap: Map<number, ObjectDetectionCallbacks> = new Map();
 eventEmitter.addListener(
   "onResults",
   (args: { handle: number } & ResultBundleMap) => {
-    console.log("onResults", JSON.stringify(args));
+    //console.log("onResults", JSON.stringify(args));
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
+      // TODO: Looks like this isn't getting called -
+      //  when useObjectDetection is registered, we're getting
+      //  `useObjectDetection {"processor": undefined}` so
+      //  we're not finding the callback in the map (I think)
+      console.log("onResults - callback", JSON.stringify(args));
       callbacks.onResults(args);
     }
   }

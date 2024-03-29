@@ -35,7 +35,7 @@ export default function App(): React.ReactElement | null {
   return (
     <View style={styles.container}>
       {permsGranted.cam && permsGranted.mic ? (
-        <MediapipeCamera style={styles.box} />
+        <MediapipeCamera style={styles.box} resultsPanel={true} />
       ) : (
         <>
           <Text style={styles.noPermsText}>
