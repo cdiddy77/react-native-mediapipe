@@ -86,8 +86,9 @@
     "react-native-worklets-core": "*"
   },
   "workspaces": [
+    "docsite",
     "example",
-    "docsite"
+    "examples/*"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {
