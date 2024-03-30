@@ -94,6 +94,9 @@ module.exports = {
           "(useDerivedValue|useAnimatedStyle|useAnimatedProps|useWorkletCallback|useFrameProcessor)",
       },
     ],
+    // docusaurus does that
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
   },
   env: {
     node: true,
