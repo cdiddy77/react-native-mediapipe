@@ -2,9 +2,7 @@ import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 
-// originally, this is using @site/src/components/HomepageFeatures - but the typescript compiler 
-// in the way that lefthook runs it doesn't like that for some reason, so making path relative.
-import HomepageFeatures from '../components/HomepageFeatures';
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
