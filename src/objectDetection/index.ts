@@ -130,6 +130,7 @@ export function useObjectDetection(
   model: string,
   options?: Partial<ObjectDetectionOptions>
 ) {
+  console.log("useObjectDetection", { runningMode, model, options });
   const processor = useSharedValue<
     | { detectorHandle: number; plugin: FrameProcessorPlugin | undefined }
     | undefined

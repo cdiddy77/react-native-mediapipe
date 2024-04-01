@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { type ViewStyle, StyleSheet, Text, View } from "react-native";
+import { Platform, type ViewStyle, Text, View, StyleSheet } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import {
   type ResultBundleMap,
@@ -43,7 +43,7 @@ export const MediapipeCamera: React.FC<MediapipeProps> = ({
     <Camera
       style={resultsPanel ? styles.box : style}
       device={device}
-      pixelFormat="yuv"
+      pixelFormat={Platform.select({ ios: "rgb", android: "yuv" })}
       isActive={true}
       frameProcessor={frameProcessor}
     />
