@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NativeEventEmitter, NativeModules } from "react-native";
 import {
   VisionCameraProxy,
@@ -104,11 +104,6 @@ eventEmitter.addListener(
     //console.log("onResults", JSON.stringify(args));
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
-      // TODO: Looks like this isn't getting called -
-      //  when useObjectDetection is registered, we're getting
-      //  `useObjectDetection {"processor": undefined}` so
-      //  we're not finding the callback in the map (I think)
-      console.log("onResults - callback", JSON.stringify(args));
       callbacks.onResults(args);
     }
   }
@@ -130,7 +125,10 @@ export function useObjectDetection(
   model: string,
   options?: Partial<ObjectDetectionOptions>
 ) {
-  console.log("useObjectDetection", { runningMode, model, options });
+  //console.log("useObjectDetection", { runningMode, model, options });
+  const [detectorHandle, setDetectorHandle] = useState<number | undefined>(
+    undefined
+  );
   const processor = useSharedValue<
     | { detectorHandle: number; plugin: FrameProcessorPlugin | undefined }
     | undefined
@@ -138,10 +136,10 @@ export function useObjectDetection(
 
   // Remember the latest callback if it changes.
   React.useLayoutEffect(() => {
-    if (processor.value?.detectorHandle !== undefined) {
-      detectorMap.set(processor.value.detectorHandle, { onResults, onError });
+    if (detectorHandle !== undefined) {
+      detectorMap.set(detectorHandle, { onResults, onError });
     }
-  }, [onResults, onError, processor.value?.detectorHandle]);
+  }, [onResults, onError, detectorHandle]);
 
   React.useEffect(() => {
     const plugin =
@@ -158,24 +156,24 @@ export function useObjectDetection(
       .then((handle) => {
         console.log("useObjectDetection", runningMode, model, handle);
         processor.value = { detectorHandle: handle, plugin };
+        setDetectorHandle(handle);
       });
     return () => {
       console.log("useObjectDetection.useEffect.unsub", "releaseDetector");
-      if (processor.value?.detectorHandle !== undefined) {
-        getObjectDetectionModule().releaseDetector(
-          processor.value.detectorHandle
-        );
+      if (detectorHandle !== undefined) {
+        getObjectDetectionModule().releaseDetector(detectorHandle);
       }
     };
+    // The linter wants `processor` and `detectorHandle` in the dependency array, but these are
+    //  _set_ by this useEffect. Making this reactive based on these values would cause an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     options?.delegate,
     options?.maxResults,
     runningMode,
     options?.threshold,
-    processor,
     model,
   ]);
-  console.log("useObjectDetection", { processor: processor.value });
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";

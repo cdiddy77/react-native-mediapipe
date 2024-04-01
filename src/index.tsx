@@ -12,10 +12,12 @@ type MediapipeProps = {
   resultsPanel: boolean;
 };
 
-// TODONEXT: Figure out how to get the callback to work
-//  List the objects detected in the results panel
-//  Make that panel be scrollable
+// TODO:
+//  Keep track of the last non-zero infereance and display that for
+//   some time after the inference is done if the next ones are zero
+//  Make the stats panel scrollable
 //  Clean up the layout
+//  displayName is empty - should this be filled in by the frameProcessor?
 export const MediapipeCamera: React.FC<MediapipeProps> = ({
   style,
   resultsPanel,
@@ -25,8 +27,6 @@ export const MediapipeCamera: React.FC<MediapipeProps> = ({
   const frameProcessor = useObjectDetection(
     (results) => {
       setStats(results);
-      console.log("WE'VE GOT RESULTS");
-      console.log(results);
     },
     (error) => {
       console.log(error);
@@ -49,6 +49,25 @@ export const MediapipeCamera: React.FC<MediapipeProps> = ({
     />
   );
 
+  let rows: React.JSX.Element[] = [];
+  let count = 0;
+
+  if ((stats?.results.length ?? 0) > 1) {
+    console.log("more than one result", stats?.results.length);
+  }
+
+  if (stats?.results && stats.results.length > 0 && stats.results[0]) {
+    count = stats.results[0].detections.length;
+    rows = stats.results[0].detections.map((obj) => {
+      const categories = obj.categories
+        .map((cat) => `${cat.categoryName} (${cat.score})`)
+        .join(", ");
+      const text = `${categories}: ${JSON.stringify(obj.boundingBox)}`;
+      console.log(text);
+      return <Text>{text}</Text>;
+    });
+  }
+
   return resultsPanel ? (
     <View style={{ flexDirection: "column", alignItems: "stretch" }}>
       {camera}
@@ -61,8 +80,9 @@ export const MediapipeCamera: React.FC<MediapipeProps> = ({
         }}
       >
         <View style={{ width: "100%" }}>
-          <Text>count: {stats?.results.length}</Text>
           <Text>inferenceTime: {stats?.inferenceTime}</Text>
+          <Text>count: {count}</Text>
+          {rows}
         </View>
       </View>
     </View>
