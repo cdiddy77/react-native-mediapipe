@@ -3,7 +3,10 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: ["./tsconfig.json"],
+    project: [
+      "./tsconfig.json",
+      "docsite/tsconfig.json"
+    ],
     ecmaFeatures: {
       jsx: true,
     },
@@ -85,7 +88,9 @@ module.exports = {
     ],
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-unnecessary-condition": "error",
-
+    // docusaurus does that
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
     // react hooks
     "react-hooks/exhaustive-deps": [
       "error",

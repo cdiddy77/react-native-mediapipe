@@ -7,6 +7,9 @@ pre-commit:
     types:
       glob: "*.{js,ts, jsx, tsx}"
       run: npx tsc --noEmit
+    types-docsite:
+      glob: "*.{js,ts, jsx, tsx}"
+      run: npx tsc --noEmit --project docsite
 commit-msg:
   parallel: true
   commands:
