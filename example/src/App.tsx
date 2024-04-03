@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: "stretch",
   },
-  permsButton: {},
   noPermsText: {
     fontSize: 20,
     fontWeight: "bold",

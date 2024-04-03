@@ -17,11 +17,15 @@ public class ObjectDetectionFrameProcessorPlugin: FrameProcessorPlugin {
 
   public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any
   {
-    let detectorHandle: Double = arguments?["detectorHandle"] as! Double
-    guard let detector = ObjectDetectionModule.detectorMap[Int(detectorHandle)] else {
+    guard let detectorHandleValue = arguments?["detectorHandle"] as? Double else {
       return false
     }
-  
+    
+    // Now that we have a valid Double, attempt to retrieve the detector using it
+    guard let detector = ObjectDetectionModule.detectorMap[Int(detectorHandleValue)] else {
+      return false
+    }
+
     let buffer = frame.buffer
     detector.detectAsync(
       sampleBuffer: buffer,

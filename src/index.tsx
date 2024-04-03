@@ -1,33 +1,32 @@
 import React from "react";
 import { type ViewStyle, Text, Platform } from "react-native";
-import { Camera, useCameraDevice } from "react-native-vision-camera";
-import { RunningMode, useObjectDetection } from "./objectDetection";
+import {
+  Camera,
+  useCameraDevice,
+  type FrameProcessor,
+} from "react-native-vision-camera";
 
-type MediapipeProps = {
+export type MediapipeCameraProps = {
   style: ViewStyle;
+  processor: FrameProcessor;
 };
 
-export const MediapipeCamera: React.FC<MediapipeProps> = ({ style }) => {
+export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
+  style,
+  processor,
+}) => {
   const device = useCameraDevice("front");
-  const frameProcessor = useObjectDetection(
-    (results) => {
-      console.log(results);
-    },
-    (error) => {
-      console.log(error);
-    },
-    RunningMode.LIVE_STREAM,
-    "efficientdet-lite0.tflite"
-  );
   return device !== undefined ? (
     <Camera
       style={style}
       device={device}
       pixelFormat={Platform.select({ ios: "rgb", android: "yuv" })}
       isActive={true}
-      frameProcessor={frameProcessor}
+      frameProcessor={processor}
     />
   ) : (
     <Text>no device</Text>
   );
 };
+
+export * from "./objectDetection";

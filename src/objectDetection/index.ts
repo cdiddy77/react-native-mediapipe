@@ -2,13 +2,16 @@ import React from "react";
 import { NativeEventEmitter, NativeModules } from "react-native";
 import {
   VisionCameraProxy,
-  type FrameProcessorPlugin,
   useFrameProcessor,
 } from "react-native-vision-camera";
-import { useSharedValue } from "react-native-worklets-core";
 
 const { ObjectDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ObjectDetection);
+
+const plugin = VisionCameraProxy.initFrameProcessorPlugin("objectDetection");
+if (!plugin) {
+  throw new Error("Failed to initialize objectdetection plugin");
+}
 
 interface ObjectDetectionModule {
   createDetector: (
@@ -48,10 +51,10 @@ interface DetectionMap {
 }
 
 interface RectFMap {
-  xmin: number;
-  ymin: number;
-  xmax: number;
-  ymax: number;
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
 }
 
 interface CategoryMap {
@@ -74,7 +77,7 @@ interface ObjectDetectionError {
 }
 
 // eslint-disable-next-line no-restricted-syntax
-enum Delegate {
+export enum Delegate {
   CPU = 0,
   GPU = 1,
 }
@@ -101,7 +104,6 @@ const detectorMap: Map<number, ObjectDetectionCallbacks> = new Map();
 eventEmitter.addListener(
   "onResults",
   (args: { handle: number } & ResultBundleMap) => {
-    console.log("onResults", JSON.stringify(args));
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
       callbacks.onResults(args);
@@ -111,7 +113,6 @@ eventEmitter.addListener(
 eventEmitter.addListener(
   "onError",
   (args: { handle: number } & ObjectDetectionError) => {
-    console.log("onError", JSON.stringify(args));
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
       callbacks.onError(args);
@@ -126,41 +127,45 @@ export function useObjectDetection(
   model: string,
   options?: Partial<ObjectDetectionOptions>
 ) {
-  console.log("useObjectDetection", { runningMode, model, options });
-  const processor = useSharedValue<
-    | { detectorHandle: number; plugin: FrameProcessorPlugin | undefined }
-    | undefined
-  >(undefined);
+  const [detectorHandle, setDetectorHandle] = React.useState<
+    number | undefined
+  >();
 
   // Remember the latest callback if it changes.
   React.useLayoutEffect(() => {
-    if (processor.value?.detectorHandle !== undefined) {
-      detectorMap.set(processor.value.detectorHandle, { onResults, onError });
+    if (detectorHandle !== undefined) {
+      detectorMap.set(detectorHandle, { onResults, onError });
     }
-  }, [onResults, onError, processor.value?.detectorHandle]);
+  }, [onResults, onError, detectorHandle]);
 
   React.useEffect(() => {
-    const plugin =
-      VisionCameraProxy.initFrameProcessorPlugin("objectDetection");
-
+    let newHandle: number | undefined;
     getObjectDetectionModule()
       .createDetector(
         options?.threshold ?? 0.5,
         options?.maxResults ?? 3,
-        options?.delegate ?? Delegate.GPU,
+        options?.delegate ?? Delegate.CPU,
         model,
         runningMode
       )
       .then((handle) => {
-        console.log("useObjectDetection", runningMode, model, handle);
-        processor.value = { detectorHandle: handle, plugin };
+        console.log(
+          "useObjectDetection.createDetector",
+          runningMode,
+          model,
+          handle
+        );
+        setDetectorHandle(handle);
+        newHandle = handle;
       });
     return () => {
-      console.log("useObjectDetection.useEffect.unsub", "releaseDetector");
-      if (processor.value?.detectorHandle !== undefined) {
-        getObjectDetectionModule().releaseDetector(
-          processor.value.detectorHandle
-        );
+      console.log(
+        "useObjectDetection.useEffect.unsub",
+        "releaseDetector",
+        newHandle
+      );
+      if (newHandle !== undefined) {
+        getObjectDetectionModule().releaseDetector(newHandle);
       }
     };
   }, [
@@ -168,18 +173,16 @@ export function useObjectDetection(
     options?.maxResults,
     runningMode,
     options?.threshold,
-    processor,
     model,
   ]);
-  console.log("useObjectDetection", { processor: processor.value });
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      processor.value?.plugin?.call(frame, {
-        detectorHandle: processor.value.detectorHandle,
+      plugin?.call(frame, {
+        detectorHandle,
       });
     },
-    [processor.value?.detectorHandle, processor.value?.plugin]
+    [detectorHandle]
   );
   return frameProcessor;
 }

@@ -13,6 +13,8 @@ import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicYuvToRGB
 import android.renderscript.Type
 import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import androidx.core.math.MathUtils.clamp
 import com.facebook.react.common.annotations.VisibleForTesting
 import com.google.mediapipe.framework.image.BitmapImageBuilder
@@ -48,8 +50,14 @@ class ObjectDetectorHelper(
 
   fun clearObjectDetector() {
     objectDetectorListener = null
-    objectDetector?.close()
-    objectDetector = null
+    // This is a hack. If we call close directly, we crash. There is a theory
+    // that this is because the object detector is still doing some processing, and that
+    // it is not safe to close it. So a better solution might be to mark it and then when
+    // processing is complete, cause it to be closed.
+    Handler(Looper.getMainLooper()).postDelayed({
+      objectDetector?.close()
+      objectDetector = null
+    }, 100)
   }
 
   // Initialize the object detector using current settings on the
@@ -405,7 +413,7 @@ class ObjectDetectorHelper(
     // Convert the input Bitmap object to an MPImage object to run inference
 //    val bitmap = toBitmap(image)
 //    val bitmap = yuv420ToBitmap(image)
-    val bitmap = yuv420ToBitmapRS(image,context)
+    val bitmap = yuv420ToBitmapRS(image, context)
 //    val mpImage = MediaImageBuilder(image).build()
     val mpImage = BitmapImageBuilder(bitmap).build()
 
