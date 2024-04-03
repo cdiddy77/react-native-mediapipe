@@ -111,6 +111,7 @@ eventEmitter.addListener(
 eventEmitter.addListener(
   "onError",
   (args: { handle: number } & ObjectDetectionError) => {
+    console.log("onError", JSON.stringify(args));
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
       callbacks.onError(args);

@@ -93,7 +93,7 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('examples/objectdetection/android/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -130,6 +130,12 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
+      - name: Generate composite hash
+        id: composite-hash
+        run: |
+          cat example/ios/Podfile.lock examples/objectdetection/ios/Podfile.lock > combined.lock
+          echo "COMPOSITE_HASH=$(sha256sum combined.lock | awk '{print $1}')" >> $GITHUB_ENV
+    
       - name: Cache cocoapods
         if: env.turbo_cache_hit != 1
         id: cocoapods-cache
@@ -137,7 +143,7 @@ jobs:
         with:
           path: |
             **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('example/ios/Podfile.lock') }}
+          key: ${{ runner.os }}-cocoapods-${{ env.COMPOSITE_HASH }}
           restore-keys: |
             ${{ runner.os }}-cocoapods-
 
@@ -145,6 +151,9 @@ jobs:
         if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
           cd example/ios
+          pod install
+          cd ../..
+          cd examples/objectdetection/ios
           pod install
         env:
           NO_FLIPPER: 1

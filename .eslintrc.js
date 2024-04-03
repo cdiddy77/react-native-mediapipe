@@ -21,6 +21,7 @@ module.exports = {
     ".eslintrc.js",
     ".prettierrc.js",
     "*.config.js",
+    "jest.setup.js",
   ],
   plugins: ["@typescript-eslint"],
   extends: [

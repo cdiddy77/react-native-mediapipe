@@ -113,13 +113,12 @@ class ObjectDetectorHelper(
       objectDetector = ObjectDetector.createFromOptions(context, options)
     } catch (e: IllegalStateException) {
       objectDetectorListener?.onError(
-        "Object detector failed to initialize. See error logs for details"
+        "Object detector failed to initialize: " + e.message
       )
       Log.e(TAG, "TFLite failed to load model with error: " + e.message)
     } catch (e: RuntimeException) {
       objectDetectorListener?.onError(
-        "Object detector failed to initialize. See error logs for " + "details",
-        GPU_ERROR
+        "Object detector failed to initialize: " + e.message
       )
       Log.e(
         TAG,
@@ -127,7 +126,7 @@ class ObjectDetectorHelper(
       )
     } catch (e: Exception) {
       objectDetectorListener?.onError(
-        "Object detector failed to initialize. See error logs for details"
+        "Object detector failed to initialize: " + e.message
       )
       Log.e(TAG, "TFLite failed to load model with error: " + e.message)
     }
