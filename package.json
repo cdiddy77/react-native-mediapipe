@@ -95,6 +95,7 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
+      "<rootDir>/examples/objectdetection/node_modules",
       "<rootDir>/lib/"
     ]
   },
