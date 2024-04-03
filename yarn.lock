@@ -18343,24 +18343,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rnmp-example-objectdetectionbackup@workspace:examples/objectdetection-backup":
-  version: 0.0.0-use.local
-  resolution: "rnmp-example-objectdetectionbackup@workspace:examples/objectdetection-backup"
-  dependencies:
-    "@babel/core": ^7.20.0
-    "@babel/preset-env": ^7.20.0
-    "@babel/runtime": ^7.20.0
-    "@react-native/babel-preset": 0.73.21
-    "@react-native/metro-config": 0.73.5
-    "@react-native/typescript-config": 0.73.1
-    babel-plugin-module-resolver: ^5.0.0
-    react: 18.2.0
-    react-native: 0.73.4
-    react-native-vision-camera: ^3.8.2
-    react-native-worklets-core: ^0.3.0
-  languageName: unknown
-  linkType: soft
-
 "rtl-detect@npm:^1.0.4":
   version: 1.1.2
   resolution: "rtl-detect@npm:1.1.2"
