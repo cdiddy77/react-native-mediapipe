@@ -24,6 +24,12 @@ class ObjectDetectorHelper: NSObject {
   var modelPath: String
   let handle: Int
   
+  // this is an unfortunate hack : we need to provide the client with the size of the
+  // image which was being analyzed. This information is helpfully provided except in the
+  // case of livestream. So we stash it here for each frame. It changes seldom so
+  // this should rarely be an issue
+  private var livestreamImageSize: CGSize = CGSize(width: 0, height: 0)
+  
   // MARK: - Custom Initializer
   init(
     handle:Int,
@@ -74,12 +80,15 @@ class ObjectDetectorHelper: NSObject {
     guard let mpImage = try? MPImage(uiImage: image) else {
       return nil
     }
-    print(image.imageOrientation.rawValue)
     do {
       let startDate = Date()
       let result = try objectDetector?.detect(image: mpImage)
       let inferenceTime = Date().timeIntervalSince(startDate) * 1000
-      return ResultBundle(inferenceTime: inferenceTime, objectDetectorResults: [result])
+      return ResultBundle(
+        inferenceTime: inferenceTime, 
+        objectDetectorResults: [result],
+        size: CGSizeMake(CGFloat(image.size.width), CGFloat(image.size.height))
+      )
     } catch {
       print(error)
       return nil
@@ -94,6 +103,7 @@ class ObjectDetectorHelper: NSObject {
         return
       }
       do {
+        self.livestreamImageSize = CGSize(width: image.width, height: image.height)
         try objectDetector?.detectAsync(image: image, timestampInMilliseconds: timeStamps)
       } catch {
         print(error)
@@ -162,7 +172,9 @@ class ObjectDetectorHelper: NSObject {
         prevTime = curTime
         let resultBundle = ResultBundle(
           inferenceTime: inferenceTime,
-          objectDetectorResults: [result])
+          objectDetectorResults: [result],
+          size: CGSizeMake(CGFloat(image.width), CGFloat(image.height))
+        )
         delegate?.objectDetectorHelper(self, onResults: resultBundle, error: nil)
       } catch {
         delegate?.objectDetectorHelper(self, onResults: nil, error: error)
@@ -186,7 +198,9 @@ extension ObjectDetectorHelper: ObjectDetectorLiveStreamDelegate {
       }
       let resultBundle = ResultBundle(
         inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
-        objectDetectorResults: [result])
+        objectDetectorResults: [result],
+        size: CGSize(width: livestreamImageSize.width, height: livestreamImageSize.height)
+      )
       delegate?.objectDetectorHelper(self, onResults: resultBundle, error: nil)
     }
 }
@@ -195,7 +209,7 @@ extension ObjectDetectorHelper: ObjectDetectorLiveStreamDelegate {
 struct ResultBundle {
   let inferenceTime: Double
   let objectDetectorResults: [ObjectDetectorResult?]
-  var size: CGSize = .zero
+  let size: CGSize
 }
 
 struct DefaultConstants {
