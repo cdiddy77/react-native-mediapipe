@@ -152,3 +152,21 @@ jobs:
       - name: Build example for iOS
         run: |
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+  
+  deploy-docsite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docusaurus website
+        run: |
+          cd docsite
+          yarn install 
+          yarn run build
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: docsite/build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
