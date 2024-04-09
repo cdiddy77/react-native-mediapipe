@@ -76,6 +76,11 @@ android {
 
     namespace "com.objectdetection"
     defaultConfig {
+        externalNativeBuild {
+    cmake {
+        arguments "-DCMAKE_MAKE_PROGRAM=C:\\ninja\\ninja.exe", "-DCMAKE_OBJECT_PATH_MAX=1024"
+    }
+}
         applicationId "com.objectdetection"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
