@@ -63,6 +63,11 @@ const config: Config = {
           label: 'Tutorial',
         },
         {
+          href: 'https://www.loom.com/share/248e835862c7446abacd8812210ae361?sid=67615359-f063-48af-9d39-77016946c3ed',
+          label: '\'Getting Started\' Video',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/cdiddy77/react-native-mediapipe',
           label: 'GitHub',
           position: 'right',
