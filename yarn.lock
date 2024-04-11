@@ -17474,21 +17474,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-vision-camera@npm:^3.8.2":
-  version: 3.9.1
-  resolution: "react-native-vision-camera@npm:3.9.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-worklets-core: "*"
-  peerDependenciesMeta:
-    react-native-worklets-core:
-      optional: true
-  checksum: c700931932fa09437687bb8165091121677e79e0525730b65fc7ca5dbc526ea4f24916f255261e1d212ad82a020a1f00585c7f9aafe9c720b2f0ea52c25261a2
-  languageName: node
-  linkType: hard
-
-"react-native-vision-camera@npm:^3.9.2":
+"react-native-vision-camera@npm:3.9.2":
   version: 3.9.2
   resolution: "react-native-vision-camera@npm:3.9.2"
   peerDependencies:
@@ -17499,6 +17485,20 @@ __metadata:
     react-native-worklets-core:
       optional: true
   checksum: b69beca5bcc486c6e4f9b11199ba46cc8552be2bb46a8b1f74851c9563f88eedf851d9c61299e2d3e507029398281a7fcbc4e2183af3ee39d75a6194bcfaf757
+  languageName: node
+  linkType: hard
+
+"react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::locator=react-native-mediapipe%40workspace%3A.":
+  version: 3.9.2
+  resolution: "react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::version=3.9.2&hash=71d0d6&locator=react-native-mediapipe%40workspace%3A."
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-worklets-core: "*"
+  peerDependenciesMeta:
+    react-native-worklets-core:
+      optional: true
+  checksum: b0d758c5b13b9cc9083fb6db4db0da8eb7d454bad6adbc332467326635c91ed2238bc83460b1bfe840579710c5fb954e01eeb40daf67f661485a9e3b761af838
   languageName: node
   linkType: hard
 
