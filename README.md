@@ -12,20 +12,21 @@ A React Native Camera and Player for MediaPipe applications.
 * 🔍 AI Object Detection
 * 🧩 Works as a react-native component
 
-Install mediapipe from npm:
+Install react-native-mediapipe from npm:
 ```sh
 npm install react-native-mediapipe
+```
+
+Install react-native-mediapipe from yarn:
+```sh
+yarn add  react-native-mediapipe
 ```
 
 ## Example
 
 ```js
-import { MediaPipe_Camera_ } from "react-native-mediapipe";
+import { MediaPipeCamera } from "react-native-mediapipe";
 
-// ...
-
-<MediapipeView color="tomato" />
-```
 
 > Link to an example of this in use later.
 
