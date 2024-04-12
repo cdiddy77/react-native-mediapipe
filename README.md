@@ -26,6 +26,8 @@ yarn add  react-native-mediapipe
 
 ```js
 import { MediaPipeCamera } from "react-native-mediapipe";
+```
+
 
 
 > Link to an example of this in use later.
