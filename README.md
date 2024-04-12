@@ -1,12 +1,11 @@
-[//]: # (
-<a href="https://margelo.io">
+<!--- <a href="https://margelo.io">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/banner-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/banner-light.png" />
     <img alt="VisionCamera" src="./docs/static/img/banner-light.png" />
   </picture>
 </a>
-)
+ --->
 
 # react-native-mediapipe
 
@@ -44,7 +43,8 @@ import { MediapipeView } from "react-native-mediapipe";
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
-Join the [Community](https://discord.gg/ApuAzVnAaX) here! [//]: #(I want to turn this into a banner later down the line using the code on the top of the file.)
+Join the [Community](https://discord.gg/ApuAzVnAaX) here! 
+<!--- (I want to turn this into a banner later down the line using the code on the top of the file.) --->
 
 ## License
 
