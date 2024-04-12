@@ -2,6 +2,8 @@
 
 A React Native Camera and Player for MediaPipe applications.
 
+* [Documentation](https://cdiddy77.github.io/react-native-mediapipe/)
+
 ## Requirements
 * Requirements go here.
 
@@ -14,9 +16,6 @@ Install mediapipe from npm:
 ```sh
 npm install react-native-mediapipe
 ```
-
-### Documentation
-* [Documentation](https://cdiddy77.github.io/react-native-mediapipe/)
 
 ## Example
 
