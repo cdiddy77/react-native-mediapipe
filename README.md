@@ -18,7 +18,6 @@ A React Native Camera and Player for MediaPipe applications.
 * 📸 Photo and Video capture using your devices actual camera
 * 🧩 AI Object Detection
 * 📱 Works on Windows, Android, and iOS Devices
-* 
 <div> <img align="right" width="35%" img alt="Placeholder for an Image" src="example.png"> </div> 
 
 Install mediapipe from npm:
