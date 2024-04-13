@@ -16,12 +16,11 @@ A React Native Camera and Player for MediaPipe applications.
 
 ## Getting Started
 
-Install react-native-mediapipe from npm:
+1) Install react-native-mediapipe from npm:
 ```sh
 npm install react-native-mediapipe react-native-vision-camera react-native-worklets-core
 ```
-
-Install react-native-mediapipe from yarn:
+or Install react-native-mediapipe from yarn:
 ```sh
 yarn add  react-native-mediapipe react-native-vision-camera react-native-worklets-core
 ```
@@ -30,7 +29,7 @@ yarn add  react-native-mediapipe react-native-vision-camera react-native-worklet
 import { MediaPipeCamera } from "react-native-mediapipe";
 ```
 
-In your babel.config.js file
+2) In your babel.config.js file
 ```
 module.exports = {
 presets: ['module:@react-native/babel-present'],
@@ -38,7 +37,7 @@ plugins: [['react-native-workles-core/plugin']],
 }
 ```
 
-In your gradle/build.gradle file
+3) In your gradle/build.gradle file
 ```
 buildscript {
 ext {
@@ -49,7 +48,7 @@ minSdkVersion = 24 (Make sure that this is at least 24)
 ...
 }
 ```
-# If you're on IOS:
+# 4) If you're on IOS:
 In your info.plist file in the outermost <dict> tag:
 ```
 <key>NSCameraUsageDescription</key>
@@ -67,7 +66,7 @@ pod install
 ```
 
 
-# If you're on Android:
+# 4) If you're on Android:
 In your AndroidManifest.xml file inside the <manifest> tag:
 ```
 <uses-permission android:name="android.permission.CAMERA" />
@@ -76,9 +75,6 @@ In your AndroidManifest.xml file inside the <manifest> tag:
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 ```
 
-
-
-> Link to an example of this in use later.
 
 ## Contributing
 
