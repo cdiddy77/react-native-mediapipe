@@ -7,7 +7,6 @@ A React Native Camera and Player for MediaPipe applications.
 ## Requirements
 * Gradle minimum SDK 24 or higher
 * Android-SDK Version 26 or higher
-OR
 * iOS 12 or higher
 
 ## Features
