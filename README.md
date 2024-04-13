@@ -48,7 +48,7 @@ minSdkVersion = 24 (Make sure that this is at least 24)
 ...
 }
 ```
-# 4) If you're on IOS:
+4) If you're on IOS:
 In your info.plist file in the outermost <dict> tag:
 ```
 <key>NSCameraUsageDescription</key>
@@ -66,7 +66,7 @@ pod install
 ```
 
 
-# 4) If you're on Android:
+4) If you're on Android:
 In your AndroidManifest.xml file inside the <manifest> tag:
 ```
 <uses-permission android:name="android.permission.CAMERA" />
