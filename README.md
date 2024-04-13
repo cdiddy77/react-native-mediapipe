@@ -5,10 +5,10 @@ A React Native Camera and Player for MediaPipe applications.
 * [Documentation](https://cdiddy77.github.io/react-native-mediapipe/)
 
 ## Requirements
-Gradle minimum SDK 24 or higher
-Android-SDK Version 26 or higher
+* Gradle minimum SDK 24 or higher
+* Android-SDK Version 26 or higher
 OR
-iOS 12 or higher
+* iOS 12 or higher
 
 ## Features
 * 🎥 Video streaming from a react-native app to a media pipe
