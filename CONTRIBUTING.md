@@ -10,24 +10,6 @@
 1. Fork & clone the repository
 2. Install dependencies
    ```
-   cd path/to/your/directory
-   git clone
-   cd package
-
-   Dependcies for IOS and Andriod:
-
-   IOS:
-   XCode
-   Node & Watchman using Homebrew.
-    - brew install node
-    - brew install watchman
-   Cocopod 
-    - $ sudo gem install cocoapods.
-
-   Andriod: 
-   Android development environment.
-   Java Development Kit - Zulu using Homebrew.
-
 
    ```
 
@@ -38,10 +20,9 @@ Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) 
 ### JS/TS
 
 1. Open the entire folder in Visual Studio Code
-2. Start the metro bundler in the `example/` directory using `yarn start`
-3. Run either the iOS `yarn ios` or Android `yarn andriod` project to test changes
+2. Start the metro bundler in the `examples/objectdetection` directory using `yarn start`
+3. Run either the iOS `yarn ios` or Android `yarn android` project to test changes
 
-> Run `yarn check-js` to validate codestyle
 
 ### iOS
 
@@ -50,11 +31,10 @@ Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) 
 3. Select your device in the devices drop-down
 4. Hit run
 
-> Run `yarn check-ios` to validate codestyle
 
 ### Android
 
-1. Open the `example/android/` folder with Android Studio
+1. Open the `examples/objectdetection/android` folder with Android Studio
 2. Start the metro bundler in the `example/` directory using `yarn start`
 3. Select your device in the devices drop-down
 4. Once your device is connected, make sure it can find the metro bundler's port:
@@ -63,12 +43,10 @@ Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) 
    ```
 6. Hit run
 
-> Run `yarn check-android` to validate codestyle
-
 ### Docs
 
 1. Edit the relevant file, it may be easiest to search for what you're editing to find the right file
-2. Install all dependencies by running `yarn` inside the `docs` folder
+2. Install all dependencies by running `yarn` inside the `docsite` folder
 
 > Run `yarn start` to generate the docs, you can then view them in your browser to confirm your changes
 
@@ -81,7 +59,8 @@ Great code produces great products. That's why we love to keep our codebases cle
 Before pushing your changes, you can verify that everything is still correctly formatted by running all linters:
 
 ```
-yarn check-all
+yarn typecheck
+yarn lint
 ```
 
 This validates Swift, Kotlin, C++ and JS/TS code:
