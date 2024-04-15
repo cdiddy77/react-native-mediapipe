@@ -7,7 +7,6 @@ module.exports = {
       "./tsconfig.json",
       "docsite/tsconfig.json",
       "examples/objectdetection/tsconfig.json",
-      "example/tsconfig.json",
     ],
     ecmaFeatures: {
       jsx: true,
@@ -25,7 +24,6 @@ module.exports = {
     "*.config.js",
     "jest.setup.js",
     "coverage",
-    "example/index.js",
   ],
   plugins: ["@typescript-eslint"],
   extends: [

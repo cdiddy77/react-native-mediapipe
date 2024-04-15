@@ -93,6 +93,7 @@ export interface ObjectDetectionOptions {
   threshold: number;
   maxResults: number;
   delegate: Delegate;
+  resize: { scale: number; aspect: "preserve" | "default" | number };
 }
 export interface ObjectDetectionCallbacks {
   onResults: (result: ResultBundleMap) => void;
@@ -144,7 +145,7 @@ export function useObjectDetection(
       .createDetector(
         options?.threshold ?? 0.5,
         options?.maxResults ?? 3,
-        options?.delegate ?? Delegate.CPU,
+        options?.delegate ?? Delegate.GPU,
         model,
         runningMode
       )
@@ -178,8 +179,15 @@ export function useObjectDetection(
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
+
       plugin?.call(frame, {
         detectorHandle,
+        scale: {
+          width: frame.width * 0.5,
+          height: frame.height * 0.5,
+        },
+        pixelFormat: "rgb",
+        dataType: "uint8",
       });
     },
     [detectorHandle]

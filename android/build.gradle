@@ -25,6 +25,11 @@ if (isNewArchitectureEnabled()) {
   apply plugin: "com.facebook.react"
 }
 
+def reactNativeArchitectures() {
+  def value = project.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["Mediapipe_" + name]
 }
@@ -53,12 +58,30 @@ android {
     }
   }
 
+  buildFeatures {
+    prefab true
+  }  
+
+  ndkVersion getExtOrDefault("ndkVersion")
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
 
+    externalNativeBuild {
+      cmake {
+        cppFlags "-O2 -frtti -fexceptions -Wall -fstack-protector-all"
+        abiFilters (*reactNativeArchitectures())
+        arguments "-DANDROID_STL=c++_shared"
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
   }
 
   buildTypes {
@@ -75,6 +98,25 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+
+  // packagingOptions {
+  //   excludes = [
+  //           "**/libc++_shared.so",
+  //           "**/libfbjni.so",
+  //           "**/libjsi.so",
+  //           "**/libfolly_json.so",
+  //           "**/libfolly_runtime.so",
+  //           "**/libglog.so",
+  //           "**/libhermes.so",
+  //           "**/libhermes-executor-debug.so",
+  //           "**/libhermes_executor.so",
+  //           "**/libreactnativejni.so",
+  //           "**/libturbomodulejsijni.so",
+  //           "**/libreact_nativemodule_core.so",
+  //           "**/libjscexecutor.so"
+  //   ]
+  // }
+
 }
 
 repositories {
