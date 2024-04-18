@@ -1,122 +1,90 @@
 # Contributing
 
-Contributions are always welcome, no matter how large or small!
+## Guidelines
 
-We want this community to be friendly and respectful to each other. Please follow it in all your interactions with the project. Before contributing, please read the [code of conduct](./CODE_OF_CONDUCT.md).
+1. Have fun.
+2. Don't waste anyone's time.
 
-## Development workflow
+## Get started
 
-This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
+1. Fork & clone the repository
+2. Install dependencies
+   ```
 
-- The library package in the root directory.
-- An example app in the `example/` directory.
+   ```
 
-To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
+Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) for a quick overview of the native development workflow.
 
-```sh
-yarn
+> You can also open React Native Mediapipe in [a quick online editor (github1s)](https://github.com/cdiddy77/react-native-mediapipe)
+
+### JS/TS
+
+1. Open the entire folder in Visual Studio Code
+2. Start the metro bundler in the `examples/objectdetection` directory using `yarn start`
+3. Run either the iOS `yarn ios` or Android `yarn android` project to test changes
+
+
+### iOS
+
+1. Open the `react-native-mediapipe/example/ios/MediapipeExample.xcworkspace` file with Xcode
+2. Change signing configuration to your developer account
+3. Select your device in the devices drop-down
+4. Hit run
+
+
+### Android
+
+1. Open the `examples/objectdetection/android` folder with Android Studio
+2. Start the metro bundler in the `example/` directory using `yarn start`
+3. Select your device in the devices drop-down
+4. Once your device is connected, make sure it can find the metro bundler's port:
+   ```
+   adb reverse tcp:8081 tcp:8081
+   ```
+6. Hit run
+
+### Docs
+
+1. Edit the relevant file, it may be easiest to search for what you're editing to find the right file
+2. Install all dependencies by running `yarn` inside the `docsite` folder
+
+> Run `yarn start` to generate the docs, you can then view them in your browser to confirm your changes
+
+## Committing
+
+### Codestyle
+
+Great code produces great products. That's why we love to keep our codebases clean, and to achieve that, we use linters and formatters which output errors when something isn't formatted the way we like it to be.
+
+Before pushing your changes, you can verify that everything is still correctly formatted by running all linters:
+
 ```
-
-> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development.
-
-The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
-
-It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
-
-If you want to use Android Studio or XCode to edit the native code, you can open the `example/android` or `example/ios` directories respectively in those editors. To edit the Objective-C or Swift files, open `example/ios/MediapipeExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-mediapipe`.
-
-To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `react-native-mediapipe` under `Android`.
-
-You can use various commands from the root directory to work with the project.
-
-To start the packager:
-
-```sh
-yarn example start
-```
-
-To run the example app on Android:
-
-```sh
-yarn example android
-```
-
-To run the example app on iOS:
-
-```sh
-yarn example ios
-```
-
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
-
-```sh
 yarn typecheck
 yarn lint
 ```
 
-To fix formatting errors, run the following:
+This validates Swift, Kotlin, C++ and JS/TS code:
 
-```sh
-yarn lint --fix
+```bash
+$ yarn check-all
+   yarn run v1.22.10
+   Formatting Swift code..
+   Linting Swift code..
+   Linting Kotlin code..
+   Linting C++ code..
+   Linting JS/TS code..
+   All done!
+   ✨  Done in 8.05s.
 ```
 
-Remember to add tests for your change if possible. Run the unit tests by:
+### PR messages
 
-```sh
-yarn test
-```
+When creating a pull-request, make sure to use the [conventional changelog](https://github.com/conventional-changelog/conventional-changelog) format for it's title:
 
-### Commit message convention
+* ✨ For new features or enhancements, use `feat`. Example: `feat: Support ultra-wide-angle cameras`
+* 🐛 For bugfixes or build improvements, use `fix`. Example: `fix: Fix iOS 13 crash when switching cameras`
+* 💨 For performance improvements, use `perf`. Example: `perf: Improve takePhoto() performance by re-using file-session`
+* 🛠️ When upgrading dependencies, use `chore(deps)`. Example: `chore(deps): Upgrade react-native to 0.70`
+* 📚 When changing anything in the documentation, use `docs`. Example: `docs: Fix typo in installation instructions`
 
-We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
-
-- `fix`: bug fixes, e.g. fix crash due to deprecated method.
-- `feat`: new features, e.g. add new method to the module.
-- `refactor`: code refactor, e.g. migrate from class components to hooks.
-- `docs`: changes into documentation, e.g. add usage example for the module..
-- `test`: adding or updating tests, e.g. add integration tests using detox.
-- `chore`: tooling changes, e.g. change CI config.
-
-Our pre-commit hooks verify that your commit message matches this format when committing.
-
-### Linting and tests
-
-[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
-
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
-
-Our pre-commit hooks verify that the linter and tests pass when committing.
-
-### Publishing to npm
-
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
-
-### Scripts
-
-The `package.json` file contains various scripts for common tasks:
-
-- `yarn`: setup project by installing dependencies.
-- `yarn typecheck`: type-check files with TypeScript.
-- `yarn lint`: lint files with ESLint.
-- `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
-
-### Sending a pull request
-
-> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
-
-When you're sending a pull request:
-
-- Prefer small pull requests focused on one change.
-- Verify that linters and tests are passing.
-- Review the documentation to make sure it looks good.
-- Follow the pull request template when opening a pull request.
-- For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
+Pull-requests will be squash-committed, so no need to prefix your individual commits with the conventional changelog format as long as the commit messages are descriptive.
