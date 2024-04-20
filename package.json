@@ -76,7 +76,9 @@
     "typescript": "^5.2.2"
   },
   "resolutions": {
-    "@types/react": "^18.2.44"
+    "@types/react": "^18.2.44",
+    "react-native-vision-camera@^3.8.2": "patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch",
+    "react-native-vision-camera@^3.9.2": "patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch"
   },
   "peerDependencies": {
     "react": "*",
