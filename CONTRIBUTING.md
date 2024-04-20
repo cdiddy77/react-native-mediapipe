@@ -10,6 +10,17 @@
 1. Fork & clone the repository
 2. Install dependencies
    ```
+   iOS:
+   XCode
+   Node & Watchman using Homebrew.
+    - brew install node
+    - brew install watchman
+   Cocopod 
+    - $ sudo gem install cocoapods.
+
+   Andriod: 
+   Android development environment.
+   Java Development Kit - Zulu using Homebrew.
 
    ```
 
