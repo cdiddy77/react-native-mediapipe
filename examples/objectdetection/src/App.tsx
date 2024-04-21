@@ -6,49 +6,36 @@ import {
   NavigationContainer,
   useNavigationContainerRef,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Button } from "react-native";
 
-type RootStackParamList = {
+type RootTabParamList = {
   CameraStream: undefined;
   StillPhoto: undefined;
   Settings: undefined;
 };
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 function App() {
-  const navigationRef = useNavigationContainerRef<RootStackParamList>();
-
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        initialRouteName="CameraStream"
-        screenOptions={{
-          // eslint-disable-next-line react/no-unstable-nested-components
-          headerRight: () => (
-            <Button
-              onPress={() => navigationRef.current?.navigate("Settings")}
-              title="Settings"
-            />
-          ),
-        }}
-      >
-        <Stack.Screen
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName="CameraStream">
+        <Tab.Screen
           name="CameraStream"
           component={CameraStream}
           options={{ title: "Camera Streaming" }}
         />
-        <Stack.Screen
+        <Tab.Screen
           name="StillPhoto"
           component={StillPhoto}
           options={{ title: "Still Photo" }}
         />
-        <Stack.Screen
+        <Tab.Screen
           name="Settings"
           component={Settings}
           options={{ title: "Settings" }}
         />
-      </Stack.Navigator>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
