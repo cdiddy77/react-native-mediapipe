@@ -3,12 +3,12 @@ import React from "react";
 import { View, Text } from "react-native";
 import type { RootTabParamList } from "./navigation";
 
-type Props = BottomTabScreenProps<RootTabParamList, "Settings">;
+type Props = BottomTabScreenProps<RootTabParamList, "Photo">;
 
-export const Settings: React.FC<Props> = () => {
+export const Photo: React.FC<Props> = () => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Settings Placeholder</Text>
+      <Text>Still Photo Placeholder</Text>
     </View>
   );
 };

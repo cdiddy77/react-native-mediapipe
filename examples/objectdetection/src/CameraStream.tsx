@@ -26,6 +26,8 @@ import {
   useCameraPermission,
   useMicrophonePermission,
 } from "react-native-vision-camera";
+import type { RootTabParamList } from "./navigation";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 interface Detection {
   label: string;
@@ -35,7 +37,9 @@ interface Detection {
   height: number;
 }
 
-export default function CameraStream(): React.ReactElement | null {
+type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
+
+export const CameraStream: React.FC<Props> = () => {
   const { width, height } = useWindowDimensions();
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
@@ -107,7 +111,7 @@ export default function CameraStream(): React.ReactElement | null {
   } else {
     return <NeedPermissions askForPermissions={askForPermissions} />;
   }
-}
+};
 
 const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
   askForPermissions,
