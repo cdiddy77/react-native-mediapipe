@@ -33,7 +33,7 @@ import { MediaPipeCamera } from "react-native-mediapipe";
 ```
 module.exports = {
 presets: ['module:@react-native/babel-present'],
-plugins: [['react-native-workles-core/plugin']],
+plugins: [['react-native-worklets-core/plugin']],
 }
 ```
 
