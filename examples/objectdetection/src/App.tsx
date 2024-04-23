@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName="CameraStream">
+      <Tab.Navigator initialRouteName="Photo">
         <Tab.Screen
           name="CameraStream"
           component={CameraStream}
