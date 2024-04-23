@@ -2,16 +2,53 @@ import * as React from "react";
 import { CameraStream } from "./CameraStream";
 import { Photo } from "./Photo";
 import { Settings } from "./Settings";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, type RouteProp } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { type RootTabParamList } from "./navigation";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+
+type TabBarIconProps = {
+  focused: boolean;
+  color: string;
+  size: number;
+  route: RouteProp<RootTabParamList, keyof RootTabParamList>;
+};
+
+const RenderTabBarIcon: React.FC<TabBarIconProps> = ({
+  focused,
+  color,
+  size,
+  route,
+}) => {
+  let iconName;
+
+  if (route.name === "CameraStream") {
+    iconName = focused ? "camera" : "camera-outline";
+  } else if (route.name === "Photo") {
+    iconName = focused ? "document" : "document-outline";
+  } else {
+    // if (route.name === "Settings")
+    iconName = focused ? "cog" : "cog-outline";
+  }
+
+  return <Ionicons name={iconName} size={size} color={color} />;
+};
 
 function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName="CameraStream">
+      <Tab.Navigator
+        initialRouteName="CameraStream"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            return RenderTabBarIcon({ focused, color, size, route });
+          },
+          tabBarActiveTintColor: "tomato",
+          tabBarInactiveTintColor: "gray",
+        })}
+      >
         <Tab.Screen
           name="CameraStream"
           component={CameraStream}
