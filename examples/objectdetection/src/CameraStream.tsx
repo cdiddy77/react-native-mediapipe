@@ -120,7 +120,7 @@ export const CameraStream: React.FC<Props> = () => {
           ))}
         </Canvas>
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
-          <Text style={styles.cameraSwitchButtonText}>sC</Text>
+          <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
         </Pressable>
       </View>
     );
@@ -138,7 +138,7 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
         Camera and Mic permissions required
       </Text>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
-        <Text>Switch</Text>
+        <Text>Request</Text>
       </Pressable>
     </View>
   );
