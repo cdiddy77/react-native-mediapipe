@@ -12,6 +12,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  Image,
   View,
   useWindowDimensions,
 } from "react-native";
@@ -67,6 +68,14 @@ export const CameraStream: React.FC<Props> = () => {
 
   const [objectFrames, setObjectFrames] = React.useState<Detection[]>([]);
 
+  const [active, setActive] = React.useState<string>("front");
+
+  const setActiveCamera = () => {
+    setActive((currentCamera) =>
+      currentCamera === "front" ? "back" : "front"
+    );
+  };
+
   const frameProcessor = useObjectDetection(
     (results) => {
       console.log(results);
@@ -100,12 +109,19 @@ export const CameraStream: React.FC<Props> = () => {
   if (permsGranted.cam && permsGranted.mic) {
     return (
       <View style={styles.container}>
-        <MediapipeCamera style={styles.box} processor={frameProcessor} />
+        <MediapipeCamera
+          style={styles.box}
+          processor={frameProcessor}
+          activeCamera={active}
+        />
         <Canvas style={styles.box}>
           {objectFrames.map((frame, index) => (
             <ObjectFrame frame={frame} index={index} key={index} />
           ))}
         </Canvas>
+        <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
+          <Text style={styles.cameraSwitchButtonText}>sC</Text>
+        </Pressable>
       </View>
     );
   } else {
@@ -122,7 +138,7 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
         Camera and Mic permissions required
       </Text>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
-        <Text>Request</Text>
+        <Text>Switch</Text>
       </Pressable>
     </View>
   );
@@ -178,6 +194,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "red",
+  },
+  cameraSwitchButton: {
+    position: "absolute",
+    padding: 10,
+    backgroundColor: "blue",
+    borderRadius: 20,
+    top: 20,
+    right: 20,
+  },
+  cameraSwitchButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 

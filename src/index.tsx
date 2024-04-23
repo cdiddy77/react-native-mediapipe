@@ -14,8 +14,9 @@ export type MediapipeCameraProps = {
 export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
   style,
   processor,
+  activeCamera,
 }) => {
-  const device = useCameraDevice("front");
+  const device = useCameraDevice(activeCamera);
   return device !== undefined ? (
     <Camera
       style={style}
