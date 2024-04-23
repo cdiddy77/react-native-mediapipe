@@ -9,20 +9,7 @@
 
 1. Fork & clone the repository
 2. Install dependencies
-   ```
-   iOS:
-   XCode
-   Node & Watchman using Homebrew.
-    - brew install node
-    - brew install watchman
-   Cocopod 
-    - $ sudo gem install cocoapods.
 
-   Andriod: 
-   Android development environment.
-   Java Development Kit - Zulu using Homebrew.
-
-   ```
 
 Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) for a quick overview of the native development workflow.
 
@@ -37,7 +24,7 @@ Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) 
 
 ### iOS
 
-1. Open the `react-native-mediapipe/example/ios/MediapipeExample.xcworkspace` file with Xcode
+1. Open the `react-native-mediapipe/examples/ios/MediapipeExample.xcworkspace` file with Xcode
 2. Change signing configuration to your developer account
 3. Select your device in the devices drop-down
 4. Hit run
