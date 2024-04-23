@@ -12,7 +12,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  Image,
   View,
   useWindowDimensions,
 } from "react-native";
@@ -26,6 +25,7 @@ import {
 import {
   useCameraPermission,
   useMicrophonePermission,
+  type CameraPosition,
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -68,8 +68,7 @@ export const CameraStream: React.FC<Props> = () => {
 
   const [objectFrames, setObjectFrames] = React.useState<Detection[]>([]);
 
-  const [active, setActive] = React.useState<string>("front");
-
+  const [active, setActive] = React.useState<CameraPosition>("front");
   const setActiveCamera = () => {
     setActive((currentCamera) =>
       currentCamera === "front" ? "back" : "front"
@@ -106,6 +105,7 @@ export const CameraStream: React.FC<Props> = () => {
     "efficientdet-lite0.tflite",
     { delegate: Delegate.GPU }
   );
+
   if (permsGranted.cam && permsGranted.mic) {
     return (
       <View style={styles.container}>
