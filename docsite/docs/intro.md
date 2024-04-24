@@ -63,31 +63,27 @@ import TabItem from '@theme/TabItem';
     <p>
       1. **Give Permissions:** Navigate to your AndroidManifest.xml file and add:
     </p>
-    <pre>
-      <code>
-        &lt;uses-permission android:name="android.permission.CAMERA" /&gt;
-        
-        &lt;!-- optionally, if you want to record audio: --&gt;
-
-        &lt;uses-permission android:name="android.permission.RECORD_AUDIO" /&gt;
-      </code>
-    </pre>
+    ```
+    <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- optionally, if you want to record audio: -->
+    
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    ```
   </TabItem>
   <TabItem value="mac" label="macOS">
   <p>
     1. **Give Permissions:** Navigate to your info.plist file in the outermost tag:
   </p>
-  <pre>
-    <code>
-      &lt;key&gt;NSCameraUsageDescription&lt;/key&gt;
-      &lt;string&gt;$(PRODUCT_NAME) needs access to your Camera.&lt;/string&gt;
+    ```
+    <key>NSCameraUsageDescription</key>
+    <string>$(PRODUCT_NAME) needs access to your Camera.</string>
 
-      &lt;!-- optionally, if you want to record audio: --&gt;
+    <!-- optionally, if you want to record audio: -->
 
-      &lt;key&gt;NSMicrophoneUsageDescription&lt;/key&gt;
-      &lt;string&gt;$(PRODUCT_NAME) needs access to your Microphone.&lt;/string&gt;
-    </code>
-  </pre>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>$(PRODUCT_NAME) needs access to your Microphone.</string>
+    ```
   <p>
     2. **Terminal Commands:** In your terminal run the following commands
   </p>
