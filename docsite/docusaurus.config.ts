@@ -39,6 +39,7 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           // editUrl:  'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
+        
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -50,7 +51,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'React Native MediaPipe',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -60,7 +61,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
         {
           href: 'https://www.loom.com/share/248e835862c7446abacd8812210ae361?sid=67615359-f063-48af-9d39-77016946c3ed',
@@ -91,7 +92,7 @@ const config: Config = {
           items: [
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/react-native-mediapipe',
+              href: 'https://discord.gg/2HPuUda3z4',
             },
           ],
         },
