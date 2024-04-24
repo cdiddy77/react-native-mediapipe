@@ -9,9 +9,7 @@
 
 1. Fork & clone the repository
 2. Install dependencies
-   ```
 
-   ```
 
 Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) for a quick overview of the native development workflow.
 
@@ -26,7 +24,7 @@ Read the READMEs in [`android/`](android/README.md) and [`ios/`](ios/README.md) 
 
 ### iOS
 
-1. Open the `react-native-mediapipe/example/ios/MediapipeExample.xcworkspace` file with Xcode
+1. Open the `react-native-mediapipe/examples/objectdetection/ios/objectdetection.xcworkspace` file with Xcode
 2. Change signing configuration to your developer account
 3. Select your device in the devices drop-down
 4. Hit run
