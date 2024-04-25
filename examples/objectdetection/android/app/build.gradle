@@ -76,6 +76,7 @@ android {
 
     namespace "com.objectdetection"
     defaultConfig {
+       
         applicationId "com.objectdetection"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

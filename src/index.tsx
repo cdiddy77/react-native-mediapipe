@@ -3,19 +3,22 @@ import { type ViewStyle, Text, Platform } from "react-native";
 import {
   Camera,
   useCameraDevice,
+  type CameraPosition,
   type FrameProcessor,
 } from "react-native-vision-camera";
 
 export type MediapipeCameraProps = {
   style: ViewStyle;
   processor: FrameProcessor;
+  activeCamera: CameraPosition;
 };
 
 export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
   style,
   processor,
+  activeCamera,
 }) => {
-  const device = useCameraDevice("front");
+  const device = useCameraDevice(activeCamera);
   return device !== undefined ? (
     <Camera
       style={style}

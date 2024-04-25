@@ -20,7 +20,7 @@ function App() {
         <Tab.Screen
           name="Photo"
           component={Photo}
-          options={{ title: "Photo" }}
+          options={{ title: "Photos" }}
         />
         <Tab.Screen
           name="Settings"
