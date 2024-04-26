@@ -25,6 +25,7 @@ import {
 import {
   useCameraPermission,
   useMicrophonePermission,
+  type CameraPosition,
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
@@ -67,6 +68,13 @@ export const CameraStream: React.FC<Props> = () => {
 
   const [objectFrames, setObjectFrames] = React.useState<Detection[]>([]);
 
+  const [active, setActive] = React.useState<CameraPosition>("front");
+  const setActiveCamera = () => {
+    setActive((currentCamera) =>
+      currentCamera === "front" ? "back" : "front"
+    );
+  };
+
   const frameProcessor = useObjectDetection(
     (results) => {
       console.log(results);
@@ -97,15 +105,23 @@ export const CameraStream: React.FC<Props> = () => {
     "efficientdet-lite0.tflite",
     { delegate: Delegate.GPU }
   );
+
   if (permsGranted.cam && permsGranted.mic) {
     return (
       <View style={styles.container}>
-        <MediapipeCamera style={styles.box} processor={frameProcessor} />
+        <MediapipeCamera
+          style={styles.box}
+          processor={frameProcessor}
+          activeCamera={active}
+        />
         <Canvas style={styles.box}>
           {objectFrames.map((frame, index) => (
             <ObjectFrame frame={frame} index={index} key={index} />
           ))}
         </Canvas>
+        <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
+          <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
+        </Pressable>
       </View>
     );
   } else {
@@ -178,6 +194,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "red",
+  },
+  cameraSwitchButton: {
+    position: "absolute",
+    padding: 10,
+    backgroundColor: "blue",
+    borderRadius: 20,
+    top: 20,
+    right: 20,
+  },
+  cameraSwitchButtonText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 
