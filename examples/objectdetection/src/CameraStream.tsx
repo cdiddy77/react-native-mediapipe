@@ -7,14 +7,7 @@ import {
 } from "@shopify/react-native-skia";
 import * as React from "react";
 
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   Delegate,
   MediapipeCamera,
@@ -29,6 +22,7 @@ import {
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
 
 interface Detection {
   label: string;
@@ -41,7 +35,6 @@ interface Detection {
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
-  const { width, height } = useWindowDimensions();
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
@@ -75,25 +68,28 @@ export const CameraStream: React.FC<Props> = () => {
     );
   };
 
-  const frameProcessor = useObjectDetection(
-    (results) => {
-      console.log(results);
+  const objectDetection = useObjectDetection(
+    (results, viewSize) => {
       const firstResult = results.results[0];
       const detections = firstResult?.detections ?? [];
+      const frameSize = {
+        width: results.inputImageWidth,
+        height: results.inputImageHeight,
+      };
       setObjectFrames(
         detections.map((detection) => {
+          const { x, y, width, height } = frameRectToView(
+            ltrbToXywh(detection.boundingBox),
+            frameSize,
+            viewSize,
+            "cover"
+          );
           return {
             label: detection.categories[0]?.categoryName ?? "unknown",
-            x: (detection.boundingBox.left / results.inputImageWidth) * width,
-            y: (detection.boundingBox.top / results.inputImageHeight) * height,
-            width:
-              ((detection.boundingBox.right - detection.boundingBox.left) /
-                results.inputImageWidth) *
-              width,
-            height:
-              ((detection.boundingBox.bottom - detection.boundingBox.top) /
-                results.inputImageHeight) *
-              height,
+            x,
+            y,
+            width,
+            height,
           };
         })
       );
@@ -111,8 +107,9 @@ export const CameraStream: React.FC<Props> = () => {
       <View style={styles.container}>
         <MediapipeCamera
           style={styles.box}
-          processor={frameProcessor}
+          solution={objectDetection}
           activeCamera={active}
+          resizeMode="cover" // must agree with frameRectToView above
         />
         <Canvas style={styles.box}>
           {objectFrames.map((frame, index) => (
@@ -172,6 +169,7 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "red",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
