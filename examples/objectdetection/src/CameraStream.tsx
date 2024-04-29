@@ -154,7 +154,7 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
   const paragraph = React.useMemo(() => {
     const textStyle = {
       backgroundColor: Skia.Color(color),
-      color: Skia.Color("white"),
+      color: Skia.Color(textfromBackground(color)),
       font: font,
       fontSize: 24,
     };
@@ -250,6 +250,19 @@ const colorNames = [
   "SeaGreen",
   "Violet",
 ];
+
+function textfromBackground(background: string): string {
+  const color = Skia.Color(background);
+  const red = (color[0] ?? 0) * 256;
+  const green = (color[1] ?? 0) * 256;
+  const blue = (color[2] ?? 0) * 256;
+
+  // use the algorithm from https://stackoverflow.com/a/3943023/2197085
+  const text =
+    red * 0.299 + green * 0.587 + blue * 0.114 > 186 ? "black" : "white";
+
+  return text;
+}
 
 const fontFamily = Platform.select({ ios: "Helvetica", android: "sans-serif" });
 const fontStyle = {
