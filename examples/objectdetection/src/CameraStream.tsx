@@ -2,7 +2,9 @@ import {
   Canvas,
   Group,
   Rect,
-  Text as SkiaText,
+  Skia,
+  Paragraph,
+  TextAlign,
   matchFont,
 } from "@shopify/react-native-skia";
 import * as React from "react";
@@ -146,14 +148,33 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
   index,
 }) => {
   const color = colorNames[index % colorNames.length];
+  if (color === undefined) {
+    throw new Error(`No color found for index ${index}`);
+  }
+  const paragraph = React.useMemo(() => {
+    const textStyle = {
+      backgroundColor: Skia.Color(color),
+      color: Skia.Color("white"),
+      font: font,
+      fontSize: 24,
+    };
+    const para = Skia.ParagraphBuilder.Make({
+      textAlign: TextAlign.Right,
+    })
+      .pushStyle(textStyle)
+      .addText(` ${frame.label} `)
+      .build();
+    return para;
+  }, [frame.label, color]);
+
   return (
     <Group style={"stroke"} strokeWidth={2}>
-      <SkiaText
+      <Paragraph
+        paragraph={paragraph}
         x={frame.x}
         y={frame.y}
         color={color}
-        text={frame.label}
-        font={font}
+        width={frame.width}
       />
       <Rect
         key={index}
@@ -233,6 +254,6 @@ const colorNames = [
 const fontFamily = Platform.select({ ios: "Helvetica", android: "sans-serif" });
 const fontStyle = {
   fontFamily,
-  fontSize: 14,
+  fontSize: 24,
 };
 const font = matchFont(fontStyle);
