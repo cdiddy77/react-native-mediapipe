@@ -7,11 +7,13 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.mrousavy.camera.frameprocessor.SharedArray
 
 object ObjectDetectorMap {
   internal val detectorMap = mutableMapOf<Int, ObjectDetectorHelper>()
 
 }
+
 class ObjectDetectionModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
@@ -52,14 +54,14 @@ class ObjectDetectionModule(reactContext: ReactApplicationContext) :
       currentModel = model,
       runningMode = enumValues<RunningMode>().first { it.ordinal == runningMode },
       context = reactApplicationContext.applicationContext,
-      objectDetectorListener = ObjectDetectorListener(this,id)
+      objectDetectorListener = ObjectDetectorListener(this, id)
     )
     ObjectDetectorMap.detectorMap[id] = helper
     promise.resolve(id)
   }
 
   @ReactMethod
-  fun releaseDetector(handle: Int,promise: Promise) {
+  fun releaseDetector(handle: Int, promise: Promise) {
     val entry = ObjectDetectorMap.detectorMap[handle]
     if (entry != null) {
       entry.clearObjectDetector()
@@ -77,6 +79,7 @@ class ObjectDetectionModule(reactContext: ReactApplicationContext) :
   fun removeListeners(count: Int?) {
     /* Required for RN built-in Event Emitter Calls. */
   }
+
   private fun sendErrorEvent(handle: Int, message: String, code: Int) {
     val errorArgs =
       Arguments.makeNativeMap(mapOf("handle" to handle, "message" to message, "code" to code))
