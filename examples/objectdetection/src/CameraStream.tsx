@@ -187,7 +187,8 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
     </Group>
   );
 };
-
+// TODONEXT: https://www.npmjs.com/package/react-native-element-dropdown?activeTab=readme
+// Really, no picker?
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "red",

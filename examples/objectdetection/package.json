@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/slider": "^4.5.2",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@shopify/react-native-skia": "^1.0.5",
