@@ -5,6 +5,7 @@ import type { RootTabParamList } from "./navigation";
 import Slider from "@react-native-community/slider";
 import { Picker } from "@react-native-picker/picker";
 import { Delegate } from "react-native-mediapipe";
+import { useSettings } from "./app-settings";
 
 type SlidersComponentProps = {
   label: string;
@@ -41,18 +42,17 @@ const OptionSlider: React.FC<SlidersComponentProps> = ({
 type Props = BottomTabScreenProps<RootTabParamList, "Settings">;
 
 export const Settings: React.FC<Props> = () => {
-  const [maxResults, setMaxResults] = React.useState(5);
-  const [threshold, setThreshold] = React.useState(0);
-  const [processor, setProcessor] = React.useState(Delegate.GPU);
-  const [model, setModel] = React.useState("efficientdet-lite0");
+  const { settings, setSettings } = useSettings();
 
   return (
     <View style={styles.container}>
       <View style={styles.item}>
         <Text style={styles.label}>Inference Delegate: </Text>
         <Picker
-          selectedValue={processor}
-          onValueChange={setProcessor}
+          selectedValue={settings.processor}
+          onValueChange={(value) =>
+            setSettings({ ...settings, processor: value })
+          }
           style={styles.picker}
         >
           <Picker.Item label="GPU" value={Delegate.GPU} />
@@ -62,8 +62,8 @@ export const Settings: React.FC<Props> = () => {
       <View style={styles.item}>
         <Text style={styles.label}>Model selections: </Text>
         <Picker
-          selectedValue={model}
-          onValueChange={setModel}
+          selectedValue={settings.model}
+          onValueChange={(value) => setSettings({ ...settings, model: value })}
           style={styles.picker}
         >
           <Picker.Item label="EfficientDet-Lite0" value="efficientdet-lite0" />
@@ -73,13 +73,13 @@ export const Settings: React.FC<Props> = () => {
       </View>
       <OptionSlider
         label="Max results: ${value}"
-        value={maxResults}
-        setValue={setMaxResults}
+        value={settings.maxResults}
+        setValue={(value) => setSettings({ ...settings, maxResults: value })}
       />
       <OptionSlider
         label="Score threshold: ${value}%"
-        value={threshold}
-        setValue={setThreshold}
+        value={settings.threshold}
+        setValue={(value) => setSettings({ ...settings, threshold: value })}
         minValue={0}
         maxValue={100}
       />
