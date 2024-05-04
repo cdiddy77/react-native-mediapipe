@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import type { RootTabParamList } from "./navigation";
 import Slider from "@react-native-community/slider";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
 import { Delegate } from "react-native-mediapipe";
 import { useSettings } from "./app-settings";
 
@@ -48,28 +48,30 @@ export const Settings: React.FC<Props> = () => {
     <View style={styles.container}>
       <View style={styles.item}>
         <Text style={styles.label}>Inference Delegate: </Text>
-        <Picker
-          selectedValue={settings.processor}
+        <RNPickerSelect
+          itemKey={settings.processor}
           onValueChange={(value) =>
-            setSettings({ ...settings, processor: value })
+            setSettings({ ...settings, processor: value as Delegate })
           }
-          style={styles.picker}
-        >
-          <Picker.Item label="GPU" value={Delegate.GPU} />
-          <Picker.Item label="CPU" value={Delegate.CPU} />
-        </Picker>
+          items={[
+            { label: "GPU", value: Delegate.GPU },
+            { label: "CPU", value: Delegate.CPU },
+          ]}
+        />
       </View>
       <View style={styles.item}>
         <Text style={styles.label}>Model selections: </Text>
-        <Picker
-          selectedValue={settings.model}
-          onValueChange={(value) => setSettings({ ...settings, model: value })}
-          style={styles.picker}
-        >
-          <Picker.Item label="EfficientDet-Lite0" value="efficientdet-lite0" />
-          <Picker.Item label="EfficientDet-Lite2" value="efficientdet-lite0" />
-          <Picker.Item label="SSD MobileNetV2" value="ssd-mobilenetv2" />
-        </Picker>
+        <RNPickerSelect
+          itemKey={settings.model}
+          onValueChange={(value) =>
+            setSettings({ ...settings, model: value as string })
+          }
+          items={[
+            { label: "EfficientDet-Lite0", value: "efficientdet-lite0" },
+            { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
+            { label: "SSD MobileNetV2", value: "ssd-mobilenetv2" },
+          ]}
+        />
       </View>
       <OptionSlider
         label="Max results: ${value}"
@@ -85,6 +87,10 @@ export const Settings: React.FC<Props> = () => {
       />
     </View>
   );
+};
+
+const pickerStyle = {
+  useNativeAndroidPickerStyle: false,
 };
 
 const styles = StyleSheet.create({
