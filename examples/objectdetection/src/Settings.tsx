@@ -113,6 +113,10 @@ export const Settings: React.FC<Props> = () => {
   );
 };
 
+const pickerStyle = {
+  useNativeAndroidPickerStyle: false,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
