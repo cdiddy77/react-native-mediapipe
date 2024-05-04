@@ -10,7 +10,7 @@ To resolve this, you can either enable long paths in Windows or try moving your 
 
 ## How To Enable Long Paths 
 
-To enable the new long path behavior on your machine: 
+To enable the new long path behavior on your machine:
 
 - Use the registry key
 **Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled (Type: REG_DWORD)** must exist and be set to 1.
