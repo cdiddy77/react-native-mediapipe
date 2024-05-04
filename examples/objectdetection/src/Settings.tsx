@@ -15,6 +15,13 @@ type SlidersComponentProps = {
   maxValue?: number;
 };
 
+type SelectComponentProps = {
+  label: string;
+  value: unknown;
+  setValue: (value: unknown) => void;
+  items: { label: string; value: unknown }[];
+};
+
 const OptionSlider: React.FC<SlidersComponentProps> = ({
   label,
   value,
@@ -39,6 +46,26 @@ const OptionSlider: React.FC<SlidersComponentProps> = ({
   );
 };
 
+const OptionSelect: React.FC<SelectComponentProps> = ({
+  label,
+  value,
+  setValue,
+  items,
+}) => {
+  return (
+    <View style={styles.item}>
+      <Text style={styles.label}>{label}</Text>
+      <RNPickerSelect
+        value={value}
+        onValueChange={setValue}
+        style={{ inputAndroid: styles.picker, inputIOS: styles.picker }}
+        useNativeAndroidPickerStyle={false}
+        items={items}
+      />
+    </View>
+  );
+};
+
 type Props = BottomTabScreenProps<RootTabParamList, "Settings">;
 
 export const Settings: React.FC<Props> = () => {
@@ -46,33 +73,29 @@ export const Settings: React.FC<Props> = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.item}>
-        <Text style={styles.label}>Inference Delegate: </Text>
-        <RNPickerSelect
-          itemKey={settings.processor}
-          onValueChange={(value) =>
-            setSettings({ ...settings, processor: value as Delegate })
-          }
-          items={[
-            { label: "GPU", value: Delegate.GPU },
-            { label: "CPU", value: Delegate.CPU },
-          ]}
-        />
-      </View>
-      <View style={styles.item}>
-        <Text style={styles.label}>Model selections: </Text>
-        <RNPickerSelect
-          itemKey={settings.model}
-          onValueChange={(value) =>
-            setSettings({ ...settings, model: value as string })
-          }
-          items={[
-            { label: "EfficientDet-Lite0", value: "efficientdet-lite0" },
-            { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
-            { label: "SSD MobileNetV2", value: "ssd-mobilenetv2" },
-          ]}
-        />
-      </View>
+      <OptionSelect
+        label="Processor: "
+        value={settings.processor}
+        setValue={(value) =>
+          setSettings({ ...settings, processor: value as Delegate })
+        }
+        items={[
+          { label: "GPU", value: Delegate.GPU },
+          { label: "CPU", value: Delegate.CPU },
+        ]}
+      />
+      <OptionSelect
+        label="Model selections: "
+        value={settings.model}
+        setValue={(value) =>
+          setSettings({ ...settings, model: value as string })
+        }
+        items={[
+          { label: "EfficientDet-Lite0", value: "efficientdet-lite0" },
+          { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
+          { label: "SSD MobileNetV2", value: "ssd-mobilenetv2" },
+        ]}
+      />
       <OptionSlider
         label="Max results: ${value}"
         value={settings.maxResults}
@@ -89,10 +112,6 @@ export const Settings: React.FC<Props> = () => {
   );
 };
 
-const pickerStyle = {
-  useNativeAndroidPickerStyle: false,
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -101,7 +120,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   item: { padding: 10 },
-  slider: { width: 200, height: 40 },
-  picker: { width: 200, height: 40 },
+  slider: { width: 250, height: 40 },
+  picker: { width: 250, height: 40, marginLeft: 15 },
   label: { marginLeft: 15 },
 });
