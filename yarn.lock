@@ -15904,8 +15904,8 @@ __metadata:
     react-native-safe-area-context: ^4.9.0
     react-native-screens: ^3.30.1
     react-native-vector-icons: ^10.0.3
-    react-native-vision-camera: ^3.9.2
-    react-native-worklets-core: ^0.4.0
+    react-native-vision-camera: ^4.0.1
+    react-native-worklets-core: ^1.3.0
     react-test-renderer: 18.2.0
     typescript: 5.0.4
   languageName: unknown
@@ -17599,8 +17599,8 @@ __metadata:
     react: 18.2.0
     react-native: 0.73.4
     react-native-builder-bob: ^0.23.2
-    react-native-vision-camera: ^3.9.2
-    react-native-worklets-core: ^0.3.0
+    react-native-vision-camera: ^4.0.1
+    react-native-worklets-core: ^1.3.0
     release-it: ^15.0.0
     turbo: ^1.10.7
     typescript: ^5.2.2
@@ -17650,55 +17650,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:3.9.2":
-  version: 3.9.2
-  resolution: "react-native-vision-camera@npm:3.9.2"
+"react-native-vision-camera@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "react-native-vision-camera@npm:4.0.1"
   peerDependencies:
+    "@shopify/react-native-skia": "*"
     react: "*"
     react-native: "*"
+    react-native-reanimated: "*"
     react-native-worklets-core: "*"
   peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
     react-native-worklets-core:
       optional: true
-  checksum: b69beca5bcc486c6e4f9b11199ba46cc8552be2bb46a8b1f74851c9563f88eedf851d9c61299e2d3e507029398281a7fcbc4e2183af3ee39d75a6194bcfaf757
+  checksum: 7698a003e74b3bc82e297fe9088b88dc92d6ba73b12baad99c85a6f3520c333715baec10d64d7adc1dee489701ca246f9444db974dfef3b748a1845081260ffa
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::locator=react-native-mediapipe%40workspace%3A.":
-  version: 3.9.2
-  resolution: "react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::version=3.9.2&hash=71d0d6&locator=react-native-mediapipe%40workspace%3A."
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-worklets-core: "*"
-  peerDependenciesMeta:
-    react-native-worklets-core:
-      optional: true
-  checksum: b0d758c5b13b9cc9083fb6db4db0da8eb7d454bad6adbc332467326635c91ed2238bc83460b1bfe840579710c5fb954e01eeb40daf67f661485a9e3b761af838
-  languageName: node
-  linkType: hard
-
-"react-native-worklets-core@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "react-native-worklets-core@npm:0.3.0"
+"react-native-worklets-core@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "react-native-worklets-core@npm:1.3.0"
   dependencies:
     string-hash-64: ^1.0.3
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: bd45a34197d61950719c2b179741e9f2f627cbaa6e3b72d9c91e8f8044731576e15daa8adc38731774f5007a89140e353712d1290797c2c9f795dc2c3043b01a
-  languageName: node
-  linkType: hard
-
-"react-native-worklets-core@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "react-native-worklets-core@npm:0.4.0"
-  dependencies:
-    string-hash-64: ^1.0.3
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 0fc6a4439510bc1c547c74c2f35403b7419a11cb968f9334c62e3157737926d243012880fafda5a3e9dcac40499c5eed29f54ab3fa455a2b4377e0045062de11
+  checksum: 05c01409a3a01416b69c2e94b9173cf4450c000d3fe34692af4b67c5221a856494dd9b2000fec0368349c80a5831fe0a746fecf7689189c42f0c5ccf787b6971
   languageName: node
   linkType: hard
 

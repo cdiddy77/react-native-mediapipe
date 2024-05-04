@@ -306,12 +306,17 @@ namespace resizeconvert {
                 // do nothing, we're already in ARGB
                 return frameBuffer;
             case RGB:
+                // RAW is [R, G, B] in libyuv memory layout
+                error = libyuv::ARGBToRAW(frameBuffer.data(), frameBuffer.bytesPerRow(),
+                                          destination.data(), destination.bytesPerRow(),
+                                          destination.width, destination.height);
+                break;
+            case BGR:
+                // RGB24 is [B, G, R] in libyuv memory layout
                 error = libyuv::ARGBToRGB24(frameBuffer.data(), frameBuffer.bytesPerRow(),
                                             destination.data(), destination.bytesPerRow(),
                                             destination.width, destination.height);
                 break;
-            case BGR:
-                throw std::runtime_error("BGR is not supported on Android!");
             case RGBA:
                 error = libyuv::ARGBToRGBA(frameBuffer.data(), frameBuffer.bytesPerRow(),
                                            destination.data(), destination.bytesPerRow(),
@@ -414,7 +419,8 @@ namespace resizeconvert {
         return result.buffer;
     }
 
-    jni::local_ref<ResizeConvert::jhybriddata> ResizeConvert::initHybrid(jni::alias_ref<jhybridobject> javaThis) {
+    jni::local_ref<ResizeConvert::jhybriddata>
+    ResizeConvert::initHybrid(jni::alias_ref<jhybridobject> javaThis) {
         return makeCxxInstance(javaThis);
     }
 
