@@ -17650,7 +17650,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:^4.0.1":
+"react-native-vision-camera@npm:4.0.1":
   version: 4.0.1
   resolution: "react-native-vision-camera@npm:4.0.1"
   peerDependencies:
@@ -17667,6 +17667,26 @@ __metadata:
     react-native-worklets-core:
       optional: true
   checksum: 7698a003e74b3bc82e297fe9088b88dc92d6ba73b12baad99c85a6f3520c333715baec10d64d7adc1dee489701ca246f9444db974dfef3b748a1845081260ffa
+  languageName: node
+  linkType: hard
+
+"react-native-vision-camera@patch:react-native-vision-camera@npm%3A4.0.1#./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch::locator=react-native-mediapipe%40workspace%3A.":
+  version: 4.0.1
+  resolution: "react-native-vision-camera@patch:react-native-vision-camera@npm%3A4.0.1#./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch::version=4.0.1&hash=260f68&locator=react-native-mediapipe%40workspace%3A."
+  peerDependencies:
+    "@shopify/react-native-skia": "*"
+    react: "*"
+    react-native: "*"
+    react-native-reanimated: "*"
+    react-native-worklets-core: "*"
+  peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
+    react-native-worklets-core:
+      optional: true
+  checksum: c406d4a558e3984146a01500b37e43925a2bef46e02495c1478188b4f868df6cc13efb308d27f153967d53f5870daa2c59b2eceff9824e3a77805697166cf425
   languageName: node
   linkType: hard
 
