@@ -15,6 +15,9 @@ import {
   MediapipeCamera,
   RunningMode,
   useObjectDetection,
+  clampToDims,
+  frameRectToView,
+  ltrbToXywh,
 } from "react-native-mediapipe";
 
 import {
@@ -24,7 +27,6 @@ import {
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
 
 interface Detection {
   label: string;
@@ -71,7 +73,7 @@ export const CameraStream: React.FC<Props> = () => {
   };
 
   const objectDetection = useObjectDetection(
-    (results, viewSize) => {
+    (results, viewSize, mirrored) => {
       const firstResult = results.results[0];
       const detections = firstResult?.detections ?? [];
       const frameSize = {
@@ -80,11 +82,15 @@ export const CameraStream: React.FC<Props> = () => {
       };
       setObjectFrames(
         detections.map((detection) => {
-          const { x, y, width, height } = frameRectToView(
-            ltrbToXywh(detection.boundingBox),
-            frameSize,
-            viewSize,
-            "cover"
+          const { x, y, width, height } = clampToDims(
+            frameRectToView(
+              ltrbToXywh(detection.boundingBox),
+              frameSize,
+              viewSize,
+              "cover",
+              mirrored
+            ),
+            viewSize
           );
           return {
             label: detection.categories[0]?.categoryName ?? "unknown",
