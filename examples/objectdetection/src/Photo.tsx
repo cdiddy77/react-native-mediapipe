@@ -14,6 +14,8 @@ export const Photo: React.FC<Props> = () => {
       <Text>Still Photo Placeholder</Text>
       <Text>Max Results: {settings.maxResults}</Text>
       <Text>Score Threshold: {settings.threshold}</Text>
+      <Text>Model: {settings.model}</Text>
+      <Text>Processor: {settings.processor}</Text>
     </View>
   );
 };

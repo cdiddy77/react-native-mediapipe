@@ -11,7 +11,6 @@ import * as React from "react";
 
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import {
-  Delegate,
   MediapipeCamera,
   RunningMode,
   useObjectDetection,
@@ -25,6 +24,7 @@ import {
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
+import { useSettings } from "./app-settings";
 
 interface Detection {
   label: string;
@@ -37,6 +37,7 @@ interface Detection {
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
+  const { settings } = useSettings();
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
@@ -100,8 +101,12 @@ export const CameraStream: React.FC<Props> = () => {
       console.error(`onError: ${error}`);
     },
     RunningMode.LIVE_STREAM,
-    "efficientdet-lite0.tflite",
-    { delegate: Delegate.GPU }
+    `${settings.model}.tflite`,
+    {
+      delegate: settings.processor,
+      maxResults: settings.maxResults,
+      threshold: settings.threshold / 100,
+    }
   );
 
   if (permsGranted.cam && permsGranted.mic) {
