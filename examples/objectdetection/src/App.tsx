@@ -42,7 +42,7 @@ const RenderTabBarIcon: React.FC<TabBarIconProps> = ({
 function App() {
   const [settings, setSettings] = React.useState<AppSettings>({
     maxResults: 5,
-    threshold: 0,
+    threshold: 20,
     processor: Delegate.GPU,
     model: "efficientdet-lite0",
   });

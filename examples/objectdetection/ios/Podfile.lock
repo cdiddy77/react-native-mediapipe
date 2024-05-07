@@ -959,7 +959,7 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-worklets-core (0.4.0):
+  - react-native-worklets-core (1.3.0):
     - React
     - React-callinvoker
     - React-Core
@@ -1425,7 +1425,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-skia: 6da30aeaa315fcec5c27ebfb016b9eca2b57b66f
   react-native-slider: 7a39874fc1fcdfee48e448fa72cce0a8f2c7c5d6
-  react-native-worklets-core: 2efe80a3ee87fe5e6fefa814e0e20c2708d3ad25
+  react-native-worklets-core: 7a50c0c14005cc57df8583eabd99ea3f467fa277
   React-nativeconfig: b4d4e9901d4cabb57be63053fd2aa6086eb3c85f
   React-NativeModulesApple: cd26e56d56350e123da0c1e3e4c76cb58a05e1ee
   React-perflogger: 5f49905de275bac07ac7ea7f575a70611fa988f2
@@ -1456,4 +1456,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 106c37d775a4ea3a9fa9744362f0af5ba16aac0e
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2
