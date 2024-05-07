@@ -3,6 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
+
   title: 'react-native-mediapipe',
   tagline: 'A React Native Camera and Player for MediaPipe applications',
   favicon: 'img/favicon.ico',
@@ -28,6 +29,7 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+  
 
   presets: [
     [
@@ -46,6 +48,9 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+
+
+  
 
   themeConfig: {
     // Replace with your project's social card
@@ -113,6 +118,16 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+    // ...
+    plugins: [require.resolve("@cmfcmf/docusaurus-search-local")],
+  
+
+
+
+  
 };
 
+
 export default config;
+
