@@ -25,6 +25,7 @@ import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
 import { useSettings } from "./app-settings";
+import { useDebounce } from "./useDebounce";
 
 interface Detection {
   label: string;
@@ -38,6 +39,7 @@ type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
   const { settings } = useSettings();
+  const debouncedSettings = useDebounce(settings, 500);
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
@@ -101,11 +103,11 @@ export const CameraStream: React.FC<Props> = () => {
       console.error(`onError: ${error}`);
     },
     RunningMode.LIVE_STREAM,
-    `${settings.model}.tflite`,
+    `${debouncedSettings.model}.tflite`,
     {
-      delegate: settings.processor,
-      maxResults: settings.maxResults,
-      threshold: settings.threshold / 100,
+      delegate: debouncedSettings.processor,
+      maxResults: debouncedSettings.maxResults,
+      threshold: debouncedSettings.threshold / 100,
     }
   );
 
