@@ -75,6 +75,7 @@ import TabItem from '@theme/TabItem';
   <p>
     1. **Give Permissions:** Navigate to your info.plist file in the outermost tag:
   </p>
+
     ```
     <key>NSCameraUsageDescription</key>
     <string>$(PRODUCT_NAME) needs access to your Camera.</string>
