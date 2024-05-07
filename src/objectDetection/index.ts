@@ -1,9 +1,15 @@
 import React from "react";
-import { NativeEventEmitter, NativeModules } from "react-native";
+import {
+  NativeEventEmitter,
+  NativeModules,
+  type LayoutChangeEvent,
+} from "react-native";
 import {
   VisionCameraProxy,
   useFrameProcessor,
 } from "react-native-vision-camera";
+import type { MediaPipeSolution } from "../shared/types";
+import type { Dims } from "../shared/convert";
 
 const { ObjectDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ObjectDetection);
@@ -93,10 +99,12 @@ export interface ObjectDetectionOptions {
   threshold: number;
   maxResults: number;
   delegate: Delegate;
+  resize: { scale: number; aspect: "preserve" | "default" | number };
 }
 export interface ObjectDetectionCallbacks {
-  onResults: (result: ResultBundleMap) => void;
+  onResults: (result: ResultBundleMap, viewSize: Dims) => void;
   onError: (error: ObjectDetectionError) => void;
+  viewSize: Dims;
 }
 
 // TODO setup the general event callbacks
@@ -106,7 +114,7 @@ eventEmitter.addListener(
   (args: { handle: number } & ResultBundleMap) => {
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
-      callbacks.onResults(args);
+      callbacks.onResults(args, callbacks.viewSize);
     }
   }
 );
@@ -126,17 +134,36 @@ export function useObjectDetection(
   runningMode: RunningMode,
   model: string,
   options?: Partial<ObjectDetectionOptions>
-) {
+): MediaPipeSolution {
   const [detectorHandle, setDetectorHandle] = React.useState<
     number | undefined
   >();
 
+  const [cameraViewDimensions, setCameraViewDimensions] = React.useState<{
+    width: number;
+    height: number;
+  }>({ width: 1, height: 1 });
+
+  const cameraViewLayoutChangeHandler = React.useCallback(
+    (event: LayoutChangeEvent) => {
+      setCameraViewDimensions({
+        height: event.nativeEvent.layout.height,
+        width: event.nativeEvent.layout.width,
+      });
+    },
+    []
+  );
+
   // Remember the latest callback if it changes.
   React.useLayoutEffect(() => {
     if (detectorHandle !== undefined) {
-      detectorMap.set(detectorHandle, { onResults, onError });
+      detectorMap.set(detectorHandle, {
+        onResults,
+        onError,
+        viewSize: cameraViewDimensions,
+      });
     }
-  }, [onResults, onError, detectorHandle]);
+  }, [onResults, onError, detectorHandle, cameraViewDimensions]);
 
   React.useEffect(() => {
     let newHandle: number | undefined;
@@ -144,7 +171,7 @@ export function useObjectDetection(
       .createDetector(
         options?.threshold ?? 0.5,
         options?.maxResults ?? 3,
-        options?.delegate ?? Delegate.CPU,
+        options?.delegate ?? Delegate.GPU,
         model,
         runningMode
       )
@@ -178,11 +205,21 @@ export function useObjectDetection(
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
+
       plugin?.call(frame, {
         detectorHandle,
+        pixelFormat: "rgb",
+        dataType: "uint8",
       });
     },
     [detectorHandle]
   );
-  return frameProcessor;
+  return React.useMemo(
+    (): MediaPipeSolution => ({
+      cameraViewLayoutChangeHandler,
+      cameraViewDimensions,
+      frameProcessor,
+    }),
+    [cameraViewDimensions, cameraViewLayoutChangeHandler, frameProcessor]
+  );
 }

@@ -58,6 +58,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Get submodule
+        run: git submodule update --init --recursive
+
       - name: Cache turborepo for Android
         uses: actions/cache@v3
         with:
