@@ -1,8 +1,8 @@
 import type { LayoutChangeEvent } from "react-native";
-import type { FrameProcessor } from "react-native-vision-camera";
+import type { ReadonlyFrameProcessor } from "react-native-vision-camera";
 
 export interface MediaPipeSolution {
-  frameProcessor: FrameProcessor;
+  frameProcessor: ReadonlyFrameProcessor;
   cameraViewLayoutChangeHandler: (event: LayoutChangeEvent) => void;
   cameraViewDimensions: { width: number; height: number };
 }

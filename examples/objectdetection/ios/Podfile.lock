@@ -955,7 +955,7 @@ PODS:
     - React
     - React-callinvoker
     - React-Core
-  - react-native-worklets-core (0.4.0):
+  - react-native-worklets-core (1.3.0):
     - React
     - React-callinvoker
     - React-Core
@@ -1141,11 +1141,18 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - SocketRocket (0.6.1)
-  - VisionCamera (3.9.2):
+  - VisionCamera (4.0.1):
+    - VisionCamera/Core (= 4.0.1)
+    - VisionCamera/FrameProcessors (= 4.0.1)
+    - VisionCamera/React (= 4.0.1)
+  - VisionCamera/Core (4.0.1)
+  - VisionCamera/FrameProcessors (4.0.1):
     - React
     - React-callinvoker
-    - React-Core
     - react-native-worklets-core
+  - VisionCamera/React (4.0.1):
+    - React-Core
+    - VisionCamera/FrameProcessors
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1405,7 +1412,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 84ea43c6c6232049135b1550b8c60b2faac19fab
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-skia: 6da30aeaa315fcec5c27ebfb016b9eca2b57b66f
-  react-native-worklets-core: 2efe80a3ee87fe5e6fefa814e0e20c2708d3ad25
+  react-native-worklets-core: 7a50c0c14005cc57df8583eabd99ea3f467fa277
   React-nativeconfig: b4d4e9901d4cabb57be63053fd2aa6086eb3c85f
   React-NativeModulesApple: cd26e56d56350e123da0c1e3e4c76cb58a05e1ee
   React-perflogger: 5f49905de275bac07ac7ea7f575a70611fa988f2
@@ -1430,9 +1437,9 @@ SPEC CHECKSUMS:
   RNScreens: b6b64d956af3715adbfe84808694ae82d3fec74f
   RNVectorIcons: 73ab573085f65a572d3b6233e68996d4707fd505
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  VisionCamera: 6c8ca7d04fc62fafccd8f8ad584e96f5303671f5
+  VisionCamera: 8e00df84a76cf26ca70ecd3b6ed05dc0d3b60beb
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
 
 PODFILE CHECKSUM: 106c37d775a4ea3a9fa9744362f0af5ba16aac0e
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3
