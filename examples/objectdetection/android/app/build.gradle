@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: 'de.undercouch.download'
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -76,7 +77,7 @@ android {
 
     namespace "com.objectdetection"
     defaultConfig {
-       
+
         applicationId "com.objectdetection"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -104,6 +105,13 @@ android {
         }
     }
 }
+
+// import DownloadModels task
+project.ext.ASSET_DIR = projectDir.toString() + '/src/main/assets'
+
+// Download default models; if you wish to use your own models then
+// place them in the "assets" directory and comment out this line.
+apply from:'download_models.gradle'
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
