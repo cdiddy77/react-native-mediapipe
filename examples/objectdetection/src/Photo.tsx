@@ -22,8 +22,9 @@ export const Photo: React.FC<Props> = () => {
       setImagePath(image.path);
       setScreenState("completed");
       console.log(image);
+    }).catch(error => {
+      setScreenState("error");
     });
-    //TODO: Catch error here and send user to error screen
   };
   return (
     <View style={ styles.root }>
@@ -34,9 +35,27 @@ export const Photo: React.FC<Props> = () => {
             <Text style={styles.selectButtonText}>Select a photo</Text>
           </Pressable>
       )}
-       {screenState==='completed'&& (
-      <Image source={{uri:imagePath}} style={styles.photo}/>
+        {screenState==='completed'&& (
+    <>
+          <Image source={{uri:imagePath}} style={styles.photo}/>
+          <Pressable
+          style={styles.selectButton}
+          onPress={onClickSelectPhoto}>
+            <Text style={styles.selectButtonText}>Select a new photo</Text>
+          </Pressable>
+    </>
     )}
+    {screenState === "error" && (
+      <>
+      <Text style={styles.errorText}>Error! Please try again.</Text>
+        <Pressable
+        style={styles.selectButton}
+        onPress={onClickSelectPhoto}>
+            <Text style={styles.selectButtonText}>Select a photo</Text>
+          </Pressable>
+      </>
+        
+      )}
     </View>
   );
 };
@@ -45,7 +64,8 @@ const styles = StyleSheet.create({
   root:{ flex: 1, alignItems: "center", justifyContent: "center"},
   selectButton: {backgroundColor: "blue", padding: 10, borderRadius: 5 },
   selectButtonText: {fontSize: 20, color:"white"},
-  photo: {width:300,height:400}
+  photo: {width:300,height:400},
+  errorText: {fontSize: 30, color:"red"}
 });
 
 
