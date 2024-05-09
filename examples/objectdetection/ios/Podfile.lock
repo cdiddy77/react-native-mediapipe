@@ -1138,6 +1138,15 @@ PODS:
     - VisionCamera
   - RNCPicker (2.7.5):
     - React-Core
+  - RNImageCropPicker (0.40.3):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.40.3)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.40.3):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNScreens (3.30.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1147,6 +1156,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - SocketRocket (0.6.1)
+  - TOCropViewController (2.7.4)
   - VisionCamera (4.0.1):
     - VisionCamera/Core (= 4.0.1)
     - VisionCamera/FrameProcessors (= 4.0.1)
@@ -1240,6 +1250,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeMediaPipe (from `../../..`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
@@ -1262,6 +1273,7 @@ SPEC REPOS:
     - MediaPipeTasksVision
     - OpenSSL-Universal
     - SocketRocket
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   boost:
@@ -1371,6 +1383,8 @@ EXTERNAL SOURCES:
     :path: "../../.."
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNVectorIcons:
@@ -1448,9 +1462,11 @@ SPEC CHECKSUMS:
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
   ReactNativeMediaPipe: 92850eb7623b4bb0d6e8fe90c5e5781b42ccba00
   RNCPicker: 3e2c37a8328f368ce14da050cdc8231deb5fc9f9
+  RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNScreens: b6b64d956af3715adbfe84808694ae82d3fec74f
   RNVectorIcons: 73ab573085f65a572d3b6233e68996d4707fd505
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   VisionCamera: 8e00df84a76cf26ca70ecd3b6ed05dc0d3b60beb
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
 
