@@ -4,9 +4,8 @@ import android.graphics.ImageFormat
 import android.util.Log
 import com.google.mediapipe.framework.image.ByteBufferImageBuilder
 import com.google.mediapipe.framework.image.MPImage
-import com.mrousavy.camera.frameprocessor.Frame
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin
-import com.mrousavy.camera.frameprocessor.VisionCameraProxy
+import com.mrousavy.camera.frameprocessors.Frame
+import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
 import com.reactnativemediapipe.shared.ResizeConvert
 
 class ObjectDetectionFrameProcessorPlugin() :

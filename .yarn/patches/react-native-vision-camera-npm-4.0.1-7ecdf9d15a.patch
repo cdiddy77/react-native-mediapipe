@@ -1,0 +1,60 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index 3ef638b2b91d9d94a8f43222b6ffd953e57110fb..d507ff0fa8705e5bb794828d1940d81dd27cf969 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -1,5 +1,6 @@
+ import java.nio.file.Paths
+ import com.android.Version
++import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+ 
+ def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+ def androidManifestPath = agpVersion >= 7 ? 'src/main/AndroidManifest.xml' : 'src/hasNamespace/AndroidManifest.xml'
+@@ -89,11 +90,27 @@ if (hasWorklets) {
+ def enableCodeScanner = safeExtGetBool('VisionCamera_enableCodeScanner', false)
+ logger.warn("[VisionCamera] VisionCamera_enableCodeScanner is set to $enableCodeScanner!")
+ 
++static def findTools(baseDir) {
++  def basePath = baseDir.toPath().normalize()
++  while (basePath) {
++    def toolsPath = Paths.get(basePath.toString(), "tools")
++    if (toolsPath.toFile().exists()) {
++      return toolsPath.toString()
++    }
++    basePath = basePath.getParent()
++  }
++  throw new GradleException("react-native-vision-camera: Failed to find tools/ path!")
++}
++
++def toolsDir = findTools(projectDir)
++
+ repositories {
+   google()
+   mavenCentral()
+ }
+ 
++def os = DefaultNativePlatform.currentOperatingSystem;
++
+ android {
+   if (agpVersion >= 7) {
+     namespace "com.mrousavy.camera"
+@@ -130,9 +147,17 @@ android {
+     externalNativeBuild {
+       cmake {
+         cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
+-        arguments "-DANDROID_STL=c++_shared",
+-                "-DNODE_MODULES_DIR=${nodeModules}",
+-                "-DENABLE_FRAME_PROCESSORS=${enableFrameProcessors ? "ON" : "OFF"}"
++        if (os.isWindows()) {
++          arguments "-DANDROID_STL=c++_shared",
++                  "-DNODE_MODULES_DIR=${nodeModules}",
++                  "-DENABLE_FRAME_PROCESSORS=${hasWorklets ? "ON" : "OFF"}",
++                  "-DCMAKE_MAKE_PROGRAM=${toolsDir}\\windows\\ninja.exe",
++                  "-DCMAKE_OBJECT_PATH_MAX=1024"
++        } else {
++          arguments "-DANDROID_STL=c++_shared",
++                  "-DNODE_MODULES_DIR=${nodeModules}",
++                  "-DENABLE_FRAME_PROCESSORS=${hasWorklets ? "ON" : "OFF"}"
++        }
+         abiFilters (*reactNativeArchitectures())
+       }
+     }

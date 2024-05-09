@@ -5,6 +5,16 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@algolia/autocomplete-core@npm:1.17.0":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-core@npm:1.17.0"
+  dependencies:
+    "@algolia/autocomplete-plugin-algolia-insights": 1.17.0
+    "@algolia/autocomplete-shared": 1.17.0
+  checksum: 326035fbdc055c823be145724e7934ae7ddd3629da1dd869a6ba8bab9547235b96339c1ec977bab31a8dcf36a39564653b80bed9a1ad1783b6ccf5545ba7e992
+  languageName: node
+  linkType: hard
+
 "@algolia/autocomplete-core@npm:1.9.3":
   version: 1.9.3
   resolution: "@algolia/autocomplete-core@npm:1.9.3"
@@ -12,6 +22,33 @@ __metadata:
     "@algolia/autocomplete-plugin-algolia-insights": 1.9.3
     "@algolia/autocomplete-shared": 1.9.3
   checksum: ce78048568660184a4fa3c6548f344a7f5ce0ba45d4cfc233f9756b6d4f360afd5ae3a18efefcd27a626d3a0d6cf22d9cba3e21b217afae62b8e9d11bc4960da
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-js@npm:^1.8.2":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-js@npm:1.17.0"
+  dependencies:
+    "@algolia/autocomplete-core": 1.17.0
+    "@algolia/autocomplete-preset-algolia": 1.17.0
+    "@algolia/autocomplete-shared": 1.17.0
+    htm: ^3.1.1
+    preact: ^10.13.2
+  peerDependencies:
+    "@algolia/client-search": ">= 4.5.1 < 6"
+    algoliasearch: ">= 4.9.1 < 6"
+  checksum: d048de6c218b4c17ea160fa4a2dd1aeed1fe298e481212b633e540608bc9db3fd0a4bf7c55c9ef255c893b92b22c7c55c77cc898a047ba31ea8115a65f3855ce
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-plugin-algolia-insights@npm:1.17.0":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-plugin-algolia-insights@npm:1.17.0"
+  dependencies:
+    "@algolia/autocomplete-shared": 1.17.0
+  peerDependencies:
+    search-insights: ">= 1 < 3"
+  checksum: ab32c31ab43cadb2bfe9b304e959f1afb6584bb2f0fa618637a3d75fd7c450eff731eb31a89157a3b4a630b6dbb222f2df480dfd8f931a6f978f1c95eb1c47d2
   languageName: node
   linkType: hard
 
@@ -23,6 +60,18 @@ __metadata:
   peerDependencies:
     search-insights: ">= 1 < 3"
   checksum: 030695bf692021c27f52a3d4931efed23032796e326d4ae7957ae91b51c36a10dc2d885fb043909e853f961c994b8e9ff087f50bb918cfa075370562251a199f
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-preset-algolia@npm:1.17.0":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-preset-algolia@npm:1.17.0"
+  dependencies:
+    "@algolia/autocomplete-shared": 1.17.0
+  peerDependencies:
+    "@algolia/client-search": ">= 4.9.1 < 6"
+    algoliasearch: ">= 4.9.1 < 6"
+  checksum: 9e3d779ceaf6bb2b202fb7a7c1a2f5de36f4d6acb8b52ba9f6a67651f74852c3092da899f69fc928e321017f4c5451b7bcef57b021292ec2988378896b4625a3
   languageName: node
   linkType: hard
 
@@ -38,6 +87,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@algolia/autocomplete-shared@npm:1.17.0":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-shared@npm:1.17.0"
+  peerDependencies:
+    "@algolia/client-search": ">= 4.9.1 < 6"
+    algoliasearch: ">= 4.9.1 < 6"
+  checksum: a5bccecd50c770bca34263631a280332c5884a2a2879b27fadd5ef3dc78425db697c0cf54b11da9c84565bfe10d0b3cc4be46742e798619011c41c5e6297c821
+  languageName: node
+  linkType: hard
+
 "@algolia/autocomplete-shared@npm:1.9.3":
   version: 1.9.3
   resolution: "@algolia/autocomplete-shared@npm:1.9.3"
@@ -45,6 +104,13 @@ __metadata:
     "@algolia/client-search": ">= 4.9.1 < 6"
     algoliasearch: ">= 4.9.1 < 6"
   checksum: 06014c8b08d30c452de079f48c0235d8fa09904bf511da8dc1b7e491819940fd4ff36b9bf65340242b2e157a26799a3b9aea01feee9c5bf67be3c48d7dff43d7
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-theme-classic@npm:^1.8.2":
+  version: 1.17.0
+  resolution: "@algolia/autocomplete-theme-classic@npm:1.17.0"
+  checksum: 71f314bbc6ed1061c94f6899669e8a50559cef81c8aea3545c0ffed6a24a54604360b05a8b8624d17bc9fd3d2514ffd2586ee23bf26189a607592cbf52ad6fe1
   languageName: node
   linkType: hard
 
@@ -117,7 +183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@algolia/client-search@npm:4.23.3":
+"@algolia/client-search@npm:4.23.3, @algolia/client-search@npm:^4.12.0":
   version: 4.23.3
   resolution: "@algolia/client-search@npm:4.23.3"
   dependencies:
@@ -1901,6 +1967,28 @@ __metadata:
   version: 0.2.3
   resolution: "@bcoe/v8-coverage@npm:0.2.3"
   checksum: 850f9305536d0f2bd13e9e0881cb5f02e4f93fad1189f7b2d4bebf694e3206924eadee1068130d43c11b750efcc9405f88a8e42ef098b6d75239c0f047de1a27
+  languageName: node
+  linkType: hard
+
+"@cmfcmf/docusaurus-search-local@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@cmfcmf/docusaurus-search-local@npm:1.1.0"
+  dependencies:
+    "@algolia/autocomplete-js": ^1.8.2
+    "@algolia/autocomplete-theme-classic": ^1.8.2
+    "@algolia/client-search": ^4.12.0
+    algoliasearch: ^4.12.0
+    cheerio: ^1.0.0-rc.9
+    clsx: ^1.1.1
+    lunr-languages: ^1.4.0
+    mark.js: ^8.11.1
+  peerDependencies:
+    "@docusaurus/core": ^2.0.0
+    nodejieba: ^2.5.0
+  peerDependenciesMeta:
+    nodejieba:
+      optional: true
+  checksum: da719d70db835a61d0e99a2aaf64ef5a758e92c5f67698bfee3d196666cd6ecadec6eb495eaa44ca80b8682b2846bf698f9c0008535874eeed2968f5188c9ba8
   languageName: node
   linkType: hard
 
@@ -5498,7 +5586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algoliasearch@npm:^4.18.0, algoliasearch@npm:^4.19.1":
+"algoliasearch@npm:^4.12.0, algoliasearch@npm:^4.18.0, algoliasearch@npm:^4.19.1":
   version: 4.23.3
   resolution: "algoliasearch@npm:4.23.3"
   dependencies:
@@ -6598,7 +6686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cheerio@npm:^1.0.0-rc.12":
+"cheerio@npm:^1.0.0-rc.12, cheerio@npm:^1.0.0-rc.9":
   version: 1.0.0-rc.12
   resolution: "cheerio@npm:1.0.0-rc.12"
   dependencies:
@@ -6820,6 +6908,13 @@ __metadata:
   version: 1.0.4
   resolution: "clone@npm:1.0.4"
   checksum: d06418b7335897209e77bdd430d04f882189582e67bd1f75a04565f3f07f5b3f119a9d670c943b6697d0afb100f03b866b3b8a1f91d4d02d72c4ecf2bb64b5dd
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^1.1.1":
+  version: 1.2.1
+  resolution: "clsx@npm:1.2.1"
+  checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
   languageName: node
   linkType: hard
 
@@ -8233,6 +8328,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "docsite@workspace:docsite"
   dependencies:
+    "@cmfcmf/docusaurus-search-local": ^1.1.0
     "@docusaurus/core": 3.2.0
     "@docusaurus/module-type-aliases": 3.2.0
     "@docusaurus/preset-classic": 3.2.0
@@ -10645,6 +10741,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htm@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "htm@npm:3.1.1"
+  checksum: 1827a0cafffcff69690b048a4df59944086d7503fe5eb7c10b40834439205bdf992941e7aa25e92b3c2c086170565b4ed7c365bc072d31067c6e7a4e478776bd
+  languageName: node
+  linkType: hard
+
 "html-entities@npm:^2.3.2":
   version: 2.5.2
   resolution: "html-entities@npm:2.5.2"
@@ -13015,6 +13118,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lunr-languages@npm:^1.4.0":
+  version: 1.14.0
+  resolution: "lunr-languages@npm:1.14.0"
+  checksum: 05dd6338af6897932f64f9cb735d5b48f9905d892499b22a3f3abc279b2ac71a6bce0fdfe59c01464c6ad3f8e44e2956ba0637f092535239793bbadf4540e72d
+  languageName: node
+  linkType: hard
+
 "macos-release@npm:^3.1.0":
   version: 3.2.0
   resolution: "macos-release@npm:3.2.0"
@@ -13087,6 +13197,13 @@ __metadata:
   version: 4.3.0
   resolution: "map-obj@npm:4.3.0"
   checksum: fbc554934d1a27a1910e842bc87b177b1a556609dd803747c85ece420692380827c6ae94a95cce4407c054fa0964be3bf8226f7f2cb2e9eeee432c7c1985684e
+  languageName: node
+  linkType: hard
+
+"mark.js@npm:^8.11.1":
+  version: 8.11.1
+  resolution: "mark.js@npm:8.11.1"
+  checksum: aa6b9ae1c67245348d5b7abd253ef2acd6bb05c6be358d7d192416d964e42665fc10e0e865591c6f93ab9b57e8da1f23c23216e8ebddb580905ea7a0c0df15d4
   languageName: node
   linkType: hard
 
@@ -14905,8 +15022,8 @@ __metadata:
     react-native-safe-area-context: ^4.9.0
     react-native-screens: ^3.30.1
     react-native-vector-icons: ^10.0.3
-    react-native-vision-camera: ^3.9.2
-    react-native-worklets-core: ^0.4.0
+    react-native-vision-camera: ^4.0.1
+    react-native-worklets-core: ^1.3.0
     react-test-renderer: 18.2.0
     typescript: 5.0.4
   languageName: unknown
@@ -16033,6 +16150,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preact@npm:^10.13.2":
+  version: 10.20.2
+  resolution: "preact@npm:10.20.2"
+  checksum: 497c755065cdaf9d687e38c1cfaf935e20e98cc95a4b8c977a538dc74d41133a13ebed26d34001d11fa08b7d6811de28add74e94a3404bf35b222aa5e966fd1b
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -16609,8 +16733,8 @@ __metadata:
     react: 18.2.0
     react-native: 0.73.4
     react-native-builder-bob: ^0.23.2
-    react-native-vision-camera: ^3.9.2
-    react-native-worklets-core: ^0.3.0
+    react-native-vision-camera: ^4.0.1
+    react-native-worklets-core: ^1.3.0
     release-it: ^15.0.0
     turbo: ^1.10.7
     typescript: ^5.2.2
@@ -16660,55 +16784,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:3.9.2":
-  version: 3.9.2
-  resolution: "react-native-vision-camera@npm:3.9.2"
+"react-native-vision-camera@npm:4.0.1":
+  version: 4.0.1
+  resolution: "react-native-vision-camera@npm:4.0.1"
   peerDependencies:
+    "@shopify/react-native-skia": "*"
     react: "*"
     react-native: "*"
+    react-native-reanimated: "*"
     react-native-worklets-core: "*"
   peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
     react-native-worklets-core:
       optional: true
-  checksum: b69beca5bcc486c6e4f9b11199ba46cc8552be2bb46a8b1f74851c9563f88eedf851d9c61299e2d3e507029398281a7fcbc4e2183af3ee39d75a6194bcfaf757
+  checksum: 7698a003e74b3bc82e297fe9088b88dc92d6ba73b12baad99c85a6f3520c333715baec10d64d7adc1dee489701ca246f9444db974dfef3b748a1845081260ffa
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::locator=react-native-mediapipe%40workspace%3A.":
-  version: 3.9.2
-  resolution: "react-native-vision-camera@patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch::version=3.9.2&hash=71d0d6&locator=react-native-mediapipe%40workspace%3A."
+"react-native-vision-camera@patch:react-native-vision-camera@npm%3A4.0.1#./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch::locator=react-native-mediapipe%40workspace%3A.":
+  version: 4.0.1
+  resolution: "react-native-vision-camera@patch:react-native-vision-camera@npm%3A4.0.1#./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch::version=4.0.1&hash=260f68&locator=react-native-mediapipe%40workspace%3A."
   peerDependencies:
+    "@shopify/react-native-skia": "*"
     react: "*"
     react-native: "*"
+    react-native-reanimated: "*"
     react-native-worklets-core: "*"
   peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
     react-native-worklets-core:
       optional: true
-  checksum: b0d758c5b13b9cc9083fb6db4db0da8eb7d454bad6adbc332467326635c91ed2238bc83460b1bfe840579710c5fb954e01eeb40daf67f661485a9e3b761af838
+  checksum: c406d4a558e3984146a01500b37e43925a2bef46e02495c1478188b4f868df6cc13efb308d27f153967d53f5870daa2c59b2eceff9824e3a77805697166cf425
   languageName: node
   linkType: hard
 
-"react-native-worklets-core@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "react-native-worklets-core@npm:0.3.0"
+"react-native-worklets-core@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "react-native-worklets-core@npm:1.3.0"
   dependencies:
     string-hash-64: ^1.0.3
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: bd45a34197d61950719c2b179741e9f2f627cbaa6e3b72d9c91e8f8044731576e15daa8adc38731774f5007a89140e353712d1290797c2c9f795dc2c3043b01a
-  languageName: node
-  linkType: hard
-
-"react-native-worklets-core@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "react-native-worklets-core@npm:0.4.0"
-  dependencies:
-    string-hash-64: ^1.0.3
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 0fc6a4439510bc1c547c74c2f35403b7419a11cb968f9334c62e3157737926d243012880fafda5a3e9dcac40499c5eed29f54ab3fa455a2b4377e0045062de11
+  checksum: 05c01409a3a01416b69c2e94b9173cf4450c000d3fe34692af4b67c5221a856494dd9b2000fec0368349c80a5831fe0a746fecf7689189c42f0c5ccf787b6971
   languageName: node
   linkType: hard
 

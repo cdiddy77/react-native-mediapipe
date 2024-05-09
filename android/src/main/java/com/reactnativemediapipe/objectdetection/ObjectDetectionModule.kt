@@ -7,7 +7,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.mediapipe.tasks.vision.core.RunningMode
-import com.mrousavy.camera.frameprocessor.SharedArray
 
 object ObjectDetectorMap {
   internal val detectorMap = mutableMapOf<Int, ObjectDetectorHelper>()
