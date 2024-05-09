@@ -93,7 +93,7 @@ export const Settings: React.FC<Props> = () => {
         items={[
           { label: "EfficientDet-Lite0", value: "efficientdet-lite0" },
           { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
-          { label: "SSD MobileNetV2", value: "ssd-mobilenet-v2" },
+          { label: "SSD MobileNetV2", value: "ssd-mobilenetv2" },
         ]}
       />
       <OptionSlider
