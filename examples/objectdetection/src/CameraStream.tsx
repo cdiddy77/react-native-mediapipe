@@ -140,11 +140,16 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.noPermsText}>
-        Camera and Mic permissions required
-      </Text>
+      <View style={styles.permissionsBox}>
+        <Text style={styles.noPermsText}>
+          Allow App to use your Camera and Microphone
+        </Text>
+        <Text style={styles.permsInfoText}>
+          App needs access to your camera in order for Object Detection to work.
+        </Text>
+      </View>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
-        <Text>Request</Text>
+      <Text style={styles.permsButtonText}>Allow</Text>
       </Pressable>
     </View>
   );
@@ -197,7 +202,7 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "red",
+    backgroundColor: "#FFF0F0",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -211,20 +216,40 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   permsButton: {
-    padding: 10,
-    backgroundColor: "lightblue",
+    padding: 15.5,
+    paddingRight: 25,
+    paddingLeft: 25,
+    backgroundColor: "#F95F48",
     borderRadius: 5,
-    margin: 10,
+    margin: 15,
+  },
+  permsButtonText: {
+    fontSize: 17,
+    color: "black",
+    fontWeight: "bold",
+  },
+  permissionsBox: { 
+    backgroundColor: "#F3F3F3",
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#CCCACA",
+    marginBottom: 20,
   },
   noPermsText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "red",
+    color: "black",
+  },
+  permsInfoText: {
+    fontSize: 15,
+    color: "black",
+    marginTop: 12,
   },
   cameraSwitchButton: {
     position: "absolute",
     padding: 10,
-    backgroundColor: "blue",
+    backgroundColor: "#F95F48",
     borderRadius: 20,
     top: 20,
     right: 20,
