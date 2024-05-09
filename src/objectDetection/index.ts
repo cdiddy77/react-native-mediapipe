@@ -167,6 +167,9 @@ export function useObjectDetection(
 
   React.useEffect(() => {
     let newHandle: number | undefined;
+    console.log(
+      `getObjectDetectionModule: delegate = ${options?.delegate}, maxResults= ${options?.maxResults}, runningMode = ${runningMode}, threshold = ${options?.threshold}, model= ${model}`
+    );
     getObjectDetectionModule()
       .createDetector(
         options?.threshold ?? 0.5,
