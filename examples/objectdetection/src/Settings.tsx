@@ -84,8 +84,7 @@ export const Settings: React.FC<Props> = () => {
           { label: "CPU", value: Delegate.CPU },
         ]}
       />
-      {/* Disable Model selection temporarily
-       <OptionSelect
+      <OptionSelect
         label="Model selections: "
         value={settings.model}
         setValue={(value) =>
@@ -96,7 +95,7 @@ export const Settings: React.FC<Props> = () => {
           { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
           { label: "SSD MobileNetV2", value: "ssd-mobilenet-v2" },
         ]}
-      /> */}
+      />
       <OptionSlider
         label="Max results: ${value}"
         value={settings.maxResults}
