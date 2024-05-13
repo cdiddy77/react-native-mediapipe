@@ -12,13 +12,17 @@ export type ResizeMode = "cover" | "contain";
 // both cover and contain preserve aspect ratio. Cover will crop the image to fill the view, contain will show the whole image and add padding.
 // for cover, if the aspect ratio x/y of the frame is greater than
 export function framePointToView(
-  point: Point,
+  pointOrig: Point,
   frameDims: Dims,
   viewDims: Dims,
-  mode: ResizeMode
+  mode: ResizeMode,
+  mirrored: boolean
 ): Point {
   const frameRatio = frameDims.width / frameDims.height;
   const viewRatio = viewDims.width / viewDims.height;
+  const point = mirrored
+    ? { x: frameDims.width - pointOrig.x, y: pointOrig.y }
+    : pointOrig;
   let scale = 1;
   let xoffset = 0;
   let yoffset = 0;
@@ -47,52 +51,63 @@ export function framePointToView(
       yoffset = (viewDims.height - frameDims.height * scale) / 2;
     }
   }
-  return {
+  const result = {
     x: point.x * scale + xoffset,
     y: point.y * scale + yoffset,
   };
+  return result;
 }
 
-function frameRectLTRBToView(
+export function frameRectLTRBToView(
   rect: RectLTRB,
   frameDims: Dims,
   viewDims: Dims,
-  mode: ResizeMode
+  mode: ResizeMode,
+  mirrored: boolean
 ): RectLTRB {
   const lt = framePointToView(
     { x: rect.left, y: rect.top },
     frameDims,
     viewDims,
-    mode
+    mode,
+    mirrored
   );
   const rb = framePointToView(
     { x: rect.right, y: rect.bottom },
     frameDims,
     viewDims,
-    mode
+    mode,
+    mirrored
   );
-  return { left: lt.x, top: lt.y, right: rb.x, bottom: rb.y };
+  const left = mirrored ? Math.min(lt.x, rb.x) : lt.x;
+  const right = mirrored ? Math.max(lt.x, rb.x) : rb.x;
+  return { left, top: lt.y, right, bottom: rb.y };
 }
 
-function frameRectXYWHToView(
+export function frameRectXYWHToView(
   rect: RectXYWH,
   frameDims: Dims,
   viewDims: Dims,
-  mode: ResizeMode
+  mode: ResizeMode,
+  mirrored: boolean
 ): RectXYWH {
   const lt = framePointToView(
     { x: rect.x, y: rect.y },
     frameDims,
     viewDims,
-    mode
+    mode,
+    mirrored
   );
   const rb = framePointToView(
     { x: rect.x + rect.width, y: rect.y + rect.height },
     frameDims,
     viewDims,
-    mode
+    mode,
+    mirrored
   );
-  return { x: lt.x, y: lt.y, width: rb.x - lt.x, height: rb.y - lt.y };
+  const width = mirrored ? Math.abs(rb.x - lt.x) : rb.x - lt.x;
+  const x = mirrored ? lt.x - width : lt.x;
+  return { x, y: lt.y, width, height: rb.y - lt.y };
 }
 
 function isRectLTRB(rect: unknown): rect is RectLTRB {
@@ -109,12 +124,25 @@ export function frameRectToView<TRect extends RectLTRB | RectXYWH>(
   rect: TRect,
   frameDims: Dims,
   viewDims: Dims,
-  mode: ResizeMode
+  mode: ResizeMode,
+  mirrored: boolean
 ): TRect {
   if (isRectLTRB(rect)) {
-    return frameRectLTRBToView(rect, frameDims, viewDims, mode) as TRect;
+    return frameRectLTRBToView(
+      rect,
+      frameDims,
+      viewDims,
+      mode,
+      mirrored
+    ) as TRect;
   } else {
-    return frameRectXYWHToView(rect, frameDims, viewDims, mode) as TRect;
+    return frameRectXYWHToView(
+      rect,
+      frameDims,
+      viewDims,
+      mode,
+      mirrored
+    ) as TRect;
   }
 }
 
@@ -125,4 +153,23 @@ export function ltrbToXywh(rect: RectLTRB): RectXYWH {
     width: rect.right - rect.left,
     height: rect.bottom - rect.top,
   };
+}
+
+export function clampToDims<TRect extends RectLTRB | RectXYWH>(
+  rect: TRect,
+  dims: Dims
+): TRect {
+  if (isRectLTRB(rect)) {
+    const left = Math.max(0, Math.min(rect.left, dims.width));
+    const top = Math.max(0, Math.min(rect.top, dims.height));
+    const right = Math.max(0, Math.min(rect.right, dims.width));
+    const bottom = Math.max(0, Math.min(rect.bottom, dims.height));
+    return { left, top, right, bottom } as TRect;
+  } else {
+    const x = Math.max(0, Math.min(rect.x, dims.width));
+    const y = Math.max(0, Math.min(rect.y, dims.height));
+    const width = Math.max(0, Math.min(rect.width, dims.width - x));
+    const height = Math.max(0, Math.min(rect.height, dims.height - y));
+    return { x, y, width, height } as TRect;
+  }
 }

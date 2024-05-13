@@ -1,5 +1,5 @@
 import React from "react";
-import { type ViewStyle, Text, Platform } from "react-native";
+import { type ViewStyle, Text } from "react-native";
 import {
   Camera,
   useCameraDevice,
@@ -19,22 +19,29 @@ export type MediapipeCameraProps = {
 
 export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
   style,
-  solution,
+  solution: {
+    cameraDeviceChangeHandler,
+    cameraViewLayoutChangeHandler,
+    frameProcessor,
+  },
   activeCamera = "front",
   orientation = "portrait",
   resizeMode = "cover",
 }) => {
   const device = useCameraDevice(activeCamera);
+  React.useEffect(() => {
+    cameraDeviceChangeHandler(device);
+  }, [cameraDeviceChangeHandler, device]);
   return device !== undefined ? (
     <Camera
       resizeMode={resizeMode}
       style={style}
       device={device}
       orientation={orientation}
-      pixelFormat={Platform.select({ ios: "rgb", android: "yuv" })}
+      pixelFormat={"rgb"}
       isActive={true}
-      frameProcessor={solution.frameProcessor}
-      onLayout={solution.cameraViewLayoutChangeHandler}
+      frameProcessor={frameProcessor}
+      onLayout={cameraViewLayoutChangeHandler}
     />
   ) : (
     <Text>no device</Text>
