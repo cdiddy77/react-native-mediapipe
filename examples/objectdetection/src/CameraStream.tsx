@@ -26,7 +26,6 @@ import {
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
 import { useSettings } from "./app-settings";
 import { useDebounce } from "./useDebounce";
 
@@ -156,7 +155,7 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
         </Text>
       </View>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
-      <Text style={styles.permsButtonText}>Allow</Text>
+        <Text style={styles.permsButtonText}>Allow</Text>
       </Pressable>
     </View>
   );
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
-  permissionsBox: { 
+  permissionsBox: {
     backgroundColor: "#F3F3F3",
     padding: 20,
     borderRadius: 12,
