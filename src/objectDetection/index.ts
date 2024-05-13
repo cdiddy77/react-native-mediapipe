@@ -2,11 +2,13 @@ import React from "react";
 import {
   NativeEventEmitter,
   NativeModules,
+  Platform,
   type LayoutChangeEvent,
 } from "react-native";
 import {
   VisionCameraProxy,
   useFrameProcessor,
+  type CameraDevice,
 } from "react-native-vision-camera";
 import type { MediaPipeSolution } from "../shared/types";
 import type { Dims } from "../shared/convert";
@@ -99,12 +101,17 @@ export interface ObjectDetectionOptions {
   threshold: number;
   maxResults: number;
   delegate: Delegate;
-  resize: { scale: number; aspect: "preserve" | "default" | number };
+  mirrorMode: "no-mirror" | "mirror" | "mirror-front-only";
 }
 export interface ObjectDetectionCallbacks {
-  onResults: (result: ResultBundleMap, viewSize: Dims) => void;
+  onResults: (
+    result: ResultBundleMap,
+    viewSize: Dims,
+    mirrored: boolean
+  ) => void;
   onError: (error: ObjectDetectionError) => void;
   viewSize: Dims;
+  mirrored: boolean;
 }
 
 // TODO setup the general event callbacks
@@ -114,7 +121,7 @@ eventEmitter.addListener(
   (args: { handle: number } & ResultBundleMap) => {
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
-      callbacks.onResults(args, callbacks.viewSize);
+      callbacks.onResults(args, callbacks.viewSize, callbacks.mirrored);
     }
   }
 );
@@ -153,7 +160,23 @@ export function useObjectDetection(
     },
     []
   );
-
+  const mirrorMode =
+    options?.mirrorMode ??
+    Platform.select({ android: "mirror-front-only", default: "no-mirror" });
+  const [cameraDevice, setCameraDevice] = React.useState<
+    CameraDevice | undefined
+  >(undefined);
+  const mirrored = React.useMemo((): boolean => {
+    if (
+      (mirrorMode === "mirror-front-only" &&
+        cameraDevice?.position === "front") ||
+      mirrorMode === "mirror"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [cameraDevice?.position, mirrorMode]);
   // Remember the latest callback if it changes.
   React.useLayoutEffect(() => {
     if (detectorHandle !== undefined) {
@@ -161,12 +184,16 @@ export function useObjectDetection(
         onResults,
         onError,
         viewSize: cameraViewDimensions,
+        mirrored,
       });
     }
-  }, [onResults, onError, detectorHandle, cameraViewDimensions]);
+  }, [onResults, onError, detectorHandle, cameraViewDimensions, mirrored]);
 
   React.useEffect(() => {
     let newHandle: number | undefined;
+    console.log(
+      `getObjectDetectionModule: delegate = ${options?.delegate}, maxResults= ${options?.maxResults}, runningMode = ${runningMode}, threshold = ${options?.threshold}, model= ${model}`
+    );
     getObjectDetectionModule()
       .createDetector(
         options?.threshold ?? 0.5,
@@ -205,18 +232,15 @@ export function useObjectDetection(
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-
-      plugin?.call(frame, {
-        detectorHandle,
-        pixelFormat: "rgb",
-        dataType: "uint8",
-      });
+      // console.log(frame.orientation, frame.width, frame.height);
+      plugin?.call(frame, { detectorHandle });
     },
     [detectorHandle]
   );
   return React.useMemo(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
+      cameraDeviceChangeHandler: setCameraDevice,
       cameraViewDimensions,
       frameProcessor,
     }),

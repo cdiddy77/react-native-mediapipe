@@ -1,130 +1,50 @@
 package com.reactnativemediapipe.objectdetection
 
-import android.graphics.ImageFormat
-import android.util.Log
-import com.google.mediapipe.framework.image.ByteBufferImageBuilder
-import com.google.mediapipe.framework.image.MPImage
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import androidx.camera.core.ImageProxy
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+import com.mrousavy.camera.core.types.PixelFormat
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
-import com.reactnativemediapipe.shared.ResizeConvert
 
-class ObjectDetectionFrameProcessorPlugin() :
-  FrameProcessorPlugin() {
+class ObjectDetectionFrameProcessorPlugin() : FrameProcessorPlugin() {
 
   companion object {
     private const val TAG = "ObjectDetectionFrameProcessorPlugin"
   }
-  private val resizeConvert: ResizeConvert = ResizeConvert()
 
   override fun callback(frame: Frame, params: MutableMap<String, Any>?): Any? {
     val detectorHandle: Double = params!!["detectorHandle"] as Double
     val detector = ObjectDetectorMap.detectorMap[detectorHandle.toInt()] ?: return false
 
-    var cropWidth = frame.width
-    var cropHeight = frame.height
-    var cropX = 0
-    var cropY = 0
-    var scaleWidth = frame.width
-    var scaleHeight = frame.height
-
-    val rotationParam = params["rotation"]
-    val rotation: Rotation
-    if (rotationParam is String) {
-      rotation = Rotation.fromString(rotationParam)
-      Log.i(TAG, "Rotation: ${rotation.degrees}")
-    } else {
-      rotation = Rotation.Rotation0
-      Log.i(TAG, "Rotation not specified, defaulting to: ${rotation.degrees}")
+    //    val mpImage = MediaImageBuilder(frame.image).build()
+    //    detector.detectLivestreamFrame(mpImage,frame.orientation)
+    val bitmap = imageToBitmap(frame.imageProxy)
+    if (bitmap != null) {
+      val rotated = rotateBitmap(bitmap, orientationToDegrees(frame.orientation).toFloat())
+      val mpImage = BitmapImageBuilder(rotated).build()
+      detector.detectLivestreamFrame(mpImage, frame.orientation)
     }
-
-    val mirrorParam = params["mirror"]
-    val mirror: Boolean
-    if (mirrorParam is Boolean) {
-      mirror = mirrorParam
-      Log.i(TAG, "Mirror: $mirror")
-    } else {
-      mirror = false
-      Log.i(TAG, "Mirror not specified, defaulting to: $mirror")
-    }
-
-    val scale = params["scale"]
-    if (scale != null) {
-      if (scale is Map<*, *>) {
-        val scaleWidthDouble = scale["width"] as? Double
-        val scaleHeightDouble = scale["height"] as? Double
-        if (scaleWidthDouble != null && scaleHeightDouble != null) {
-          scaleWidth = scaleWidthDouble.toInt()
-          scaleHeight = scaleHeightDouble.toInt()
-        } else {
-          throw Error("Failed to parse values in scale dictionary!")
-        }
-        Log.i(TAG, "Target scale: $scaleWidth x $scaleHeight")
-      } else if (scale is Double) {
-        scaleWidth = (scale * frame.width).toInt()
-        scaleHeight = (scale * frame.height).toInt()
-        Log.i(TAG, "Uniform scale factor applied: $scaleWidth x $scaleHeight")
-      } else {
-        throw Error("Scale must be either a map with width and height or a double value!")
-      }
-    }
-
-    val crop = params["crop"] as? Map<*, *>
-    if (crop != null) {
-      val cropWidthDouble = crop["width"] as? Double
-      val cropHeightDouble = crop["height"] as? Double
-      val cropXDouble = crop["x"] as? Double
-      val cropYDouble = crop["y"] as? Double
-      if (cropWidthDouble != null && cropHeightDouble != null && cropXDouble != null && cropYDouble != null) {
-        cropWidth = cropWidthDouble.toInt()
-        cropHeight = cropHeightDouble.toInt()
-        cropX = cropXDouble.toInt()
-        cropY = cropYDouble.toInt()
-        Log.i(TAG, "Target size: $cropWidth x $cropHeight")
-      } else {
-        throw Error("Failed to parse values in crop dictionary!")
-      }
-    } else {
-      if (scale != null) {
-        val aspectRatio = frame.width.toDouble() / frame.height.toDouble()
-        val targetAspectRatio = scaleWidth.toDouble() / scaleHeight.toDouble()
-
-        if (aspectRatio > targetAspectRatio) {
-          cropWidth = (frame.height * targetAspectRatio).toInt()
-          cropHeight = frame.height
-        } else {
-          cropWidth = frame.width
-          cropHeight = (frame.width / targetAspectRatio).toInt()
-        }
-        cropX = (frame.width / 2) - (cropWidth / 2)
-        cropY = (frame.height / 2) - (cropHeight / 2)
-        Log.i(TAG, "Cropping to $cropWidth x $cropHeight at ($cropX, $cropY)")
-      } else {
-        Log.i(TAG, "Both scale and crop are null, using Frame's original dimensions.")
-      }
-    }
-
-    val image = frame.image
-
-    if (image.format != ImageFormat.YUV_420_888) {
-      throw Error("Frame has invalid PixelFormat! Only YUV_420_888 is supported. Did you set pixelFormat=\"yuv\"?")
-    }
-
-    val resized = resizeConvert.resize(
-      image,
-      cropX, cropY,
-      cropWidth, cropHeight,
-      scaleWidth, scaleHeight,
-      rotation.degrees,
-      mirror,
-      PixelFormat.RGB.ordinal,
-      DataType.UINT8.ordinal
-    )
-
-    val mpImage =
-      ByteBufferImageBuilder(resized, scaleWidth, scaleHeight, MPImage.IMAGE_FORMAT_RGB).build()
-
-    detector.detectLivestreamFrame(mpImage)
     return true
+  }
+
+  private var bitmapBuffer: Bitmap? = null
+  private fun imageToBitmap(image: ImageProxy): Bitmap? {
+    if (bitmapBuffer == null) {
+      bitmapBuffer = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+    }
+    bitmapBuffer?.let {
+      val buffer = image.planes[0].buffer
+      it.copyPixelsFromBuffer(buffer)
+    }
+    return bitmapBuffer
+  }
+
+  private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+    val matrix = Matrix()
+    matrix.postRotate(angle)
+    return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
   }
 
   private enum class PixelFormat {
@@ -138,15 +58,15 @@ class ObjectDetectionFrameProcessorPlugin() :
 
     companion object {
       fun fromString(string: String): PixelFormat =
-        when (string) {
-          "rgb" -> RGB
-          "rgba" -> RGBA
-          "argb" -> ARGB
-          "bgra" -> BGRA
-          "bgr" -> BGR
-          "abgr" -> ABGR
-          else -> throw Error("Invalid PixelFormat! ($string)")
-        }
+          when (string) {
+            "rgb" -> RGB
+            "rgba" -> RGBA
+            "argb" -> ARGB
+            "bgra" -> BGRA
+            "bgr" -> BGR
+            "abgr" -> ABGR
+            else -> throw Error("Invalid PixelFormat! ($string)")
+          }
     }
   }
 
@@ -157,11 +77,11 @@ class ObjectDetectionFrameProcessorPlugin() :
 
     companion object {
       fun fromString(string: String): DataType =
-        when (string) {
-          "uint8" -> UINT8
-          "float32" -> FLOAT32
-          else -> throw Error("Invalid DataType! ($string)")
-        }
+          when (string) {
+            "uint8" -> UINT8
+            "float32" -> FLOAT32
+            else -> throw Error("Invalid DataType! ($string)")
+          }
     }
   }
 }
@@ -174,12 +94,12 @@ private enum class Rotation(val degrees: Int) {
 
   companion object {
     fun fromString(value: String): Rotation =
-      when (value) {
-        "0deg" -> Rotation0
-        "90deg" -> Rotation90
-        "180deg" -> Rotation180
-        "270deg" -> Rotation270
-        else -> throw Error("Invalid rotation value! ($value)")
-      }
+        when (value) {
+          "0deg" -> Rotation0
+          "90deg" -> Rotation90
+          "180deg" -> Rotation180
+          "270deg" -> Rotation270
+          else -> throw Error("Invalid rotation value! ($value)")
+        }
   }
 }

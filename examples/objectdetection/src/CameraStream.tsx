@@ -11,10 +11,12 @@ import * as React from "react";
 
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import {
-  Delegate,
   MediapipeCamera,
   RunningMode,
   useObjectDetection,
+  clampToDims,
+  frameRectToView,
+  ltrbToXywh,
 } from "react-native-mediapipe";
 
 import {
@@ -25,6 +27,8 @@ import {
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
+import { useSettings } from "./app-settings";
+import { useDebounce } from "./useDebounce";
 
 interface Detection {
   label: string;
@@ -37,6 +41,8 @@ interface Detection {
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
+  const { settings } = useSettings();
+  const debouncedSettings = useDebounce(settings, 500);
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
@@ -71,7 +77,7 @@ export const CameraStream: React.FC<Props> = () => {
   };
 
   const objectDetection = useObjectDetection(
-    (results, viewSize) => {
+    (results, viewSize, mirrored) => {
       const firstResult = results.results[0];
       const detections = firstResult?.detections ?? [];
       const frameSize = {
@@ -80,11 +86,15 @@ export const CameraStream: React.FC<Props> = () => {
       };
       setObjectFrames(
         detections.map((detection) => {
-          const { x, y, width, height } = frameRectToView(
-            ltrbToXywh(detection.boundingBox),
-            frameSize,
-            viewSize,
-            "cover"
+          const { x, y, width, height } = clampToDims(
+            frameRectToView(
+              ltrbToXywh(detection.boundingBox),
+              frameSize,
+              viewSize,
+              "cover",
+              mirrored
+            ),
+            viewSize
           );
           return {
             label: detection.categories[0]?.categoryName ?? "unknown",
@@ -100,8 +110,12 @@ export const CameraStream: React.FC<Props> = () => {
       console.error(`onError: ${error}`);
     },
     RunningMode.LIVE_STREAM,
-    "efficientdet-lite0.tflite",
-    { delegate: Delegate.GPU }
+    `${debouncedSettings.model}.tflite`,
+    {
+      delegate: debouncedSettings.processor,
+      maxResults: debouncedSettings.maxResults,
+      threshold: debouncedSettings.threshold / 100,
+    }
   );
 
   if (permsGranted.cam && permsGranted.mic) {

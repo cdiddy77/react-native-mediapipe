@@ -7,6 +7,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.google.mediapipe.tasks.components.containers.Category
 import com.google.mediapipe.tasks.components.containers.Detection
+import com.mrousavy.camera.core.types.Orientation
 import java.util.Optional
 
 // Assuming simplified representations based on your descriptions
@@ -75,3 +76,13 @@ fun convertResultBundleToWritableMap(resultBundle: ObjectDetectorHelper.ResultBu
   map.putDouble("inferenceTime", resultBundle.inferenceTime.toDouble())
   return map
 }
+
+
+fun orientationToDegrees(orientation: Orientation): Int =
+  when (orientation) {
+    Orientation.PORTRAIT -> 0
+    Orientation.LANDSCAPE_LEFT -> 90
+    Orientation.PORTRAIT_UPSIDE_DOWN -> 180
+    Orientation.LANDSCAPE_RIGHT -> -90
+  }
+
