@@ -11,10 +11,12 @@ import * as React from "react";
 
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import {
-  Delegate,
   MediapipeCamera,
   RunningMode,
   useObjectDetection,
+  clampToDims,
+  frameRectToView,
+  ltrbToXywh,
 } from "react-native-mediapipe";
 
 import {
@@ -24,7 +26,8 @@ import {
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { frameRectToView, ltrbToXywh } from "../../../src/shared/convert";
+import { useSettings } from "./app-settings";
+import { useDebounce } from "./useDebounce";
 
 interface Detection {
   label: string;
@@ -37,6 +40,8 @@ interface Detection {
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
+  const { settings } = useSettings();
+  const debouncedSettings = useDebounce(settings, 500);
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
@@ -71,7 +76,7 @@ export const CameraStream: React.FC<Props> = () => {
   };
 
   const objectDetection = useObjectDetection(
-    (results, viewSize) => {
+    (results, viewSize, mirrored) => {
       const firstResult = results.results[0];
       const detections = firstResult?.detections ?? [];
       const frameSize = {
@@ -80,11 +85,15 @@ export const CameraStream: React.FC<Props> = () => {
       };
       setObjectFrames(
         detections.map((detection) => {
-          const { x, y, width, height } = frameRectToView(
-            ltrbToXywh(detection.boundingBox),
-            frameSize,
-            viewSize,
-            "cover"
+          const { x, y, width, height } = clampToDims(
+            frameRectToView(
+              ltrbToXywh(detection.boundingBox),
+              frameSize,
+              viewSize,
+              "cover",
+              mirrored
+            ),
+            viewSize
           );
           return {
             label: detection.categories[0]?.categoryName ?? "unknown",
@@ -100,8 +109,12 @@ export const CameraStream: React.FC<Props> = () => {
       console.error(`onError: ${error}`);
     },
     RunningMode.LIVE_STREAM,
-    "efficientdet-lite0.tflite",
-    { delegate: Delegate.GPU }
+    `${debouncedSettings.model}.tflite`,
+    {
+      delegate: debouncedSettings.processor,
+      maxResults: debouncedSettings.maxResults,
+      threshold: debouncedSettings.threshold / 100,
+    }
   );
 
   if (permsGranted.cam && permsGranted.mic) {
@@ -133,11 +146,16 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.noPermsText}>
-        Camera and Mic permissions required
-      </Text>
+      <View style={styles.permissionsBox}>
+        <Text style={styles.noPermsText}>
+          Allow App to use your Camera and Microphone
+        </Text>
+        <Text style={styles.permsInfoText}>
+          App needs access to your camera in order for Object Detection to work.
+        </Text>
+      </View>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
-        <Text>Request</Text>
+        <Text style={styles.permsButtonText}>Allow</Text>
       </Pressable>
     </View>
   );
@@ -190,7 +208,7 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "red",
+    backgroundColor: "#FFF0F0",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -204,20 +222,40 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   permsButton: {
-    padding: 10,
-    backgroundColor: "lightblue",
+    padding: 15.5,
+    paddingRight: 25,
+    paddingLeft: 25,
+    backgroundColor: "#F95F48",
     borderRadius: 5,
-    margin: 10,
+    margin: 15,
+  },
+  permsButtonText: {
+    fontSize: 17,
+    color: "black",
+    fontWeight: "bold",
+  },
+  permissionsBox: {
+    backgroundColor: "#F3F3F3",
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#CCCACA",
+    marginBottom: 20,
   },
   noPermsText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "red",
+    color: "black",
+  },
+  permsInfoText: {
+    fontSize: 15,
+    color: "black",
+    marginTop: 12,
   },
   cameraSwitchButton: {
     position: "absolute",
     padding: 10,
-    backgroundColor: "blue",
+    backgroundColor: "#F95F48",
     borderRadius: 20,
     top: 20,
     right: 20,
