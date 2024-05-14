@@ -28,6 +28,7 @@ import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
 import { useDebounce } from "./useDebounce";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface Detection {
   label: string;
@@ -132,7 +133,7 @@ export const CameraStream: React.FC<Props> = () => {
           ))}
         </Canvas>
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
-          <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
+          <Ionicons name="repeat-outline"></Ionicons>
         </Pressable>
       </View>
     );
@@ -260,10 +261,7 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-  cameraSwitchButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
+
 });
 
 const colorNames = [
