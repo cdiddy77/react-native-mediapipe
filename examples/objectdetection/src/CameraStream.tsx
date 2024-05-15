@@ -28,6 +28,7 @@ import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
 import { useDebounce } from "./useDebounce";
+import { CustomColors } from "./colors";
 
 interface Detection {
   label: string;
@@ -208,7 +209,7 @@ const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFF0F0",
+    backgroundColor: "#EAF5F9",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     padding: 15.5,
     paddingRight: 25,
     paddingLeft: 25,
-    backgroundColor: "#F95F48",
+    backgroundColor: CustomColors.elecBlue,
     borderRadius: 5,
     margin: 15,
   },
@@ -235,11 +236,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   permissionsBox: {
-    backgroundColor: "#F3F3F3",
+    backgroundColor: CustomColors.lightGray,
     padding: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#CCCACA",
+    borderColor: CustomColors.teal,
     marginBottom: 20,
   },
   noPermsText: {
