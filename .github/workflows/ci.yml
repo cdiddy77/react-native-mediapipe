@@ -154,8 +154,10 @@ jobs:
           tail -n 3 examples/objectdetection/ios/Pods/Manifest.lock
 
       - name: Install cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
+        # if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
+          echo turbo_cache_hit=${{ env.turbo_cache_hit }}
+          echo cocoapods_cache_hit=${{ steps.cocoapods-cache.outputs.cache-hit }}
           cd examples/objectdetection/ios
           pod install
         env:
