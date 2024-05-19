@@ -59,12 +59,44 @@ class ObjectDetectionModule: RCTEventEmitter {
   @objc func releaseDetector(_ handle: NSInteger,
                              resolver resolve: @escaping RCTPromiseResolveBlock,
                              rejecter reject: @escaping RCTPromiseRejectBlock) {
-    if let entry = ObjectDetectionModule.detectorMap.removeValue(forKey: handle) {
+    if ObjectDetectionModule.detectorMap.removeValue(forKey: handle) != nil {
       resolve(true)
     } else {
       resolve(false)
     }
   }
+  
+  @objc func detectOnImage(_ imagePath: String,
+                           withThreshold threshold: NSNumber,
+                           withMaxResults maxResults: NSInteger,
+                           withDelegate delegate: NSInteger,
+                           withModel model: String,
+                           resolver resolve: @escaping RCTPromiseResolveBlock,
+                           rejecter reject: @escaping RCTPromiseRejectBlock) {
+    do {
+      let helper = try ObjectDetectorHelper(
+        handle: 0,
+        scoreThreshold: threshold.floatValue,
+        maxResults: maxResults,
+        modelName: model,
+        runningMode: RunningMode.image)
+      helper.delegate = self // Assuming `self` conforms to `ObjectDetectorHelperDelegate`
+
+      // convert path to UIImage
+      let image = try loadImageFromPath(from: imagePath)
+      if let result = helper.detect(image: image) {
+        let resultArgs = convertResultBundleToDictionary(result)
+        resolve(resultArgs)
+      } else {
+        throw NSError(domain: "com.objectdetection.error", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Detection failed."])
+      }
+    } catch let error as NSError {
+      // If an error is thrown, reject the promise
+      // You can customize the error code and message as needed
+      reject("ERROR_CODE", "An error occurred: \(error.localizedDescription)", error)
+    }
+  }
+
   
   // MARK: Event Emission Helpers
   private func sendErrorEvent(handle: Int, message: String, code: Int) {
