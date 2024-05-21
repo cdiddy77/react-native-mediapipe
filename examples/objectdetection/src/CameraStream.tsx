@@ -133,9 +133,7 @@ export const CameraStream: React.FC<Props> = () => {
           ))}
         </Canvas>
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
-          <>
           <Ionicons name="repeat-outline" />
-          </>
         </Pressable>
       </View>
     );
