@@ -20,7 +20,7 @@ For more details or to demo it, visit
 
 1. **Open Terminal or Command Prompt:** Open your terminal or command prompt application. Create a brand new React Native Project. In this case we will be using **'rnmpdemo'** as on React Native MediaPipe Demo for example.
 
-```jsx
+```
 npx react-native init rnmpdemo
 ```
 
@@ -28,16 +28,16 @@ npx react-native init rnmpdemo
 
 3. **Install React Native MediaPipe:** Run the following command to install React Native MediaPipe and its dependencies:
 
-```jsx
-yarn add react-native-mediapipe react-native-vision-camera react-native-worlets-core
+```
+yarn add react-native-mediapipe react-native-vision-camera react-native-worklets-core
 ```
 
-    If correctly you should see a **react-native-mediapipe** drowpdown inside **node_modules** 
+    If correctly you should see a **react-native-mediapipe** dropdown inside **node_modules** 
 
 
 4. **Configuring Babel:** Navigate to the 'babel.config.js' file and add:
 
-```jsx
+``` jsx
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [['react-native-worklets-core/plugin']],
@@ -51,7 +51,7 @@ module.exports = {
 
 :::
 
-```jsx
+```
 buildscript {
     ext {
         ...
@@ -71,7 +71,7 @@ Configuring to your Operating System
   <TabItem value="Android" label="Android" default>
     1. **Give Permissions:** Navigate to your AndroidManifest.xml file and add:
 
-```jsx
+``` jsx
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-feature ... >
     <uses-feature ... >
@@ -95,18 +95,16 @@ Make sure you name your folder **assets** for the configuration to work
 
 :::
 
-3. **Locate the configuration file**: from our project and paste it into the 'assests' folder
 
- > If having trouble to find it follow this simple steps:
- > 1. Navigate to the **native-mediapipe** folder.
- > 2. Go to the **example** directory.
- > 3. Enter the **MediapipeExample** directory.
- > 4. Locate the file named **"efficientdet-lite0.tflite"**.
- > 5. Drag and drop or copy and paste the file into the **"assets"** folder.
+3. **Locate the configuration file**: download from this link and into the 'assets' folder
 
+ > 1. Dowload and save the configuration file from [this link.](https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector#efficientdet-lite0_model_recommended)
+ > 2. Navigate to the folder where file was saved.
+ > 3. Locate the file named **"efficientdet_lite0.tflite"**.
+ > 4. Drag and drop or copy and paste the file into the **"assets"** folder.
 
 4. Run your app
-```jsx
+```
 cd ..
 yarn start
 yarn android
@@ -236,7 +234,7 @@ const styles = StyleSheet.create({
 export default App;
 ```
 
-6. **Reaload app**: and grant acces to camera permissions
+6. **Reaload app**: and grant access to camera permissions
   </TabItem>
 
   <TabItem value="iOS" label="iOS">
@@ -257,21 +255,18 @@ You will only need to run the bundle install command once.
 
 :::
 
-```jsx
+```
 cd ios
 bundle install
 pod install
 ```
 
-3. **Locate the configuration file**: from our project and paste it into your project folder. In this case your 'rnmpdemo' folder.
+3. **Locate the configuration file**: download from this link and into your project folder. In this case your 'rnmpdemo' folder
 
- > If having trouble to find it follow this simple steps:
- > 1. Navigate to the **native-mediapipe** folder.
- > 2. Go to the **example** directory.
- > 3. Enter the **MediapipeExample** directory.
- > 4. Locate the file named **efficientdet-lite0.tflite**.
- > 5. Drag and drop or copy and paste the file into the **rnmpdemo** folder.
-
+ > 1. Dowload and save the configuration file from [this link.](https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector#efficientdet-lite0_model_recommended)
+ > 2. Navigate to the folder where file was saved.
+ > 3. Locate the file named **"efficientdet_lite0.tflite"**.
+ > 4. Drag and drop or copy and paste the file into the **rnmpdemo** folder.
 
 4. **Xcode Launching**:
 
@@ -280,7 +275,7 @@ pod install
 > 3. Go to to your **ios** folder
 > 4. Choose the **rnmpdemo.xworkspace**
 > 5. Navigate to your **rnmpdemo** folder inside your **rnmpdemo** directory
-> 6. Add the **efficientdet-lite0.tflite** into your **rnmpdemo** folder
+> 6. Add the **efficientdet_lite0.tflite** into your **rnmpdemo** folder
 
 :::warning
 
@@ -296,7 +291,7 @@ If you do pod install remember to close xcode, do pod install and restart the ap
 :::
 
 5. **Run your app**:
-```jsx
+```
 cd ..
 yarn start
 yarn ios
@@ -304,7 +299,7 @@ yarn ios
 
 6. **Add Object Detection to your app**: once you see the default React Native welcome page on your device, change your **App.tsx** code to the following one
 
-```jsx
+``` jsx
 import React from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {
@@ -426,8 +421,7 @@ const styles = StyleSheet.create({
 export default App;
 ```
 
-7. **Reaload app**: and grant acces to camera permissions
+7. **Reload app**: and grant acces to camera permissions
 
   </TabItem>
-</Tabs>
-
+ </Tabs> 
