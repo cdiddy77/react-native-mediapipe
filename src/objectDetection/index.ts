@@ -30,6 +30,13 @@ interface ObjectDetectionModule {
     runningMode: RunningMode
   ) => Promise<number>;
   releaseDetector: (handle: number) => Promise<boolean>;
+  detectOnImage: (
+    imagePath: string,
+    threshold: number,
+    maxResults: number,
+    delegate: Delegate,
+    model: string
+  ) => Promise<ResultBundleMap>;
 }
 
 function getObjectDetectionModule(): ObjectDetectionModule {
@@ -47,12 +54,12 @@ export interface ResultBundleMap {
   inputImageRotation: number;
 }
 
-interface ObjectDetectionResultMap {
+export interface ObjectDetectionResultMap {
   timestampMs: number;
   detections: DetectionMap[];
 }
 
-interface DetectionMap {
+export interface DetectionMap {
   boundingBox: RectFMap;
   categories: CategoryMap[];
   keypoints?: KeypointMap[];
@@ -245,5 +252,19 @@ export function useObjectDetection(
       frameProcessor,
     }),
     [cameraViewDimensions, cameraViewLayoutChangeHandler, frameProcessor]
+  );
+}
+
+export function objectDetectionOnImage(
+  imagePath: string,
+  model: string,
+  options?: Partial<ObjectDetectionOptions>
+): Promise<ResultBundleMap> {
+  return getObjectDetectionModule().detectOnImage(
+    imagePath,
+    options?.threshold ?? 0.5,
+    options?.maxResults ?? 3,
+    options?.delegate ?? Delegate.GPU,
+    model
   );
 }

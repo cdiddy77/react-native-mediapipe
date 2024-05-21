@@ -24,5 +24,23 @@ RCT_EXTERN_METHOD(releaseDetector:(NSInteger)handle
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
+
+RCT_EXTERN_METHOD(detectOnImage:(nonnull NSString *)imagePath
+                  withThreshold:(nonnull NSNumber *)threshold
+                  withMaxResults:(NSInteger)maxResults
+                  withDelegate:(NSInteger)delegate
+                  withModel:(nonnull NSString *)model
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
+
+RCT_EXTERN_METHOD(detectOnVideo:(nonnull NSString *)videoPath
+                  withThreshold:(nonnull NSNumber *)threshold
+                  withMaxResults:(NSInteger)maxResults
+                  withDelegate:(NSInteger)delegate
+                  withModel:(nonnull NSString *)model
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+                  )
 @end
 
