@@ -1,5 +1,6 @@
 package com.reactnativemediapipe.objectdetection
 
+import android.util.Log
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -7,6 +8,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.reactnativemediapipe.shared.loadBitmapFromPath
 
 object ObjectDetectorMap {
   internal val detectorMap = mutableMapOf<Int, ObjectDetectorHelper>()
@@ -70,6 +72,47 @@ class ObjectDetectionModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun detectOnImage(
+    imagePath: String,
+    threshold: Float,
+    maxResults: Int,
+    delegate: Int,
+    model: String,
+    promise: Promise
+  ) {
+    try {
+      Log.i(TAG,"imagePath:$imagePath")
+      val helper = ObjectDetectorHelper(
+        threshold = threshold,
+        maxResults = maxResults,
+        currentDelegate = delegate,
+        currentModel = model,
+        runningMode = RunningMode.IMAGE,
+        context = reactApplicationContext.applicationContext,
+        objectDetectorListener = ObjectDetectorListener(this, 0)
+      )
+      val bundle = helper.detectImage(loadBitmapFromPath(imagePath))
+      val resultArgs = convertResultBundleToWritableMap(bundle)
+
+      promise.resolve(resultArgs)
+    } catch (e: Exception) {
+      promise.reject(e)
+    }
+  }
+
+  @ReactMethod
+  fun detectOnVideo(
+    videoPath: String,
+    threshold: Float,
+    maxResults: Int,
+    delegate: Int,
+    model: String,
+    promise: Promise
+  ) {
+    promise.reject(UnsupportedOperationException("detectOnVideo not yet implemented"))
+  }
+
+  @ReactMethod
   fun addListener(eventName: String?) {
     /* Required for RN built-in Event Emitter Calls. */
   }
@@ -92,5 +135,9 @@ class ObjectDetectionModule(reactContext: ReactApplicationContext) :
     resultArgs.putInt("handle", handle)
     reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit("onResults", resultArgs)
+  }
+
+  companion object {
+    const val TAG = "ObjectDetectionModule"
   }
 }

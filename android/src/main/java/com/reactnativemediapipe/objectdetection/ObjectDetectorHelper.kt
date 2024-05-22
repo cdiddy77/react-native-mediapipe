@@ -255,7 +255,7 @@ class ObjectDetectorHelper(
 
   // Accepted a Bitmap and runs object detection inference on it to return results back
   // to the caller
-  fun detectImage(image: Bitmap): ResultBundle? {
+  fun detectImage(image: Bitmap): ResultBundle {
 
     if (runningMode != RunningMode.IMAGE) {
       throw IllegalArgumentException(
@@ -263,7 +263,9 @@ class ObjectDetectorHelper(
       )
     }
 
-    if (objectDetector == null) return null
+    if (objectDetector == null) {
+      throw IllegalStateException("objectDetector not set")
+    }
 
     // Inference time is the difference between the system time at the start and finish of the
     // process
@@ -280,7 +282,7 @@ class ObjectDetectorHelper(
 
     // If objectDetector?.detect() returns null, this is likely an error. Returning null
     // to indicate this.
-    return null
+    throw Exception("objectdetector failed to perform inference")
   }
 
   // Wraps results from inference, the time it takes for inference to be performed, and
