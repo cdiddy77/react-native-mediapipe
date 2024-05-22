@@ -58,9 +58,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Get submodule
-        run: git submodule update --init --recursive
-
       - name: Cache turborepo for Android
         uses: actions/cache@v3
         with:
@@ -144,8 +141,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cocoapods-
 
+      - name: setup-cocoapods
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          podfile-path: examples/objectdetection/ios/Podfile.lock
+
+      - name: check-podfile-and-manifest
+        run: |
+          echo "Podfile.lock"
+          tail -n 3 examples/objectdetection/ios/Podfile.lock
+          echo "Manifest.lock"
+          tail -n 3 examples/objectdetection/ios/Pods/Manifest.lock
+
       - name: Install cocoapods
-        if: env.turbo_cache_hit != 1 && steps.cocoapods-cache.outputs.cache-hit != 'true'
+        # disabling cache to see if that helps
+        # if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
           cd examples/objectdetection/ios
           pod install
