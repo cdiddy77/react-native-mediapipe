@@ -47,7 +47,7 @@ func convertRectFToDictionary(_ rectF: CGRect) -> [String: Any] {
 }
 
 // Convert ResultBundle to NSDictionary
-func convertResultBundleToDictionary(_ resultBundle: ResultBundle) -> [String: Any] {
+func convertResultBundleToDictionary(_ resultBundle: ObjectDetectionResultBundle) -> [String: Any] {
   var map = [String: Any]()
   
   // Results
