@@ -14,6 +14,7 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
   return [self getBundleURL];
