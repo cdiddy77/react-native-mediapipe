@@ -13,6 +13,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		37EB22B02BBC9BAB002A84F7 /* efficientdet-lite0.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 37EB22AF2BBC9BAB002A84F7 /* efficientdet-lite0.tflite */; };
+		6326052D2BED2678009CC628 /* efficientdet-lite2.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 6326052C2BED2678009CC628 /* efficientdet-lite2.tflite */; };
+		6326052F2BED2684009CC628 /* ssd-mobilenet-v2.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 6326052E2BED2684009CC628 /* ssd-mobilenet-v2.tflite */; };
+		63BD745E2BED434300078A57 /* download_models.sh in Resources */ = {isa = PBXBuildFile; fileRef = 63BD745D2BED434300078A57 /* download_models.sh */; };
 		7699B88040F8A987B510C191 /* libPods-objectdetection-objectdetectionTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-objectdetection-objectdetectionTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -43,6 +46,9 @@
 		5709B34CF0A7D63546082F79 /* Pods-objectdetection.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objectdetection.release.xcconfig"; path = "Target Support Files/Pods-objectdetection/Pods-objectdetection.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-objectdetection-objectdetectionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objectdetection-objectdetectionTests.debug.xcconfig"; path = "Target Support Files/Pods-objectdetection-objectdetectionTests/Pods-objectdetection-objectdetectionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-objectdetection.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objectdetection.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6326052C2BED2678009CC628 /* efficientdet-lite2.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; name = "efficientdet-lite2.tflite"; path = "objectdetection/efficientdet-lite2.tflite"; sourceTree = "<group>"; };
+		6326052E2BED2684009CC628 /* ssd-mobilenet-v2.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ssd-mobilenet-v2.tflite"; path = "objectdetection/ssd-mobilenet-v2.tflite"; sourceTree = "<group>"; };
+		63BD745D2BED434300078A57 /* download_models.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = download_models.sh; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = objectdetection/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-objectdetection-objectdetectionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objectdetection-objectdetectionTests.release.xcconfig"; path = "Target Support Files/Pods-objectdetection-objectdetectionTests/Pods-objectdetection-objectdetectionTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -88,6 +94,9 @@
 		13B07FAE1A68108700A75B9A /* objectdetection */ = {
 			isa = PBXGroup;
 			children = (
+				63BD745C2BED42AB00078A57 /* RunScripts */,
+				6326052E2BED2684009CC628 /* ssd-mobilenet-v2.tflite */,
+				6326052C2BED2678009CC628 /* efficientdet-lite2.tflite */,
 				37EB22AF2BBC9BAB002A84F7 /* efficientdet-lite0.tflite */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -107,6 +116,14 @@
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-objectdetection-objectdetectionTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63BD745C2BED42AB00078A57 /* RunScripts */ = {
+			isa = PBXGroup;
+			children = (
+				63BD745D2BED434300078A57 /* download_models.sh */,
+			);
+			path = RunScripts;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -180,6 +197,7 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "objectdetection" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				63A629702BED32D90074A02B /* Download models */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -246,7 +264,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				6326052D2BED2678009CC628 /* efficientdet-lite2.tflite in Resources */,
 				37EB22B02BBC9BAB002A84F7 /* efficientdet-lite0.tflite in Resources */,
+				63BD745E2BED434300078A57 /* download_models.sh in Resources */,
+				6326052F2BED2684009CC628 /* ssd-mobilenet-v2.tflite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +282,9 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env.local",
 				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/ObjectDetector/efficientdet-lite0.tflite",
+				"$(SRCROOT)/ObjectDetector/efficientdet-ite2.tflite",
+				"$(SRCROOT)/ObjectDetector/ssd_mobilenet-v2.tflite",
 			);
 			name = "Bundle React Native code and images";
 			outputPaths = (
@@ -285,6 +309,28 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-objectdetection/Pods-objectdetection-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		63A629702BED32D90074A02B /* Download models */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Download models";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/ObjectDetector/efficientdet-lite0.tflite",
+				"$(SRCROOT)/ObjectDetector/efficientdet-lite2.tflite",
+				"$(SRCROOT)/ObjectDetector/ssd-mobilenet-v2.tflite",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$SRCROOT/RunScripts/download_models.sh\n";
 		};
 		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

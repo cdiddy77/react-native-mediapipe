@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-    <key>UIAppFonts</key>
-    <array>
-      <string>Ionicons.ttf</string>
-    </array>
+		<key>UIAppFonts</key>
+		<array>
+			<string>Ionicons.ttf</string>
+		</array>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>en</string>
 		<key>CFBundleDisplayName</key>
@@ -58,5 +58,7 @@
 		<!-- optionally, if you want to record audio: -->
 		<key>NSMicrophoneUsageDescription</key>
 		<string>$(PRODUCT_NAME) needs access to your Microphone.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Enable inference on images and videos</string>
 	</dict>
 </plist>

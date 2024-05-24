@@ -1,22 +1,11 @@
-import {
-  Canvas,
-  Group,
-  Rect,
-  Skia,
-  Paragraph,
-  TextAlign,
-  matchFont,
-} from "@shopify/react-native-skia";
+import { Canvas } from "@shopify/react-native-skia";
 import * as React from "react";
 
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   MediapipeCamera,
   RunningMode,
   useObjectDetection,
-  clampToDims,
-  frameRectToView,
-  ltrbToXywh,
 } from "react-native-mediapipe";
 
 import {
@@ -27,29 +16,25 @@ import {
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
-import { useDebounce } from "./useDebounce";
 import { CustomColors } from "./colors";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-interface Detection {
-  label: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import {
+  ObjectFrame,
+  convertObjectDetectionFrame,
+  type ObjectDetectionFrame,
+} from "./Drawing";
 
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
 export const CameraStream: React.FC<Props> = () => {
   const { settings } = useSettings();
-  const debouncedSettings = useDebounce(settings, 500);
   const camPerm = useCameraPermission();
   const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
     cam: boolean;
     mic: boolean;
   }>({ cam: camPerm.hasPermission, mic: micPerm.hasPermission });
-
   const askForPermissions = React.useCallback(() => {
     if (camPerm.hasPermission) {
       setPermsGranted((prev) => ({ ...prev, cam: true }));
@@ -67,7 +52,9 @@ export const CameraStream: React.FC<Props> = () => {
     }
   }, [camPerm, micPerm]);
 
-  const [objectFrames, setObjectFrames] = React.useState<Detection[]>([]);
+  const [objectFrames, setObjectFrames] = React.useState<
+    ObjectDetectionFrame[]
+  >([]);
 
   const [active, setActive] = React.useState<CameraPosition>("front");
   const setActiveCamera = () => {
@@ -85,36 +72,20 @@ export const CameraStream: React.FC<Props> = () => {
         height: results.inputImageHeight,
       };
       setObjectFrames(
-        detections.map((detection) => {
-          const { x, y, width, height } = clampToDims(
-            frameRectToView(
-              ltrbToXywh(detection.boundingBox),
-              frameSize,
-              viewSize,
-              "cover",
-              mirrored
-            ),
-            viewSize
-          );
-          return {
-            label: detection.categories[0]?.categoryName ?? "unknown",
-            x,
-            y,
-            width,
-            height,
-          };
-        })
+        detections.map((v) =>
+          convertObjectDetectionFrame(v, frameSize, viewSize, mirrored)
+        )
       );
     },
     (error) => {
       console.error(`onError: ${error}`);
     },
     RunningMode.LIVE_STREAM,
-    `${debouncedSettings.model}.tflite`,
+    `${settings.model}.tflite`,
     {
-      delegate: debouncedSettings.processor,
-      maxResults: debouncedSettings.maxResults,
-      threshold: debouncedSettings.threshold / 100,
+      delegate: settings.processor,
+      maxResults: settings.maxResults,
+      threshold: settings.threshold / 100,
     }
   );
 
@@ -133,7 +104,7 @@ export const CameraStream: React.FC<Props> = () => {
           ))}
         </Canvas>
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
-          <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
+          <Ionicons name="repeat-outline" />
         </Pressable>
       </View>
     );
@@ -159,51 +130,6 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
         <Text style={styles.permsButtonText}>Allow</Text>
       </Pressable>
     </View>
-  );
-};
-
-const ObjectFrame: React.FC<{ frame: Detection; index: number }> = ({
-  frame,
-  index,
-}) => {
-  const color = colorNames[index % colorNames.length];
-  if (color === undefined) {
-    throw new Error(`No color found for index ${index}`);
-  }
-  const paragraph = React.useMemo(() => {
-    const textStyle = {
-      backgroundColor: Skia.Color(color),
-      color: Skia.Color(textfromBackground(color)),
-      font: font,
-      fontSize: 24,
-    };
-    const para = Skia.ParagraphBuilder.Make({
-      textAlign: TextAlign.Right,
-    })
-      .pushStyle(textStyle)
-      .addText(` ${frame.label} `)
-      .build();
-    return para;
-  }, [frame.label, color]);
-
-  return (
-    <Group style={"stroke"} strokeWidth={2}>
-      <Paragraph
-        paragraph={paragraph}
-        x={frame.x}
-        y={frame.y}
-        color={color}
-        width={frame.width}
-      />
-      <Rect
-        key={index}
-        x={frame.x}
-        y={frame.y}
-        width={frame.width}
-        height={frame.height}
-        color={color}
-      />
-    </Group>
   );
 };
 
@@ -261,51 +187,5 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-  cameraSwitchButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
+
 });
-
-const colorNames = [
-  "Coral",
-  "DarkCyan",
-  "DeepSkyBlue",
-  "ForestGreen",
-  "GoldenRod",
-  "MediumOrchid",
-  "SteelBlue",
-  "Tomato",
-  "Turquoise",
-  "SlateGray",
-  "DodgerBlue",
-  "FireBrick",
-  "Gold",
-  "HotPink",
-  "LimeGreen",
-  "Navy",
-  "OrangeRed",
-  "RoyalBlue",
-  "SeaGreen",
-  "Violet",
-];
-
-function textfromBackground(background: string): string {
-  const color = Skia.Color(background);
-  const red = (color[0] ?? 0) * 256;
-  const green = (color[1] ?? 0) * 256;
-  const blue = (color[2] ?? 0) * 256;
-
-  // use the algorithm from https://stackoverflow.com/a/3943023/2197085
-  const text =
-    red * 0.299 + green * 0.587 + blue * 0.114 > 186 ? "black" : "white";
-
-  return text;
-}
-
-const fontFamily = Platform.select({ ios: "Helvetica", android: "sans-serif" });
-const fontStyle = {
-  fontFamily,
-  fontSize: 24,
-};
-const font = matchFont(fontStyle);

@@ -8,7 +8,7 @@ import { Delegate } from "react-native-mediapipe";
 import { useSettings } from "./app-settings";
 
 type SlidersComponentProps = {
-  label: string;
+  label: (value: number) => string;
   value: number;
   setValue: (value: number) => void;
   minValue?: number;
@@ -29,14 +29,14 @@ const OptionSlider: React.FC<SlidersComponentProps> = ({
   minValue = 1,
   maxValue = 10,
 }) => {
+  const [curValue, setCurValue] = React.useState(value);
   return (
     <View style={styles.item}>
-      <Text style={styles.label}>
-        {label.replace("${value}", value.toString())}
-      </Text>
+      <Text style={styles.label}>{label(curValue)}</Text>
       <Slider
-        value={value}
-        onValueChange={setValue}
+        value={curValue}
+        onValueChange={setCurValue}
+        onSlidingComplete={setValue}
         minimumValue={minValue}
         maximumValue={maxValue}
         step={1}
@@ -84,8 +84,7 @@ export const Settings: React.FC<Props> = () => {
           { label: "CPU", value: Delegate.CPU },
         ]}
       />
-      {/* Disable Model selection temporarily
-       <OptionSelect
+      <OptionSelect
         label="Model selections: "
         value={settings.model}
         setValue={(value) =>
@@ -94,16 +93,16 @@ export const Settings: React.FC<Props> = () => {
         items={[
           { label: "EfficientDet-Lite0", value: "efficientdet-lite0" },
           { label: "EfficientDet-Lite2", value: "efficientdet-lite2" },
-          { label: "SSD MobileNetV2", value: "ssd-mobilenetv2" },
+          { label: "SSD MobileNetV2", value: "ssd-mobilenet-v2" },
         ]}
-      /> */}
+      />
       <OptionSlider
-        label="Max results: ${value}"
+        label={(value) => `Max results: ${value}`}
         value={settings.maxResults}
         setValue={(value) => setSettings({ ...settings, maxResults: value })}
       />
       <OptionSlider
-        label="Score threshold: ${value}%"
+        label={(value) => `Score threshold: ${value}%`}
         value={settings.threshold}
         setValue={(value) => setSettings({ ...settings, threshold: value })}
         minValue={0}
