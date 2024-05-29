@@ -34,11 +34,9 @@ per [RNVC getting started - updating manifests](https://react-native-vision-came
 - Edit `babel.config.js` to what it is
 - Edit `metro.config.js` to what it is
 - Edit `react-native.config.js` to what it is
+- Delete `prettierrc.js`, `eslintrc.js`, `.gitignore`
 
-### Add the model files
-Which file gets added will vary from example to example
+### Add the model file download stuff
 
-- add `<example-directory>/android/app/src/main/assets/efficientdet-lite0.tflite`
-- add `<example-directory>/ios/objectdetection/efficientdet-lite0.tflite`
-
+Lift from [This PR](https://github.com/cdiddy77/react-native-mediapipe/pull/85) and from the appropriate example from [the MediaPipe examples](https://github.com/googlesamples/mediapipe/blob/9d0624bb1cf1baa8ac31991748d69ec219aa3535/examples)
 

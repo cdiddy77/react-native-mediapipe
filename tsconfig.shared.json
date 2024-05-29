@@ -14,7 +14,7 @@
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noStrictGenericChecks": false,
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

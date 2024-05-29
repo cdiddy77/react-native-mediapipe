@@ -47,7 +47,7 @@
 		5B7EB9410499542E8C5724F5 /* Pods-objectdetection-objectdetectionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objectdetection-objectdetectionTests.debug.xcconfig"; path = "Target Support Files/Pods-objectdetection-objectdetectionTests/Pods-objectdetection-objectdetectionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-objectdetection.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objectdetection.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6326052C2BED2678009CC628 /* efficientdet-lite2.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; name = "efficientdet-lite2.tflite"; path = "objectdetection/efficientdet-lite2.tflite"; sourceTree = "<group>"; };
-		6326052E2BED2684009CC628 /* ssd-mobilenet-v2.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ssd-mobilenet-v2.tflite"; path = "objectdetection/ssd-mobilenet-v2.tflite"; sourceTree = "<group>"; };
+		6326052E2BED2684009CC628 /* ssd-mobilenet-v2.tflite */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "ssd-mobilenet-v2.tflite"; path = "objectdetection/ssd-mobilenet-v2.tflite"; sourceTree = "<group>"; };
 		63BD745D2BED434300078A57 /* download_models.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = download_models.sh; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = objectdetection/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-objectdetection-objectdetectionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objectdetection-objectdetectionTests.release.xcconfig"; path = "Target Support Files/Pods-objectdetection-objectdetectionTests/Pods-objectdetection-objectdetectionTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -324,9 +324,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/ObjectDetector/efficientdet-lite0.tflite",
-				"$(SRCROOT)/ObjectDetector/efficientdet-lite2.tflite",
-				"$(SRCROOT)/ObjectDetector/ssd-mobilenet-v2.tflite",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
