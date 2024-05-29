@@ -7,6 +7,7 @@ module.exports = {
       "./tsconfig.json",
       "docsite/tsconfig.json",
       "examples/objectdetection/tsconfig.json",
+      "examples/facelandmarkdetection/tsconfig.json",
     ],
     ecmaFeatures: {
       jsx: true,
