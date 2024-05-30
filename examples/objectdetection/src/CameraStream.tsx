@@ -16,6 +16,7 @@ import {
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
+import { CustomColors } from "./colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import {
@@ -64,14 +65,17 @@ export const CameraStream: React.FC<Props> = () => {
 
   const objectDetection = useObjectDetection(
     (results, viewSize, mirrored) => {
+      if (results.results.length === 0) {
+        setObjectFrames([]);
+        return;
+      }
       const firstResult = results.results[0];
-      const detections = firstResult?.detections ?? [];
       const frameSize = {
         width: results.inputImageWidth,
         height: results.inputImageHeight,
       };
       setObjectFrames(
-        detections.map((v) =>
+        firstResult.detections.map((v) =>
           convertObjectDetectionFrame(v, frameSize, viewSize, mirrored)
         )
       );
@@ -87,7 +91,6 @@ export const CameraStream: React.FC<Props> = () => {
       threshold: settings.threshold / 100,
     }
   );
-
   if (permsGranted.cam && permsGranted.mic) {
     return (
       <View style={styles.container}>
@@ -134,7 +137,7 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFF0F0",
+    backgroundColor: "#EAF5F9",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
     padding: 15.5,
     paddingRight: 25,
     paddingLeft: 25,
-    backgroundColor: "#F95F48",
+    backgroundColor: CustomColors.elecBlue,
     borderRadius: 5,
     margin: 15,
   },
@@ -161,11 +164,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   permissionsBox: {
-    backgroundColor: "#F3F3F3",
+    backgroundColor: CustomColors.lightGray,
     padding: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#CCCACA",
+    borderColor: CustomColors.teal,
     marginBottom: 20,
   },
   noPermsText: {
@@ -186,5 +189,4 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-
 });

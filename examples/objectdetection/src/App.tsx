@@ -9,6 +9,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import type { AppSettings } from "./app-settings";
 import { Delegate } from "react-native-mediapipe";
 import { SettingsContext } from "./app-settings";
+import { CustomColors } from "./colors";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -56,8 +57,8 @@ function App() {
             tabBarIcon: ({ focused, color, size }) => {
               return RenderTabBarIcon({ focused, color, size, route });
             },
-            tabBarActiveTintColor: "tomato",
-            tabBarInactiveTintColor: "gray",
+            tabBarActiveTintColor: CustomColors.elecBlue,
+            tabBarInactiveTintColor: CustomColors.teal,
           })}
         >
           <Tab.Screen

@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.shared",
+  "compilerOptions": {
+    "rootDir": "../..",
+    "paths": {
+      "react-native-mediapipe": [
+        "../../src/index"
+      ]
+    },
+    "composite": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src",
+    "../../src"
+  ]
+}

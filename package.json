@@ -70,7 +70,7 @@
     "react": "18.2.0",
     "react-native": "0.73.4",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-vision-camera": "^4.0.1",
+    "react-native-vision-camera": "^4.0.3",
     "react-native-worklets-core": "^1.3.0",
     "release-it": "^15.0.0",
     "turbo": "^1.10.7",
@@ -80,7 +80,8 @@
     "@types/react": "^18.2.44",
     "react-native-vision-camera@^3.8.2": "patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch",
     "react-native-vision-camera@^3.9.2": "patch:react-native-vision-camera@npm%3A3.9.2#./.yarn/patches/react-native-vision-camera-npm-3.9.2-3b35d90475.patch",
-    "react-native-vision-camera@^4.0.1": "patch:react-native-vision-camera@npm%3A4.0.1#./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch"
+    "react-native-vision-camera@^4.0.1": "patch:react-native-vision-camera@patch%3Areact-native-vision-camera@npm%253A4.0.1%23./.yarn/patches/react-native-vision-camera-npm-4.0.1-7ecdf9d15a.patch%3A%3Aversion=4.0.1&hash=260f68&locator=react-native-mediapipe%2540workspace%253A.#./.yarn/patches/react-native-vision-camera-patch-cc9d789186.patch",
+    "react-native-vision-camera@^4.0.3": "patch:react-native-vision-camera@npm%3A4.0.5#./.yarn/patches/react-native-vision-camera-npm-4.0.5-0f2bdc9daa.patch"
   },
   "peerDependencies": {
     "react": "*",
@@ -97,6 +98,7 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/objectdetection/node_modules",
+      "<rootDir>/examples/facelandmarkdetection/node_modules",
       "<rootDir>/lib/"
     ]
   },
@@ -135,5 +137,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "react-native-vector-icons": "^10.0.3"
   }
 }
