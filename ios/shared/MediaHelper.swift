@@ -13,17 +13,17 @@ enum MediaLoadingError: Error, LocalizedError {
   case unableToLoadData
   case unableToCreateImage
   case unableToCreateVideoAsset
-  
+
   var errorDescription: String? {
     switch self {
-      case .invalidURL:
-        return "Provided string is not a valid URL."
-      case .unableToLoadData:
-        return "Could not load data from the URL."
-      case .unableToCreateImage:
-        return "Data loaded is not a valid image."
-      case .unableToCreateVideoAsset:
-        return "Data loaded is not a valid video."
+    case .invalidURL:
+      return "Provided string is not a valid URL."
+    case .unableToLoadData:
+      return "Could not load data from the URL."
+    case .unableToCreateImage:
+      return "Data loaded is not a valid image."
+    case .unableToCreateVideoAsset:
+      return "Data loaded is not a valid video."
     }
   }
 }

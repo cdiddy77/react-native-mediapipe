@@ -9,6 +9,12 @@ export type RectLTRB = {
 };
 export type ResizeMode = "cover" | "contain";
 
+export function denormalizePoint(p: Point, dims: Dims): Point {
+  return {
+    x: p.x * dims.width,
+    y: p.y * dims.height,
+  };
+}
 // both cover and contain preserve aspect ratio. Cover will crop the image to fill the view, contain will show the whole image and add padding.
 // for cover, if the aspect ratio x/y of the frame is greater than
 export function framePointToView(

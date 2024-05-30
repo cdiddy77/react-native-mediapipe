@@ -280,8 +280,6 @@ class ObjectDetectorHelper(
       return ResultBundle(listOf(detectionResult), inferenceTimeMs, image.height, image.width)
     }
 
-    // If objectDetector?.detect() returns null, this is likely an error. Returning null
-    // to indicate this.
     throw Exception("objectdetector failed to perform inference")
   }
 

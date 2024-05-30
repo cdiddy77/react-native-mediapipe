@@ -130,34 +130,35 @@ jobs:
             echo "turbo_cache_hit=1" >> $GITHUB_ENV
           fi
 
-      - name: Cache cocoapods
-        if: env.turbo_cache_hit != 1
-        id: cocoapods-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/ios/Pods
-          key: ${{ runner.os }}-cocoapods-${{ hashFiles('examples/objectdetection/ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cocoapods-
+      # - name: Cache cocoapods for objectdetection
+      #   if: env.turbo_cache_hit != 1
+      #   id: cocoapods-cache-objectdetection
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       **/ios/Pods
+      #     key: ${{ runner.os }}-cocoapods-${{ hashFiles('examples/objectdetection/ios/Podfile.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-cocoapods-
 
-      - name: setup-cocoapods
+      - name: setup-cocoapods-objectdetection
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
           podfile-path: examples/objectdetection/ios/Podfile.lock
-
-      - name: check-podfile-and-manifest
-        run: |
-          echo "Podfile.lock"
-          tail -n 3 examples/objectdetection/ios/Podfile.lock
-          echo "Manifest.lock"
-          tail -n 3 examples/objectdetection/ios/Pods/Manifest.lock
-
+      
+      - name: setup-cocoapods-facelandmarkdetection
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          podfile-path: examples/facelandmarkdetection/ios/Podfile.lock
+        
       - name: Install cocoapods
         # disabling cache to see if that helps
         # if: steps.cocoapods-cache.outputs.cache-hit != 'true'
         run: |
           cd examples/objectdetection/ios
+          pod install
+          cd ../../..
+          cd examples/facelandmarkdetection/ios
           pod install
         env:
           NO_FLIPPER: 1
