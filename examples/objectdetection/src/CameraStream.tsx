@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   permsButtonText: {
-    fontSize: 17,
+    fontSize: 20,
     color: "black",
     fontWeight: "bold",
   },
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
   },
   cameraSwitchButton: {
     position: "absolute",
-    padding: 10,
-    backgroundColor: "#F95F48",
+    padding: 15,
+    backgroundColor: CustomColors.elecBlue,
     borderRadius: 20,
     top: 20,
     right: 20,

@@ -6,6 +6,7 @@ import ImagePicker from "react-native-image-crop-picker";
 import { objectDetectionOnImage, type Dims } from "react-native-mediapipe";
 import { useSettings } from "./app-settings";
 import { Canvas } from "@shopify/react-native-skia";
+import { CustomColors } from "./colors";
 import {
   ObjectFrame,
   convertObjectDetectionFrame,
@@ -92,24 +93,50 @@ export const Photo: React.FC<Props> = () => {
       )}
       {screenState === "error" && (
         <>
-        
-          <Text style={styles.errorText}>Error! User Cancelled.</Text>
-          
-          <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
-            <Text style={styles.selectButtonText}>Select a photo</Text>
-          </Pressable>
-        </>
+        <View style={styles.errorBox}>
+          <Text style={styles.errorText}>Error!</Text>
+          <Text style={styles.errorInfoText}>Please make sure you have selected a photo.</Text>
+        </View>
+        <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
+          <Text style={styles.selectButtonText}>Select a photo</Text>
+        </Pressable>
+      </>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, alignItems: "center", justifyContent: "center" },
-  selectButton: { backgroundColor: "blue", padding: 10, borderRadius: 5 },
-  selectButtonText: { fontSize: 20, color: "white" },
-  photoContainer: { width: PHOTO_SIZE.width, height: PHOTO_SIZE.height },
-  photo: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  root: { 
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center", 
+    backgroundColor: CustomColors.backgroundGrayBlue,
+  },
+
+  selectButton: { 
+    backgroundColor: CustomColors.elecBlue,
+    padding: 15.5, 
+    paddingRight: 25,
+    paddingLeft: 25,
+    borderRadius: 5 },
+
+  selectButtonText: { 
+    fontSize: 20,
+    color: "black", 
+    fontWeight: "bold",
+  },
+
+  photoContainer: { 
+    width: PHOTO_SIZE.width, 
+    height: PHOTO_SIZE.height },
+
+  photo: { 
+    position: "absolute", 
+    top: 0, left: 0, 
+    right: 0, 
+    bottom: 0 },
+
   objectsOverlay: {
     position: "absolute",
     top: 0,
@@ -117,5 +144,27 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  errorText: { fontSize: 30, color: "red" },
+  errorText: { 
+    fontSize: 25, 
+    color: "black", 
+    bottom: 10,
+    fontWeight: "bold",
+    textAlign: "center",
+  
+  },
+  errorInfoText: {
+    fontSize: 15.5, 
+    color: CustomColors.teal, 
+    
+  },
+  errorBox: {
+    backgroundColor: CustomColors.lightGray,
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: CustomColors.teal,
+    bottom: 25,
+   
+  }
+    
 });
