@@ -44,6 +44,7 @@ class ObjectDetectionModule: RCTEventEmitter {
         scoreThreshold: threshold.floatValue,
         maxResults: maxResults,
         modelName: model,
+        optionsDelegate: delegate,
         runningMode: mode)
       helper.delegate = self // Assuming `self` conforms to `ObjectDetectorHelperDelegate`
       
@@ -79,6 +80,7 @@ class ObjectDetectionModule: RCTEventEmitter {
         scoreThreshold: threshold.floatValue,
         maxResults: maxResults,
         modelName: model,
+        optionsDelegate: delegate,
         runningMode: RunningMode.image)
       helper.delegate = self // Assuming `self` conforms to `ObjectDetectorHelperDelegate`
 
@@ -103,7 +105,7 @@ class ObjectDetectionModule: RCTEventEmitter {
     self.sendEvent(withName: "onError", body: ["handle": handle, "message": message, "code": code])
   }
   
-  private func sendResultsEvent(handle: Int, bundle: ResultBundle) {
+  private func sendResultsEvent(handle: Int, bundle: ObjectDetectionResultBundle) {
     // Assuming convertResultBundleToDictionary exists and converts ResultBundle to a suitable dictionary
     var resultArgs = convertResultBundleToDictionary(bundle)
     resultArgs["handle"] = handle
@@ -112,7 +114,7 @@ class ObjectDetectionModule: RCTEventEmitter {
 }
 
 extension ObjectDetectionModule: ObjectDetectorHelperDelegate {
-  func objectDetectorHelper(_ objectDetectorHelper: ObjectDetectorHelper, onResults result: ResultBundle?, error: Error?) {
+  func objectDetectorHelper(_ objectDetectorHelper: ObjectDetectorHelper, onResults result: ObjectDetectionResultBundle?, error: Error?) {
     if let result = result {
       sendResultsEvent(handle: objectDetectorHelper.handle, bundle: result)
     } else if let error = error as? NSError {

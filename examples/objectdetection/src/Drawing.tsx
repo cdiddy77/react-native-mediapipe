@@ -29,9 +29,6 @@ export const ObjectFrame: React.FC<{
   index: number;
 }> = ({ frame, index }) => {
   const color = colorNames[index % colorNames.length];
-  if (color === undefined) {
-    throw new Error(`No color found for index ${index}`);
-  }
   const paragraph = React.useMemo(() => {
     const textStyle = {
       backgroundColor: Skia.Color(color),
@@ -94,9 +91,9 @@ const colorNames = [
 
 function textfromBackground(background: string): string {
   const color = Skia.Color(background);
-  const red = (color[0] ?? 0) * 256;
-  const green = (color[1] ?? 0) * 256;
-  const blue = (color[2] ?? 0) * 256;
+  const red = color[0] * 256;
+  const green = color[1] * 256;
+  const blue = color[2] * 256;
 
   // use the algorithm from https://stackoverflow.com/a/3943023/2197085
   const text =

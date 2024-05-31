@@ -81,7 +81,6 @@ class ObjectDetectionModule(reactContext: ReactApplicationContext) :
     promise: Promise
   ) {
     try {
-      Log.i(TAG,"imagePath:$imagePath")
       val helper = ObjectDetectorHelper(
         threshold = threshold,
         maxResults = maxResults,

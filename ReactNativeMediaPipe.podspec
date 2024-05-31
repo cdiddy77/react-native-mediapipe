@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
-  s.dependency "MediaPipeTasksVision", "0.10.5"
+  s.dependency "MediaPipeTasksVision", "0.10.12"
   s.dependency "VisionCamera"
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.

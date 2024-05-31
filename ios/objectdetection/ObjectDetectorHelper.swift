@@ -7,7 +7,7 @@ import AVFoundation
  */
 protocol ObjectDetectorHelperDelegate: AnyObject {
   func objectDetectorHelper(_ objectDetectorHelper: ObjectDetectorHelper,
-                             onResults result: ResultBundle?,
+                             onResults result: ObjectDetectionResultBundle?,
                              error: Error?)
 }
 
@@ -21,6 +21,7 @@ class ObjectDetectorHelper: NSObject {
   private(set) var runningMode = RunningMode.image
   private var maxResults = 3
   private var scoreThreshold: Float = 0.5
+  private var optionsDelegate: Delegate = .CPU
   var modelPath: String
   let handle: Int
   
@@ -36,6 +37,7 @@ class ObjectDetectorHelper: NSObject {
     scoreThreshold: Float,
     maxResults: Int,
     modelName: String,
+    optionsDelegate: Int,
     runningMode:RunningMode
   ) throws {
     let fileURL = URL(fileURLWithPath: modelName)
@@ -47,6 +49,7 @@ class ObjectDetectorHelper: NSObject {
     }
     self.handle = handle
     self.modelPath = modelPath
+    self.optionsDelegate = convertIntToDelegate(optionsDelegate)
     self.maxResults = maxResults
     self.scoreThreshold = scoreThreshold
     self.runningMode = runningMode
@@ -57,10 +60,11 @@ class ObjectDetectorHelper: NSObject {
   
   private func createObjectDetector() {
     let objectDetectorOptions = ObjectDetectorOptions()
-    objectDetectorOptions.runningMode = runningMode
+    objectDetectorOptions.runningMode = self.runningMode
     objectDetectorOptions.maxResults = self.maxResults
     objectDetectorOptions.scoreThreshold = self.scoreThreshold
-    objectDetectorOptions.baseOptions.modelAssetPath = modelPath
+    objectDetectorOptions.baseOptions.modelAssetPath = self.modelPath
+    objectDetectorOptions.baseOptions.delegate = self.optionsDelegate
     if runningMode == .liveStream {
       objectDetectorOptions.objectDetectorLiveStreamDelegate = self
     }
@@ -76,7 +80,7 @@ class ObjectDetectorHelper: NSObject {
   /**
    This method return ObjectDetectorResult and infrenceTime when receive an image
    **/
-  func detect(image: UIImage) -> ResultBundle? {
+  func detect(image: UIImage) -> ObjectDetectionResultBundle? {
     guard let mpImage = try? MPImage(uiImage: image) else {
       return nil
     }
@@ -84,8 +88,8 @@ class ObjectDetectorHelper: NSObject {
       let startDate = Date()
       let result = try objectDetector?.detect(image: mpImage)
       let inferenceTime = Date().timeIntervalSince(startDate) * 1000
-      return ResultBundle(
-        inferenceTime: inferenceTime, 
+      return ObjectDetectionResultBundle(
+        inferenceTime: inferenceTime,
         objectDetectorResults: [result],
         size: CGSizeMake(CGFloat(image.size.width), CGFloat(image.size.height))
       )
@@ -113,7 +117,7 @@ class ObjectDetectorHelper: NSObject {
   func detect(
     videoAsset: AVAsset,
     durationInMilliseconds: Double,
-    inferenceIntervalInMilliseconds: Double) async -> ResultBundle? {
+    inferenceIntervalInMilliseconds: Double) async -> ObjectDetectionResultBundle? {
       let startDate = Date()
       let assetGenerator = imageGenerator(with: videoAsset)
       
@@ -124,7 +128,7 @@ class ObjectDetectorHelper: NSObject {
         totalFrameCount: frameCount,
         atIntervalsOf: inferenceIntervalInMilliseconds)
       
-      return ResultBundle(
+      return ObjectDetectionResultBundle(
         inferenceTime: Date().timeIntervalSince(startDate) / Double(frameCount) * 1000,
         objectDetectorResults: objectDetectorResultTuple.objectDetectorResults,
         size: objectDetectorResultTuple.videoSize)
@@ -170,7 +174,7 @@ class ObjectDetectorHelper: NSObject {
         let curTime = Date().timeIntervalSince1970 * 1000
         let inferenceTime = curTime - prevTime
         prevTime = curTime
-        let resultBundle = ResultBundle(
+        let resultBundle = ObjectDetectionResultBundle(
           inferenceTime: inferenceTime,
           objectDetectorResults: [result],
           size: CGSizeMake(CGFloat(image.width), CGFloat(image.height))
@@ -196,7 +200,7 @@ extension ObjectDetectorHelper: ObjectDetectorLiveStreamDelegate {
         delegate?.objectDetectorHelper(self, onResults: nil, error: error)
         return
       }
-      let resultBundle = ResultBundle(
+      let resultBundle = ObjectDetectionResultBundle(
         inferenceTime: Date().timeIntervalSince1970 * 1000 - Double(timestampInMilliseconds),
         objectDetectorResults: [result],
         size: CGSize(width: livestreamImageSize.width, height: livestreamImageSize.height)
@@ -206,29 +210,9 @@ extension ObjectDetectorHelper: ObjectDetectorLiveStreamDelegate {
 }
 
 /// A result from the `ObjectDetectorHelper`.
-struct ResultBundle {
+struct ObjectDetectionResultBundle {
   let inferenceTime: Double
   let objectDetectorResults: [ObjectDetectorResult?]
   let size: CGSize
 }
 
-struct DefaultConstants {
-  static let maxResults = 3
-  static let scoreThreshold: Float = 0.2
-}
-
-
-
-// MARK: Model
-  
-//  var modelPath: String? {
-//    switch self {
-//      case .efficientdetLite0:
-//        return Bundle.main.path(
-//          forResource: "efficientdet_lite0", ofType: "tflite")
-//      case .efficientdetLite2:
-//        return Bundle.main.path(
-//          forResource: "efficientdet_lite2", ofType: "tflite")
-//    }
-//  }
-  

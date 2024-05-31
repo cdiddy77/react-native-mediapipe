@@ -1,0 +1,8 @@
+
+task downloadTaskFile(type: Download) {
+    src 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
+    dest project.ext.ASSET_DIR + '/face_landmarker.task'
+    overwrite false
+}
+
+preBuild.dependsOn downloadTaskFile

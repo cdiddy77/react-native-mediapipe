@@ -65,14 +65,17 @@ export const CameraStream: React.FC<Props> = () => {
 
   const objectDetection = useObjectDetection(
     (results, viewSize, mirrored) => {
+      if (results.results.length === 0) {
+        setObjectFrames([]);
+        return;
+      }
       const firstResult = results.results[0];
-      const detections = firstResult?.detections ?? [];
       const frameSize = {
         width: results.inputImageWidth,
         height: results.inputImageHeight,
       };
       setObjectFrames(
-        detections.map((v) =>
+        firstResult.detections.map((v) =>
           convertObjectDetectionFrame(v, frameSize, viewSize, mirrored)
         )
       );
@@ -88,7 +91,6 @@ export const CameraStream: React.FC<Props> = () => {
       threshold: settings.threshold / 100,
     }
   );
-
   if (permsGranted.cam && permsGranted.mic) {
     return (
       <View style={styles.container}>
@@ -187,5 +189,4 @@ const styles = StyleSheet.create({
     top: 20,
     right: 20,
   },
-
 });

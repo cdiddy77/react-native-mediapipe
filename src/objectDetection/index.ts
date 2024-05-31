@@ -10,13 +10,16 @@ import {
   useFrameProcessor,
   type CameraDevice,
 } from "react-native-vision-camera";
-import type { MediaPipeSolution } from "../shared/types";
+import { Delegate, type MediaPipeSolution, RunningMode } from "../shared/types";
 import type { Dims } from "../shared/convert";
 
 const { ObjectDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ObjectDetection);
 
-const plugin = VisionCameraProxy.initFrameProcessorPlugin("objectDetection");
+const plugin = VisionCameraProxy.initFrameProcessorPlugin(
+  "objectDetection",
+  {}
+);
 if (!plugin) {
   throw new Error("Failed to initialize objectdetection plugin");
 }
@@ -36,7 +39,7 @@ interface ObjectDetectionModule {
     maxResults: number,
     delegate: Delegate,
     model: string
-  ) => Promise<ResultBundleMap>;
+  ) => Promise<ObjectDetectionResultBundle>;
 }
 
 function getObjectDetectionModule(): ObjectDetectionModule {
@@ -46,7 +49,7 @@ function getObjectDetectionModule(): ObjectDetectionModule {
   return ObjectDetection as ObjectDetectionModule;
 }
 
-export interface ResultBundleMap {
+export interface ObjectDetectionResultBundle {
   results: ObjectDetectionResultMap[];
   inferenceTime: number;
   inputImageHeight: number;
@@ -91,19 +94,6 @@ interface ObjectDetectionError {
   message: string;
 }
 
-// eslint-disable-next-line no-restricted-syntax
-export enum Delegate {
-  CPU = 0,
-  GPU = 1,
-}
-
-// eslint-disable-next-line no-restricted-syntax
-export enum RunningMode {
-  IMAGE = 0,
-  VIDEO = 1,
-  LIVE_STREAM = 2,
-}
-
 export interface ObjectDetectionOptions {
   threshold: number;
   maxResults: number;
@@ -112,7 +102,7 @@ export interface ObjectDetectionOptions {
 }
 export interface ObjectDetectionCallbacks {
   onResults: (
-    result: ResultBundleMap,
+    result: ObjectDetectionResultBundle,
     viewSize: Dims,
     mirrored: boolean
   ) => void;
@@ -125,7 +115,7 @@ export interface ObjectDetectionCallbacks {
 const detectorMap: Map<number, ObjectDetectionCallbacks> = new Map();
 eventEmitter.addListener(
   "onResults",
-  (args: { handle: number } & ResultBundleMap) => {
+  (args: { handle: number } & ObjectDetectionResultBundle) => {
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
       callbacks.onResults(args, callbacks.viewSize, callbacks.mirrored);
@@ -259,7 +249,7 @@ export function objectDetectionOnImage(
   imagePath: string,
   model: string,
   options?: Partial<ObjectDetectionOptions>
-): Promise<ResultBundleMap> {
+): Promise<ObjectDetectionResultBundle> {
   return getObjectDetectionModule().detectOnImage(
     imagePath,
     options?.threshold ?? 0.5,
