@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
 
-  title: 'react-native-mediapipe',
+  title: 'React Native MediaPipe',
   tagline: 'A React Native Camera and Player for MediaPipe applications',
   favicon: 'img/favicon.ico',
 
@@ -54,12 +54,13 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/rnmp_logo.png',
     navbar: {
       title: 'React Native MediaPipe',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+     
+        src: 'img/rnmp_logo.png',
       },
       items: [
         {
@@ -130,4 +131,3 @@ const config: Config = {
 
 
 export default config;
-
