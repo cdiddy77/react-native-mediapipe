@@ -72,9 +72,8 @@ export const Photo: React.FC<Props> = () => {
         <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
           <Text style={styles.selectButtonText}>Select a photo</Text>
         </Pressable>
-      )} catch (cancel) 
-        console.error(cancel);
-        setScreenState("error");
+      )}
+        
       
       {screenState === "completed" && (
         <>
