@@ -21,6 +21,7 @@ export const Photo: React.FC<Props> = () => {
   const [screenState, setScreenState] = React.useState<
     "initial" | "selecting" | "inferring" | "completed" | "error"
   >("initial");
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
   const { settings } = useSettings();
   const [imagePath, setImagePath] = React.useState<string>();
   const [objectFrames, setObjectFrames] = React.useState<
@@ -62,10 +63,21 @@ export const Photo: React.FC<Props> = () => {
       setScreenState("completed");
     } catch (e) {
       console.error(e);
+      if (e instanceof Error) {
+        if (e.message.includes("User cancelled image selection")) {
+          setErrorMessage("User cancelled image selection.");
+        } else if (e.message.includes("Permissions")) {
+          setErrorMessage("Permission denied. Please allow access to photos.");
+        } else {
+          setErrorMessage("An unexpected error occurred.");
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
       setScreenState("error");
     }
   };
-
+  
   return (
     <View style={styles.root}>
       {screenState === "initial" && (
@@ -73,7 +85,6 @@ export const Photo: React.FC<Props> = () => {
           <Text style={styles.selectButtonText}>Select a photo</Text>
         </Pressable>
       )}
-        
       
       {screenState === "completed" && (
         <>
@@ -92,14 +103,14 @@ export const Photo: React.FC<Props> = () => {
       )}
       {screenState === "error" && (
         <>
-        <View style={styles.errorBox}>
-          <Text style={styles.errorText}>Error!</Text>
-          <Text style={styles.errorInfoText}>Please make sure you have selected a photo.</Text>
-        </View>
-        <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
-          <Text style={styles.selectButtonText}>Select a photo</Text>
-        </Pressable>
-      </>
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>Error!</Text>
+            <Text style={styles.errorInfoText}>{errorMessage}</Text>
+          </View>
+          <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
+            <Text style={styles.selectButtonText}>Select a photo</Text>
+          </Pressable>
+        </>
       )}
     </View>
   );
@@ -112,30 +123,29 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
     backgroundColor: CustomColors.backgroundGrayBlue,
   },
-
   selectButton: { 
     backgroundColor: CustomColors.elecBlue,
     padding: 15.5, 
     paddingRight: 25,
     paddingLeft: 25,
-    borderRadius: 5 },
-
+    borderRadius: 5 
+  },
   selectButtonText: { 
     fontSize: 20,
     color: "black", 
     fontWeight: "bold",
   },
-
   photoContainer: { 
     width: PHOTO_SIZE.width, 
-    height: PHOTO_SIZE.height },
-
+    height: PHOTO_SIZE.height 
+  },
   photo: { 
     position: "absolute", 
-    top: 0, left: 0, 
+    top: 0, 
+    left: 0, 
     right: 0, 
-    bottom: 0 },
-
+    bottom: 0 
+  },
   objectsOverlay: {
     position: "absolute",
     top: 0,
@@ -149,12 +159,10 @@ const styles = StyleSheet.create({
     bottom: 10,
     fontWeight: "bold",
     textAlign: "center",
-  
   },
   errorInfoText: {
     fontSize: 15.5, 
     color: CustomColors.teal, 
-    
   },
   errorBox: {
     backgroundColor: CustomColors.lightGray,
@@ -163,7 +171,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: CustomColors.teal,
     bottom: 25,
-   
   }
-    
 });
