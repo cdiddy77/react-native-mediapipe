@@ -52,7 +52,7 @@ Configuring to your Operating System
 <Tabs>
   <TabItem value="Android" label="Android" default>
 
-  1. **Configuring Gradle:** Navigate to the 'gradle/build.gradle' file and change minSdkVersion to 24
+  1. **Configuring Gradle:** Navigate to the 'android/build.gradle' file and change minSdkVersion to 24
   :::warning
 
   **Gradle minimum SDK** must be 24 or higher to run
