@@ -9,4 +9,7 @@ Detects hands and their movements in an image or video.
 For more details or to demo it, visit 
 [MediaPipe - Hand Landmark Detection](https://mediapipe-studio.webapps.google.com/studio/demo/hand_landmarker)
 
-## How to get started 
+---
+import ComingSoon from '../_coming-soon.md';
+
+<ComingSoon />

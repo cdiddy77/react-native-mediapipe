@@ -9,4 +9,7 @@ Changes a selected image into an embedded one.
 For more details or to demo it, visit 
 [MediaPipe - Image Embedding](https://mediapipe-studio.webapps.google.com/studio/demo/image_embedder)
 
-## How to get started 
+---
+import ComingSoon from '../_coming-soon.md';
+
+<ComingSoon />
