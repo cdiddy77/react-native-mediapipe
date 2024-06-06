@@ -142,8 +142,7 @@ export const Photo: React.FC<Props> = () => {
         })
       );
 
-      // Perform face landmark detection
-      faceDetection.detect(image.path); // Ensure detect is a method of faceDetection
+      faceDetection.detect(image.path);
 
       setImagePath(image.path);
       setScreenState("completed");
