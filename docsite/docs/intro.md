@@ -23,7 +23,7 @@ npm install react-native-mediapipe react-native-vision-camera react-native-workl
 #### Using yarn
 
 ```bash
-yarn install react-native-mediapipe react-native-vision-camera react-native-worklets-core
+yarn add react-native-mediapipe react-native-vision-camera react-native-worklets-core
 ```
 4. **Configuring Babel:** Navigate to the 'babel.config.js' file and add:
 
@@ -33,7 +33,7 @@ module.exports = {
   plugins: [['react-native-worklets-core/plugin']],
 };
 ```
-5. **Configuring Gradle:** Navigate to the 'gradle/build.gradle' file and change minSdkVersion to 24
+5. **Configuring Gradle:** Navigate to the 'android/build.gradle' file and change minSdkVersion to 24
 
 :::warning
 
@@ -59,7 +59,7 @@ import TabItem from '@theme/TabItem';
 ### Configuring to your Operating System
 
 <Tabs groupId="operating-systems">
-  <TabItem value="win" label="Windows">
+  <TabItem value="Android" label="Android">
     <p>
       1. **Give Permissions:** Navigate to your AndroidManifest.xml file and add:
     </p>
@@ -71,7 +71,7 @@ import TabItem from '@theme/TabItem';
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     ```
   </TabItem>
-  <TabItem value="mac" label="macOS">
+  <TabItem value="iOS" label="iOS">
   <p>
     1. **Give Permissions:** Navigate to your info.plist file in the outermost tag:
   </p>

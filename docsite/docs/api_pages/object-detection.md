@@ -52,7 +52,7 @@ Configuring to your Operating System
 <Tabs>
   <TabItem value="Android" label="Android" default>
 
-  1. **Configuring Gradle:** Navigate to the 'gradle/build.gradle' file and change minSdkVersion to 24
+  1. **Configuring Gradle:** Navigate to the 'android/build.gradle' file and change minSdkVersion to 24
   :::warning
 
   **Gradle minimum SDK** must be 24 or higher to run
@@ -78,8 +78,8 @@ Configuring to your Operating System
     <uses-feature ... >
     <uses-feature ... >
 
-    <uses-permission android:name ="andoird.permission.INTERNET">
-    <uses-permission android:name ="andoird.permission.CAMERA">
+    <uses-permission android:name ="android.permission.INTERNET"/>
+    <uses-permission android:name ="android.permission.CAMERA"/>
     ...
 ```
 
@@ -115,7 +115,8 @@ yarn android
   </TabItem>
 
   <TabItem value="iOS" label="iOS">
-1. **Give Permissions:** Navigate to your info.plist file in the outermost tag:
+
+1. **Give Permissions:** Navigate to your **info.plist** file in the outermost tag:
 
 ```jsx
 // add this at the end of your file before the closing </dict> tag
