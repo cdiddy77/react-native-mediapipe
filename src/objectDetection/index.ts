@@ -9,6 +9,7 @@ import {
   VisionCameraProxy,
   useFrameProcessor,
   type CameraDevice,
+  type Orientation,
 } from "react-native-vision-camera";
 import { Delegate, type MediaPipeSolution, RunningMode } from "../shared/types";
 import type { Dims } from "../shared/convert";
@@ -54,7 +55,6 @@ export interface ObjectDetectionResultBundle {
   inferenceTime: number;
   inputImageHeight: number;
   inputImageWidth: number;
-  inputImageRotation: number;
 }
 
 export interface ObjectDetectionResultMap {
@@ -147,6 +147,8 @@ export function useObjectDetection(
     width: number;
     height: number;
   }>({ width: 1, height: 1 });
+  const [_outputOrientation, setOutputOrientation] =
+    React.useState<Orientation>("portrait");
 
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
@@ -238,6 +240,10 @@ export function useObjectDetection(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
       cameraDeviceChangeHandler: setCameraDevice,
+      cameraOrientationChangedHandler: setOutputOrientation,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      resizeModeChangeHandler: () => {},
+
       cameraViewDimensions,
       frameProcessor,
     }),

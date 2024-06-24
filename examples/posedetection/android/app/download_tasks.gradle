@@ -1,0 +1,19 @@
+task downloadTaskFile(type: Download) {
+    src 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task'
+    dest project.ext.ASSET_DIR + '/pose_landmarker_heavy.task'
+    overwrite false
+}
+
+task downloadTaskFile1(type: Download) {
+    src 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
+    dest project.ext.ASSET_DIR + '/pose_landmarker_full.task'
+    overwrite false
+}
+
+task downloadTaskFile2(type: Download) {
+    src 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
+    dest project.ext.ASSET_DIR + '/pose_landmarker_lite.task'
+    overwrite false
+}
+
+preBuild.dependsOn downloadTaskFile, downloadTaskFile1, downloadTaskFile2

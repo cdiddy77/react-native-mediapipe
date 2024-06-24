@@ -7,6 +7,7 @@ import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.mrousavy.camera.core.types.PixelFormat
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
+import com.reactnativemediapipe.shared.orientationToDegrees
 
 class ObjectDetectionFrameProcessorPlugin() : FrameProcessorPlugin() {
 

@@ -18,6 +18,7 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import com.mrousavy.camera.core.types.Orientation
+import com.reactnativemediapipe.shared.orientationToDegrees
 
 class FaceLandmarkDetectorHelper(
   var minFaceDetectionConfidence: Float = DEFAULT_FACE_DETECTION_CONFIDENCE,

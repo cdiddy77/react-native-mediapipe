@@ -150,7 +150,12 @@ jobs:
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
           podfile-path: examples/facelandmarkdetection/ios/Podfile.lock
-        
+
+      - name: setup-cocoapods-posedetction
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          podfile-path: examples/posedetection/ios/Podfile.lock
+
       - name: Install cocoapods
         # disabling cache to see if that helps
         # if: steps.cocoapods-cache.outputs.cache-hit != 'true'
@@ -159,6 +164,9 @@ jobs:
           pod install
           cd ../../..
           cd examples/facelandmarkdetection/ios
+          pod install
+          cd ../../..
+          cd examples/posedetection/ios
           pod install
         env:
           NO_FLIPPER: 1

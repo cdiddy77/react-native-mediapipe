@@ -167,7 +167,6 @@ class FaceLandmarkDetectorHelper: NSObject {
       let image: CGImage
       do {
         let time = CMTime(value: Int64(timestampMs), timescale: 1000)
-        //        CMTime(seconds: Double(timestampMs) / 1000, preferredTimescale: 1000)
         image = try assetGenerator.copyCGImage(at: time, actualTime: nil)
       } catch {
         print(error)

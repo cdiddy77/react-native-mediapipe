@@ -9,6 +9,8 @@ import com.reactnativemediapipe.facelandmarkdetection.FaceLandmarkDetectionFrame
 import com.reactnativemediapipe.facelandmarkdetection.FaceLandmarkDetectionModule
 import com.reactnativemediapipe.objectdetection.ObjectDetectionFrameProcessorPlugin
 import com.reactnativemediapipe.objectdetection.ObjectDetectionModule
+import com.reactnativemediapipe.posedetection.PoseDetectionFrameProcessorPlugin
+import com.reactnativemediapipe.posedetection.PoseDetectionModule
 
 
 class MediapipePackage : ReactPackage {
@@ -20,11 +22,18 @@ class MediapipePackage : ReactPackage {
       FrameProcessorPluginRegistry.addFrameProcessorPlugin("faceLandmarkDetection") { _, _ ->
         FaceLandmarkDetectionFrameProcessorPlugin()
       }
+      FrameProcessorPluginRegistry.addFrameProcessorPlugin("poseDetection") { _, _ ->
+        PoseDetectionFrameProcessorPlugin()
+      }
     }
   }
 
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return listOf(ObjectDetectionModule(reactContext), FaceLandmarkDetectionModule(reactContext))
+    return listOf(
+      ObjectDetectionModule(reactContext),
+      FaceLandmarkDetectionModule(reactContext),
+      PoseDetectionModule(reactContext)
+    )
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
