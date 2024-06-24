@@ -231,12 +231,6 @@ function App(): React.JSX.Element {
       if (!landmarks || landmarks.length === 0) {
         return;
       }
-      console.log(
-        JSON.stringify({
-          infTime: results.inferenceTime,
-          howManyLandmarks: landmarks.length,
-        }),
-      );
       const frameSize = {
         width: results.inputImageWidth,
         height: results.inputImageHeight,
@@ -309,7 +303,6 @@ const RequestPermissions: React.FC<{
   hasCameraPermission: boolean;
   requestCameraPermission: () => Promise<boolean>;
 }> = ({hasCameraPermission, requestCameraPermission}) => {
-  console.log(hasCameraPermission);
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome to React Native Mediapipe</Text>

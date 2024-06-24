@@ -44,16 +44,6 @@ export const Photo: React.FC<Props> = () => {
         height: results.inputImageHeight,
       };
       const detections = results.results[0]?.detections ?? [];
-      console.log(
-        JSON.stringify({
-          width: image.width,
-          height: image.height,
-          detections: detections.map((d) => ({
-            bb: d.boundingBox,
-            cat: d.categories[0]?.categoryName,
-          })),
-        })
-      );
       setObjectFrames(
         detections.map((r) =>
           convertObjectDetectionFrame(r, frameSize, PHOTO_SIZE)
@@ -77,7 +67,7 @@ export const Photo: React.FC<Props> = () => {
       setScreenState("error");
     }
   };
-  
+
   return (
     <View style={styles.root}>
       {screenState === "initial" && (
@@ -85,7 +75,7 @@ export const Photo: React.FC<Props> = () => {
           <Text style={styles.selectButtonText}>Select a photo</Text>
         </Pressable>
       )}
-      
+
       {screenState === "completed" && (
         <>
           <View style={styles.photoContainer}>
@@ -117,34 +107,34 @@ export const Photo: React.FC<Props> = () => {
 };
 
 const styles = StyleSheet.create({
-  root: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center", 
+  root: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: CustomColors.backgroundGrayBlue,
   },
-  selectButton: { 
+  selectButton: {
     backgroundColor: CustomColors.elecBlue,
-    padding: 15.5, 
+    padding: 15.5,
     paddingRight: 25,
     paddingLeft: 25,
-    borderRadius: 5 
+    borderRadius: 5,
   },
-  selectButtonText: { 
+  selectButtonText: {
     fontSize: 20,
-    color: "black", 
+    color: "black",
     fontWeight: "bold",
   },
-  photoContainer: { 
-    width: PHOTO_SIZE.width, 
-    height: PHOTO_SIZE.height 
+  photoContainer: {
+    width: PHOTO_SIZE.width,
+    height: PHOTO_SIZE.height,
   },
-  photo: { 
-    position: "absolute", 
-    top: 0, 
-    left: 0, 
-    right: 0, 
-    bottom: 0 
+  photo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   objectsOverlay: {
     position: "absolute",
@@ -153,16 +143,16 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  errorText: { 
-    fontSize: 25, 
-    color: "black", 
+  errorText: {
+    fontSize: 25,
+    color: "black",
     bottom: 10,
     fontWeight: "bold",
     textAlign: "center",
   },
   errorInfoText: {
-    fontSize: 15.5, 
-    color: CustomColors.teal, 
+    fontSize: 15.5,
+    color: CustomColors.teal,
   },
   errorBox: {
     backgroundColor: CustomColors.lightGray,
@@ -171,5 +161,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: CustomColors.teal,
     bottom: 25,
-  }
+  },
 });

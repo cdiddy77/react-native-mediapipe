@@ -11,65 +11,8 @@ import com.google.mediapipe.tasks.components.containers.Connection
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import com.mrousavy.camera.core.types.Orientation
-
-// Converts NormalizedLandmark to WritableMap
-fun normalizedLandmarkToWritableMap(landmark: NormalizedLandmark): WritableMap {
-  val map = WritableNativeMap()
-  map.putDouble("x", landmark.x().toDouble())
-  map.putDouble("y", landmark.y().toDouble())
-  map.putDouble("z", landmark.z().toDouble())
-  return map
-}
-
-// Converts TransformMatrix to WritableMap
-fun transformMatrixToWritableMap(matrix: FloatArray): WritableMap {
-  val map = WritableNativeMap()
-  val dataArray = WritableNativeArray()
-
-  for (value in matrix) {
-    dataArray.pushDouble(value.toDouble())
-  }
-
-  map.putInt("rows", 4)
-  map.putInt("columns", 4)
-  map.putArray("data", dataArray)
-  return map
-}
-
-// Converts Classifications to WritableMap
-fun classificationsToWritableMap(classification: Classifications): WritableMap {
-  val map = WritableNativeMap()
-  val categoriesArray = WritableNativeArray()
-
-  classification.categories().forEach { category ->
-    val categoryMap = WritableNativeMap()
-    categoryMap.putString("label", category.categoryName())
-    categoryMap.putDouble("score", category.score().toDouble())
-    categoriesArray.pushMap(categoryMap)
-  }
-
-  map.putInt("headIndex", classification.headIndex())
-  classification.headName()?.let {
-    map.putString("headName", it.toString())
-  }
-  map.putArray("categories", categoriesArray)
-  return map
-}
-
-fun categoryListToWritableMap(classification: List<Category>): WritableMap {
-  val map = WritableNativeMap()
-  val categoriesArray = WritableNativeArray()
-
-  classification.forEach { category ->
-    val categoryMap = WritableNativeMap()
-    categoryMap.putString("label", category.categoryName())
-    categoryMap.putDouble("score", category.score().toDouble())
-    categoriesArray.pushMap(categoryMap)
-  }
-
-  map.putArray("categories", categoriesArray)
-  return map
-}
+import com.reactnativemediapipe.shared.normalizedLandmarkToWritableMap
+import com.reactnativemediapipe.shared.transformMatrixToWritableMap
 
 fun convertResultBundleToWritableMap(resultBundle: FaceLandmarkDetectorHelper.ResultBundle): WritableMap {
   val map = Arguments.createMap()
@@ -121,14 +64,20 @@ fun faceLandmarkerResultToWritableMap(result: FaceLandmarkerResult): WritableMap
   return resultMap
 }
 
-fun orientationToDegrees(orientation: Orientation): Int =
-  when (orientation) {
-    Orientation.PORTRAIT -> 0
-    Orientation.LANDSCAPE_LEFT -> 90
-    Orientation.PORTRAIT_UPSIDE_DOWN -> 180
-    Orientation.LANDSCAPE_RIGHT -> -90
+fun categoryListToWritableMap(classification: List<Category>): WritableMap {
+  val map = WritableNativeMap()
+  val categoriesArray = WritableNativeArray()
+
+  classification.forEach { category ->
+    val categoryMap = WritableNativeMap()
+    categoryMap.putString("label", category.categoryName())
+    categoryMap.putDouble("score", category.score().toDouble())
+    categoriesArray.pushMap(categoryMap)
   }
 
+  map.putArray("categories", categoriesArray)
+  return map
+}
 
 fun connectionSetToWritableArray(connections: Set<Connection>): WritableArray {
   val result = WritableNativeArray()

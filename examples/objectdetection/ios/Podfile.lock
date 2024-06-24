@@ -1130,7 +1130,7 @@ PODS:
     - React-jsi (= 0.73.6)
     - React-logger (= 0.73.6)
     - React-perflogger (= 0.73.6)
-  - ReactNativeMediaPipe (0.2.0):
+  - ReactNativeMediaPipe (0.3.0):
     - glog
     - MediaPipeTasksVision (= 0.10.12)
     - RCT-Folly (= 2022.05.16.00)
@@ -1460,7 +1460,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 9636eee762c699ca7c85751a359101797e4c8b3b
   React-utils: d16c1d2251c088ad817996621947d0ac8167b46c
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
-  ReactNativeMediaPipe: 799964fca19cb7391cc7ea91224f037317420a6e
+  ReactNativeMediaPipe: 3d63b78ed64d01ef5993ed55187ffee169898524
   RNCPicker: 3e2c37a8328f368ce14da050cdc8231deb5fc9f9
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNScreens: b6b64d956af3715adbfe84808694ae82d3fec74f

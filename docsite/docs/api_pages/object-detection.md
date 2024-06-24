@@ -238,7 +238,6 @@ const RequestPermissions: React.FC<{
  hasCameraPermission: boolean;
  requestCameraPermission: () => Promise<boolean>;
 }> = ({hasCameraPermission, requestCameraPermission}) => {
- console.log(hasCameraPermission);
  return (
    <View style={styles.container}>
      <Text style={styles.welcome}>Welcome to React Native Mediapipe</Text>

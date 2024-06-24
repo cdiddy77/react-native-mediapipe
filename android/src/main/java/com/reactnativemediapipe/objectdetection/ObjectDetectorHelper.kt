@@ -18,6 +18,7 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.objectdetector.ObjectDetector
 import com.google.mediapipe.tasks.vision.objectdetector.ObjectDetectorResult
 import com.mrousavy.camera.core.types.Orientation
+import com.reactnativemediapipe.shared.orientationToDegrees
 
 class ObjectDetectorHelper(
     var threshold: Float = THRESHOLD_DEFAULT,

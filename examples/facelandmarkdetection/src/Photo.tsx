@@ -110,8 +110,6 @@ export const Photo: React.FC<Props> = () => {
             ]
           : [];
 
-      console.log(JSON.stringify({ infTime: results.inferenceTime }));
-
       setFaceSegments(segments);
       setImagePath(image.path);
       setScreenState("completed");

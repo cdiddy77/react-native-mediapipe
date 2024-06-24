@@ -77,12 +77,3 @@ fun convertResultBundleToWritableMap(resultBundle: ObjectDetectorHelper.ResultBu
   return map
 }
 
-
-fun orientationToDegrees(orientation: Orientation): Int =
-  when (orientation) {
-    Orientation.PORTRAIT -> 0
-    Orientation.LANDSCAPE_LEFT -> 90
-    Orientation.PORTRAIT_UPSIDE_DOWN -> 180
-    Orientation.LANDSCAPE_RIGHT -> -90
-  }
-

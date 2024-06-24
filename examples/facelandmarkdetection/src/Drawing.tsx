@@ -5,7 +5,7 @@ import {
   denormalizePoint,
   framePointToView,
   type Dims,
-  type FaceLandmark,
+  type Landmark,
   type FaceLandmarkConnection,
   type Point,
 } from "react-native-mediapipe";
@@ -70,7 +70,7 @@ const COLOR_NAMES = [
 type ColorName = (typeof COLOR_NAMES)[number];
 
 export function convertLandmarksToSegments(
-  landmarks: FaceLandmark[],
+  landmarks: Landmark[],
   positions: FaceLandmarkConnection[],
   color: ColorName,
   frameSize: { width: number; height: number },

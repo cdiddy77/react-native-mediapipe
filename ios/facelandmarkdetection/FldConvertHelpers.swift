@@ -32,37 +32,6 @@ func convertFldResultBundleToDictionary(_ resultBundle: FaceLandmarkDetectionRes
   return map
 }
 
-// Converts NormalizedLandmark to a Dictionary
-func normalizedLandmarkToDictionary(_ landmark: NormalizedLandmark) -> [String: Any] {
-  var dict = [
-    "x": landmark.x,
-    "y": landmark.y,
-    "z": landmark.z
-  ]
-  if let visibility = landmark.visibility {
-    dict["visibility"] = visibility.floatValue
-  }
-  if let presence = landmark.presence {
-    dict["presence"] = presence.floatValue
-  }
-  return dict
-}
-
-// Converts TransformMatrix to a Dictionary
-func transformMatrixToDictionary(_ matrix: TransformMatrix) -> [String: Any] {
-  var data = [Float]()
-  for row in 0..<matrix.rows {
-    for column in 0..<matrix.columns {
-      data.append(matrix.value(atRow: row, column: column))
-    }
-  }
-  return [
-    "rows": matrix.rows,
-    "columns": matrix.columns,
-    "data": data
-  ]
-}
-
 // Converts Classifications to a Dictionary
 func classificationsToDictionary(_ classification: Classifications) -> [String: Any] {
   let categories = classification.categories.map {

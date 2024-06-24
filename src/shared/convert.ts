@@ -15,6 +15,21 @@ export function denormalizePoint(p: Point, dims: Dims): Point {
     y: p.y * dims.height,
   };
 }
+
+export function rotateNormalizedPoint(point: Point, rotation: number): Point {
+  if (rotation === 0) {
+    return point;
+  } else if (rotation === 90) {
+    return { x: point.y, y: 1 - point.x };
+  } else if (rotation === 180) {
+    return { x: 1 - point.x, y: 1 - point.y };
+  } else if (rotation === 270 || rotation === -90) {
+    return { x: 1 - point.y, y: point.x };
+  } else {
+    throw new Error(`Unsupported rotation ${rotation}`);
+  }
+}
+
 // both cover and contain preserve aspect ratio. Cover will crop the image to fill the view, contain will show the whole image and add padding.
 // for cover, if the aspect ratio x/y of the frame is greater than
 export function framePointToView(

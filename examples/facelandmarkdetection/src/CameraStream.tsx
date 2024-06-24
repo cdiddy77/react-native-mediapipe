@@ -137,8 +137,6 @@ export const CameraStream: React.FC<Props> = () => {
             ]
           : [];
 
-      console.log(JSON.stringify({ infTime: results.inferenceTime }));
-
       setFaceSegments(segments);
     },
     (error) => {

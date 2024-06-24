@@ -3,7 +3,7 @@
 ## How to create a new example
 
 ```sh
-npx react-native@latest init examplename
+npx npx @react-native-community/cli@latest init examplename
 cd examplename
 yarn
 bundle install
@@ -40,3 +40,19 @@ per [RNVC getting started - updating manifests](https://react-native-vision-came
 
 Lift from [This PR](https://github.com/cdiddy77/react-native-mediapipe/pull/85) and from the appropriate example from [the MediaPipe examples](https://github.com/googlesamples/mediapipe/blob/9d0624bb1cf1baa8ac31991748d69ec219aa3535/examples)
 
+### add boilerplate code for tabs/icons/etc
+
+```sh
+yarn add @react-native-community/slider @react-native-picker/picker @react-navigation/bottom-tabs @react-navigation/native @shopify/react-native-skia react-native-image-crop-picker react-native-picker-select react-native-safe-area-context react-native-screens react-native-vector-icons
+yarn add -D @types/react-native-vector-icons
+```
+
+- Follow special installation for react-native-vector-icons. Lift from [This PR](https://github.com/cdiddy77/react-native-mediapipe/pull/60)
+- copy various files from a different example `src` directory to the new `src` directory
+  - app-settings.ts
+  - App.tsx
+  - CameraStream.tsx
+  - Drawing.tsx
+  - navigation.ts
+  - Photo.tsx
+  - Settings.tsx

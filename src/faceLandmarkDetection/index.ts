@@ -9,14 +9,17 @@ import {
   VisionCameraProxy,
   useFrameProcessor,
   type CameraDevice,
+  type Orientation,
 } from "react-native-vision-camera";
 import {
   Delegate,
-  type DetectionCallbacks,
   type DetectionError,
+  type Landmark,
   type MediaPipeSolution,
   type RunningMode,
+  type TransformMatrix,
 } from "../shared/types";
+import type { Dims } from "../shared/convert";
 
 const { FaceLandmarkDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(FaceLandmarkDetection);
@@ -98,22 +101,6 @@ export interface FaceLandmarkDetectionResultBundle {
   // inputImageRotation: number;
 }
 
-// Interface for a normalized landmark point in 3D space
-export interface FaceLandmark {
-  x: number;
-  y: number;
-  z: number;
-  visibility?: number; // Optional as it might not be supported
-  presence?: number; // Optional as it might not be supported
-}
-
-// Interface for the transformation matrix
-interface TransformMatrix {
-  rows: number;
-  columns: number;
-  data: number[];
-}
-
 // Interface for the category, assuming this is part of the classifications
 interface Category {
   categoryName?: string;
@@ -130,7 +117,7 @@ interface Classifications {
 
 // Interface for FaceLandmarkerResult
 export interface FaceLandmarkerResult {
-  faceLandmarks: FaceLandmark[][];
+  faceLandmarks: Landmark[][];
   faceBlendshapes: Classifications[];
   facialTransformationMatrixes: TransformMatrix[];
 }
@@ -144,8 +131,16 @@ export interface FaceLandmarkDetectionOptions {
   mirrorMode: "no-mirror" | "mirror" | "mirror-front-only";
 }
 
-export type FaceLandmarkDetectionCallbacks =
-  DetectionCallbacks<FaceLandmarkDetectionResultBundle>;
+export interface FaceLandmarkDetectionCallbacks {
+  onResults: (
+    result: FaceLandmarkDetectionResultBundle,
+    viewSize: Dims,
+    mirrored: boolean
+  ) => void;
+  onError: (error: DetectionError) => void;
+  viewSize: Dims;
+  mirrored: boolean;
+}
 
 // TODO setup the general event callbacks
 const detectorMap: Map<number, FaceLandmarkDetectionCallbacks> = new Map();
@@ -184,6 +179,9 @@ export function useFaceLandmarkDetection(
     height: number;
   }>({ width: 1, height: 1 });
 
+  const [_outputOrientation, setOutputOrientation] =
+    React.useState<Orientation>("portrait");
+
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
       setCameraViewDimensions({
@@ -193,6 +191,7 @@ export function useFaceLandmarkDetection(
     },
     []
   );
+
   const mirrorMode =
     options?.mirrorMode ??
     Platform.select({ android: "mirror-front-only", default: "no-mirror" });
@@ -278,6 +277,9 @@ export function useFaceLandmarkDetection(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
       cameraDeviceChangeHandler: setCameraDevice,
+      cameraOrientationChangedHandler: setOutputOrientation,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      resizeModeChangeHandler: () => {},
       cameraViewDimensions,
       frameProcessor,
     }),
