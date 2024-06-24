@@ -26,7 +26,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={`Hello from ${siteConfig.title}`}
-      description="A React Native Camera and Player for MediaPipe applications">
+      description="A React Native Camera and Player for MediaPipe applications.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
