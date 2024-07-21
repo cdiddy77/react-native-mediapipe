@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import {
   VisionCameraProxy,
+  runAtTargetFps,
   useFrameProcessor,
   type CameraDevice,
   type Orientation,
@@ -79,6 +80,8 @@ export interface PoseLandmarkerResult {
 export type PoseDetectionResultBundle =
   DetectionResultBundle<PoseLandmarkerResult>;
 
+type FpsMode = "none" | number;
+
 export interface PoseDetectionOptions {
   numPoses: number;
   minPoseDetectionConfidence: number;
@@ -87,6 +90,7 @@ export interface PoseDetectionOptions {
   shouldOutputSegmentationMasks: boolean;
   delegate: Delegate;
   mirrorMode: "no-mirror" | "mirror" | "mirror-front-only";
+  fpsMode: FpsMode;
 }
 
 type PoseDetectionCallbackState =
@@ -240,12 +244,20 @@ export function usePoseDetection(
     options?.minTrackingConfidence,
     options?.shouldOutputSegmentationMasks,
   ]);
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      plugin?.call(frame, { detectorHandle });
+      const asyncMode = options?.fpsMode ?? "none";
+      if (asyncMode === "none") {
+        plugin?.call(frame, { detectorHandle });
+      } else {
+        runAtTargetFps(asyncMode, () => {
+          plugin?.call(frame, { detectorHandle });
+        });
+      }
     },
-    [detectorHandle]
+    [detectorHandle, options?.fpsMode]
   );
   return React.useMemo(
     (): MediaPipeSolution => ({

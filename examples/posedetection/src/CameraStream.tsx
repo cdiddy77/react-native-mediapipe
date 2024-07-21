@@ -4,7 +4,6 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   MediapipeCamera,
   RunningMode,
-  type Point,
   usePoseDetection,
   KnownPoseLandmarkConnections,
   type DetectionError,
@@ -20,6 +19,8 @@ import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
 import { PoseDrawFrame } from "./Drawing";
+import { useSharedValue } from "react-native-reanimated";
+import { vec, type SkPoint } from "@shopify/react-native-skia";
 
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
 
@@ -47,16 +48,7 @@ export const CameraStream: React.FC<Props> = () => {
     );
   };
 
-  const [landmarks, setLandmarks] = React.useState<Point[]>([]);
-
-  const connections = React.useMemo((): [Point, Point][] => {
-    return landmarks.length > 0
-      ? KnownPoseLandmarkConnections.map((connection) => [
-          landmarks[connection[0]],
-          landmarks[connection[1]],
-        ])
-      : [];
-  }, [landmarks]);
+  const connections = useSharedValue<SkPoint[]>([]);
 
   const onResults = React.useCallback(
     (results: PoseDetectionResultBundle, vc: ViewCoordinator): void => {
@@ -80,9 +72,17 @@ export const CameraStream: React.FC<Props> = () => {
       // );
       const frameDims = vc.getFrameDims(results);
       const pts = results.results[0].landmarks[0] ?? [];
-      setLandmarks(pts.map((landmark) => vc.convertPoint(frameDims, landmark)));
+      const newLines: SkPoint[] = [];
+      for (const connection of KnownPoseLandmarkConnections) {
+        const [a, b] = connection;
+        const pt1 = vc.convertPoint(frameDims, pts[a]);
+        const pt2 = vc.convertPoint(frameDims, pts[b]);
+        newLines.push(vec(pt1.x, pt1.y));
+        newLines.push(vec(pt2.x, pt2.y));
+      }
+      connections.value = newLines;
     },
-    []
+    [connections]
   );
   const onError = React.useCallback((error: DetectionError): void => {
     console.log(`error: ${error}`);
@@ -93,7 +93,8 @@ export const CameraStream: React.FC<Props> = () => {
       onError: onError,
     },
     RunningMode.LIVE_STREAM,
-    `${settings.model}.task`
+    `${settings.model}.task`,
+    { fpsMode: "none" } // supply a number instead to get a specific framerate
   );
 
   if (permsGranted.cam) {
@@ -105,11 +106,7 @@ export const CameraStream: React.FC<Props> = () => {
           activeCamera={active}
           resizeMode="cover"
         />
-        <PoseDrawFrame
-          points={landmarks}
-          lines={connections}
-          style={styles.box}
-        />
+        <PoseDrawFrame connections={connections} style={styles.box} />
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
           <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
         </Pressable>
