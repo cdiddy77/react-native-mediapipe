@@ -1,37 +1,30 @@
 import React from "react";
-import { Canvas, Circle, Line, vec } from "@shopify/react-native-skia";
+import { Canvas, Points, type SkPoint } from "@shopify/react-native-skia";
 import { type StyleProp, type ViewStyle } from "react-native";
-import { type Point } from "react-native-mediapipe";
+import type { SharedValue } from "react-native-reanimated";
 
 export interface PoseDrawFrameProps {
-  points: Point[];
-  lines: [Point, Point][];
+  connections: SharedValue<SkPoint[]>;
   style?: StyleProp<ViewStyle>;
 }
 export const PoseDrawFrame: React.FC<PoseDrawFrameProps> = (props) => {
   return (
     <Canvas style={props.style}>
-      {props.lines.map((segment, index) => (
-        <Line
-          key={index}
-          p1={vec(segment[0].x, segment[0].y)}
-          p2={vec(segment[1].x, segment[1].y)}
-          color="ForestGreen"
-          style="stroke"
-          strokeWidth={4}
-        />
-      ))}
-      {props.points.map((p, index) => (
-        <Circle
-          key={index}
-          cx={p.x}
-          cy={p.y}
-          r={5}
-          color="red"
-          strokeWidth={3}
-          style="stroke"
-        />
-      ))}
+      <Points
+        points={props.connections}
+        mode="lines"
+        color={"lightblue"}
+        style={"stroke"}
+        strokeWidth={3}
+      />
+      <Points
+        points={props.connections}
+        mode="points"
+        color={"red"}
+        style={"stroke"}
+        strokeWidth={10}
+        strokeCap={"round"}
+      />
     </Canvas>
   );
 };
