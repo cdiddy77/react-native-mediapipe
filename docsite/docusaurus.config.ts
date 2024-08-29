@@ -6,7 +6,7 @@ const config: Config = {
 
   title: 'React Native MediaPipe',
   tagline: 'A React Native Camera and Player for MediaPipe applications',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/react-native-mediapipe-favicon.ico',
 
   // Set the production url of your site here
   url: 'https://cdiddy77.github.io/',
