@@ -2,55 +2,49 @@
 /* eslint @typescript-eslint/no-var-requires: "off" */
 /* eslint @typescript-eslint/no-unsafe-assignment: "off" */
 
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import clsx from "clsx";
+import Heading from "@theme/Heading";
+import styles from "./styles.module.css";
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: JSX.Element;
+  Svg?: React.ComponentType<React.ComponentProps<"svg">>;
+  linkLabel: string;
+  link: string;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
-    description: (
-      <>
-        Well, we&apos;re trying.
-      </>
-    ),
+    title: "Installation",
+    linkLabel:
+      "Getting Started: Integrate React Native MediaPipe into your project.",
+    link: "/react-native-mediapipe/docs/intro",
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        For a camera app, that&apos;s important
-      </>
-    ),
+    title: "Object Detection",
+    linkLabel:
+      "Getting Started: Track and categorize objects using your mobile camera.",
+    link: "/react-native-mediapipe/docs/api_pages/object-detection",
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Because it reacts.
-      </>
-    ),
+    title: "Face Landmark Detection",
+    linkLabel:
+      "Getting Started: Captures main facial points and expressions in real-time.",
+    link: "/react-native-mediapipe/docs/api_pages/face-landmark-detection",
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, Svg, link, linkLabel }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        {Svg && <Svg className={styles.featureSvg} role="img" />}
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
+        <a href={link} target="_blank" rel="noopener noreferrer">
+          <p>{linkLabel}</p>
+        </a>
       </div>
     </div>
   );
