@@ -248,11 +248,11 @@ export function usePoseDetection(
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      const asyncMode = options?.fpsMode ?? "none";
-      if (asyncMode === "none") {
+      const fpsMode = options?.fpsMode ?? "none";
+      if (fpsMode === "none") {
         plugin?.call(frame, { detectorHandle });
       } else {
-        runAtTargetFps(asyncMode, () => {
+        runAtTargetFps(fpsMode, () => {
           plugin?.call(frame, { detectorHandle });
         });
       }
