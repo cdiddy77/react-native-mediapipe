@@ -19,6 +19,15 @@ public class PoseDetectionFrameProcessorPlugin: FrameProcessorPlugin {
     guard let detectorHandleValue = arguments?["detectorHandle"] as? Double else {
       return false
     }
+    // get the orientation argument. If its nil, return false
+    guard let orientation = arguments?["orientation"] as? String else {
+      return false
+    }
+    // convert the orientation string to a UIImage.Orientation
+    guard let uiOrientation = uiImageOrientation(from: orientation) else {
+      return false
+    }
+    
 
     // Now that we have a valid Double, attempt to retrieve the detector using it
     guard let detector = PoseDetectionModule.detectorMap[Int(detectorHandleValue)] else {
@@ -28,7 +37,7 @@ public class PoseDetectionFrameProcessorPlugin: FrameProcessorPlugin {
     let buffer = frame.buffer
     detector.detectAsync(
       sampleBuffer: buffer,
-      orientation: frame.orientation,
+      orientation: uiOrientation,
       timeStamps: Int(Date().timeIntervalSince1970 * 1000))
     return true
   }

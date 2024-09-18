@@ -1,13 +1,15 @@
-export type Dims = { width: number; height: number };
-export type Point = { x: number; y: number };
-export type RectXYWH = { x: number; y: number; width: number; height: number };
-export type RectLTRB = {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-};
-export type ResizeMode = "cover" | "contain";
+import {
+  dimsByOrientation,
+  orientationToRotation,
+  type Dims,
+  type FrameProcessInfo,
+  type ImageOrientation,
+  type Point,
+  type RectLTRB,
+  type RectXYWH,
+  type ResizeMode,
+  type ViewCoordinator,
+} from "./types";
 
 export function denormalizePoint(p: Point, dims: Dims): Point {
   return {
@@ -192,5 +194,118 @@ export function clampToDims<TRect extends RectLTRB | RectXYWH>(
     const width = Math.max(0, Math.min(rect.width, dims.width - x));
     const height = Math.max(0, Math.min(rect.height, dims.height - y));
     return { x, y, width, height } as TRect;
+  }
+}
+
+function getDegrees(orientation: ImageOrientation): number {
+  switch (orientation) {
+    case "portrait":
+      return 0;
+    case "landscape-left":
+      return 90;
+    case "portrait-upside-down":
+      return 180;
+    case "landscape-right":
+      return 270;
+  }
+}
+
+function getOrientation(degrees: number): ImageOrientation {
+  const clamped = (degrees + 360) % 360;
+  if (clamped >= 315 || clamped <= 45) {
+    return "portrait";
+  } else if (clamped >= 45 && clamped <= 135) {
+    return "landscape-left";
+  } else if (clamped >= 135 && clamped <= 225) {
+    return "portrait-upside-down";
+  } else if (clamped >= 225 && clamped <= 315) {
+    return "landscape-right";
+  } else {
+    throw new Error(`Invalid degrees! ${degrees}`);
+  }
+}
+
+function relativeTo(
+  a: ImageOrientation,
+  b: ImageOrientation
+): ImageOrientation {
+  return getOrientation(getDegrees(a) - getDegrees(b));
+}
+
+export function worklet_getDegrees(orientation: ImageOrientation): number {
+  "worklet";
+  switch (orientation) {
+    case "portrait":
+      return 0;
+    case "landscape-left":
+      return 90;
+    case "portrait-upside-down":
+      return 180;
+    case "landscape-right":
+      return 270;
+  }
+}
+
+export function worklet_getOrientation(degrees: number): ImageOrientation {
+  "worklet";
+  const clamped = (degrees + 360) % 360;
+  if (clamped >= 315 || clamped <= 45) {
+    return "portrait";
+  } else if (clamped >= 45 && clamped <= 135) {
+    return "landscape-left";
+  } else if (clamped >= 135 && clamped <= 225) {
+    return "portrait-upside-down";
+  } else if (clamped >= 225 && clamped <= 315) {
+    return "landscape-right";
+  } else {
+    throw new Error(`Invalid degrees! ${degrees}`);
+  }
+}
+
+export function worklet_relativeTo(
+  a: ImageOrientation,
+  b: ImageOrientation
+): ImageOrientation {
+  "worklet";
+  return worklet_getOrientation(worklet_getDegrees(a) - worklet_getDegrees(b));
+}
+
+export class BaseViewCoordinator implements ViewCoordinator {
+  private rotation: number;
+  private orientation: ImageOrientation;
+  constructor(
+    private viewSize: Dims,
+    private mirrored: boolean,
+    sensorOrientation: ImageOrientation,
+    outputOrientation: ImageOrientation,
+    private resizeMode: ResizeMode
+  ) {
+    this.orientation = relativeTo(outputOrientation, sensorOrientation);
+    this.rotation = orientationToRotation(this.orientation);
+    console.log(
+      "BaseViewCoordinator.constructor",
+      JSON.stringify({
+        orientation: this.orientation,
+        rotation: this.rotation,
+        sensorOrientation,
+        outputOrientation,
+      })
+    );
+  }
+  getFrameDims(info: FrameProcessInfo): Dims {
+    return dimsByOrientation(
+      this.orientation,
+      info.inputImageWidth,
+      info.inputImageHeight
+    );
+  }
+  convertPoint(frame: Dims, p: Point): Point {
+    return framePointToView(
+      denormalizePoint(rotateNormalizedPoint(p, this.rotation), frame),
+      frame,
+      this.viewSize,
+      this.resizeMode,
+      this.mirrored
+    );
   }
 }

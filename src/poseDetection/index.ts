@@ -20,23 +20,13 @@ import {
   type Mask,
   type DetectionCallbackState,
   type DetectionError,
-  type ViewCoordinator,
   type DetectionResultBundle,
-  type FrameProcessInfo,
   type DetectionCallbacks,
-  dimsByOrientation,
-  orientationToRotation,
-  rotateCounterclockwise,
-  mirror,
-} from "../shared/types";
-import {
-  denormalizePoint,
-  framePointToView,
-  rotateNormalizedPoint,
-  type Dims,
-  type Point,
   type ResizeMode,
-} from "../shared/convert";
+  type ImageOrientation,
+} from "../shared/types";
+import { BaseViewCoordinator } from "../shared/convert";
+import { useRunOnJS, useSharedValue } from "react-native-worklets-core";
 
 const { PoseDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(PoseDetection);
@@ -90,6 +80,8 @@ export interface PoseDetectionOptions {
   shouldOutputSegmentationMasks: boolean;
   delegate: Delegate;
   mirrorMode: "no-mirror" | "mirror" | "mirror-front-only";
+  forceOutputOrientation: ImageOrientation;
+  forceCameraOrientation: ImageOrientation;
   fpsMode: FpsMode;
 }
 
@@ -137,8 +129,6 @@ export function usePoseDetection(
     width: number;
     height: number;
   }>({ width: 1, height: 1 });
-  const [outputOrientation, setOutputOrientation] =
-    React.useState<Orientation>("portrait");
 
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
@@ -149,6 +139,26 @@ export function usePoseDetection(
     },
     []
   );
+  const outputOrientation = useSharedValue<Orientation>("portrait");
+  const frameOrientation = useSharedValue<Orientation>("portrait");
+
+  const forceOutputOrientation = useSharedValue<ImageOrientation | undefined>(
+    undefined
+  );
+  const forceCameraOrientation = useSharedValue<ImageOrientation | undefined>(
+    undefined
+  );
+
+  React.useEffect(() => {
+    forceCameraOrientation.value = options?.forceCameraOrientation;
+    forceOutputOrientation.value = options?.forceOutputOrientation;
+  }, [
+    forceCameraOrientation,
+    forceOutputOrientation,
+    options?.forceCameraOrientation,
+    options?.forceOutputOrientation,
+  ]);
+
   const mirrorMode =
     options?.mirrorMode ??
     Platform.select({ android: "mirror-front-only", default: "no-mirror" });
@@ -171,13 +181,13 @@ export function usePoseDetection(
 
   const { onResults, onError } = callbacks;
 
-  // Remember the latest callback if it changes.
-  React.useLayoutEffect(() => {
+  const updateDetectorMap = React.useCallback(() => {
     if (detectorHandle !== undefined) {
-      const viewCoordinator = new PoseViewCoordinator(
+      const viewCoordinator = new BaseViewCoordinator(
         cameraViewDimensions,
         mirrored,
-        outputOrientation,
+        forceCameraOrientation.value ?? frameOrientation.value,
+        forceOutputOrientation.value ?? outputOrientation.value,
         resizeMode
       );
       detectorMap.set(detectorHandle, {
@@ -187,14 +197,22 @@ export function usePoseDetection(
       });
     }
   }, [
-    detectorHandle,
     cameraViewDimensions,
+    detectorHandle,
+    forceCameraOrientation.value,
+    forceOutputOrientation.value,
+    frameOrientation.value,
     mirrored,
-    outputOrientation,
-    onResults,
     onError,
+    onResults,
+    outputOrientation.value,
     resizeMode,
   ]);
+
+  // Remember the latest callback if it changes.
+  React.useLayoutEffect(() => {
+    updateDetectorMap();
+  }, [updateDetectorMap]);
   React.useEffect(() => {
     let newHandle: number | undefined;
     console.log(
@@ -245,30 +263,76 @@ export function usePoseDetection(
     options?.shouldOutputSegmentationMasks,
   ]);
 
+  const updateDetectorMapFromWorklet = useRunOnJS(updateDetectorMap, [
+    updateDetectorMap,
+  ]);
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
+      // console.log(
+      //   `frameProcessor: ${frame.orientation}: ${frame.width}x${frame.height}:${outputOrientation.value}`
+      // );
+      // const orientation = frame.orientation;
+      if (frame.orientation !== frameOrientation.value) {
+        console.log("changing frame orientation", frame.orientation);
+        frameOrientation.value = frame.orientation;
+        updateDetectorMapFromWorklet();
+      }
+      // const orientation: ImageOrientation = worklet_relativeTo(
+      //   outputOrientation.value,
+      //   frameOrientation.value
+      // );
+      const orientation: ImageOrientation =
+        forceOutputOrientation.value ?? outputOrientation.value;
+      // const orientation: ImageOrientation = frameOrientation.value;
       const fpsMode = options?.fpsMode ?? "none";
       if (fpsMode === "none") {
-        plugin?.call(frame, { detectorHandle });
+        plugin?.call(frame, {
+          detectorHandle,
+          orientation,
+        });
       } else {
         runAtTargetFps(fpsMode, () => {
-          plugin?.call(frame, { detectorHandle });
+          plugin?.call(frame, {
+            detectorHandle,
+            orientation,
+          });
         });
       }
     },
-    [detectorHandle, options?.fpsMode]
+    [
+      detectorHandle,
+      forceOutputOrientation.value,
+      frameOrientation,
+      options?.fpsMode,
+      outputOrientation.value,
+      updateDetectorMapFromWorklet,
+    ]
   );
   return React.useMemo(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
-      cameraDeviceChangeHandler: setCameraDevice,
-      cameraOrientationChangedHandler: setOutputOrientation,
+      cameraDeviceChangeHandler: (d) => {
+        setCameraDevice(d);
+        console.log(
+          `camera device change. sensorOrientation:${d?.sensorOrientation}`
+        );
+      },
+      cameraOrientationChangedHandler: (o) => {
+        outputOrientation.value = o;
+        console.log(`output orientation change:${o}`);
+      },
       resizeModeChangeHandler: setResizeMode,
       cameraViewDimensions,
       frameProcessor,
     }),
-    [cameraViewDimensions, cameraViewLayoutChangeHandler, frameProcessor]
+    [
+      cameraViewDimensions,
+      cameraViewLayoutChangeHandler,
+      frameProcessor,
+      outputOrientation,
+    ]
   );
 }
 
@@ -287,42 +351,6 @@ export function PoseDetectionOnImage(
     model,
     options?.delegate ?? Delegate.GPU
   );
-}
-
-class PoseViewCoordinator implements ViewCoordinator {
-  private rotation: number;
-  private orientation: Orientation;
-  constructor(
-    private viewSize: Dims,
-    private mirrored: boolean,
-    orientation: Orientation,
-    private resizeMode: ResizeMode
-  ) {
-    this.orientation = Platform.select({
-      default: orientation,
-      android: rotateCounterclockwise(orientation),
-    });
-    if (Platform.OS === "android" && mirrored) {
-      this.orientation = mirror(this.orientation);
-    }
-    this.rotation = orientationToRotation(this.orientation);
-  }
-  getFrameDims(info: FrameProcessInfo): Dims {
-    return dimsByOrientation(
-      this.orientation,
-      info.inputImageWidth,
-      info.inputImageHeight
-    );
-  }
-  convertPoint(frame: Dims, p: Point): Point {
-    return framePointToView(
-      denormalizePoint(rotateNormalizedPoint(p, this.rotation), frame),
-      frame,
-      this.viewSize,
-      this.resizeMode,
-      this.mirrored
-    );
-  }
 }
 
 export const KnownPoseLandmarks = {

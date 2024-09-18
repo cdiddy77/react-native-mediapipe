@@ -11,8 +11,13 @@ import {
   type CameraDevice,
   type Orientation,
 } from "react-native-vision-camera";
-import { Delegate, type MediaPipeSolution, RunningMode } from "../shared/types";
-import type { Dims } from "../shared/convert";
+import {
+  Delegate,
+  type Dims,
+  type MediaPipeSolution,
+  RunningMode,
+} from "../shared/types";
+import { useSharedValue } from "react-native-worklets-core";
 
 const { ObjectDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ObjectDetection);
@@ -147,8 +152,7 @@ export function useObjectDetection(
     width: number;
     height: number;
   }>({ width: 1, height: 1 });
-  const [_outputOrientation, setOutputOrientation] =
-    React.useState<Orientation>("portrait");
+  const outputOrientation = useSharedValue<Orientation>("portrait");
 
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
@@ -240,14 +244,21 @@ export function useObjectDetection(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
       cameraDeviceChangeHandler: setCameraDevice,
-      cameraOrientationChangedHandler: setOutputOrientation,
+      cameraOrientationChangedHandler: (o) => {
+        outputOrientation.value = o;
+      },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       resizeModeChangeHandler: () => {},
 
       cameraViewDimensions,
       frameProcessor,
     }),
-    [cameraViewDimensions, cameraViewLayoutChangeHandler, frameProcessor]
+    [
+      cameraViewDimensions,
+      cameraViewLayoutChangeHandler,
+      frameProcessor,
+      outputOrientation,
+    ]
   );
 }
 
