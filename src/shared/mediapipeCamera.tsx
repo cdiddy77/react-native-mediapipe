@@ -5,7 +5,6 @@ import {
   useCameraDevice,
   type CameraPosition,
   type CameraProps,
-  type Orientation,
 } from "react-native-vision-camera";
 import type { MediaPipeSolution } from "./types";
 
@@ -13,7 +12,7 @@ export type MediapipeCameraProps = {
   style: ViewStyle;
   solution: MediaPipeSolution;
   activeCamera?: CameraPosition;
-  orientation?: Orientation;
+  // orientation?: Orientation;
   resizeMode?: CameraProps["resizeMode"];
 };
 
@@ -31,6 +30,10 @@ export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
 }) => {
   const device = useCameraDevice(activeCamera);
   React.useEffect(() => {
+    console.log(
+      `camera device change. sensorOrientation:${device?.sensorOrientation}`
+    );
+
     cameraDeviceChangeHandler(device);
   }, [cameraDeviceChangeHandler, device]);
   React.useEffect(() => {
@@ -47,7 +50,10 @@ export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
       isActive={true}
       frameProcessor={frameProcessor}
       onLayout={cameraViewLayoutChangeHandler}
-      onOutputOrientationChanged={cameraOrientationChangedHandler}
+      onOutputOrientationChanged={(o) => {
+        console.log(`output orientation change:${o}`);
+        cameraOrientationChangedHandler(o);
+      }}
     />
   ) : (
     <Text>no device</Text>

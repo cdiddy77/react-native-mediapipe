@@ -14,12 +14,13 @@ import {
 import {
   Delegate,
   type DetectionError,
+  type Dims,
   type Landmark,
   type MediaPipeSolution,
   type RunningMode,
   type TransformMatrix,
 } from "../shared/types";
-import type { Dims } from "../shared/convert";
+import { useSharedValue } from "react-native-worklets-core";
 
 const { FaceLandmarkDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(FaceLandmarkDetection);
@@ -179,8 +180,7 @@ export function useFaceLandmarkDetection(
     height: number;
   }>({ width: 1, height: 1 });
 
-  const [_outputOrientation, setOutputOrientation] =
-    React.useState<Orientation>("portrait");
+  const outputOrientation = useSharedValue<Orientation>("portrait");
 
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
@@ -277,13 +277,20 @@ export function useFaceLandmarkDetection(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
       cameraDeviceChangeHandler: setCameraDevice,
-      cameraOrientationChangedHandler: setOutputOrientation,
+      cameraOrientationChangedHandler: (o) => {
+        outputOrientation.value = o;
+      },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       resizeModeChangeHandler: () => {},
       cameraViewDimensions,
       frameProcessor,
     }),
-    [cameraViewDimensions, cameraViewLayoutChangeHandler, frameProcessor]
+    [
+      cameraViewDimensions,
+      cameraViewLayoutChangeHandler,
+      frameProcessor,
+      outputOrientation,
+    ]
   );
 }
 

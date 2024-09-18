@@ -1217,7 +1217,7 @@ PODS:
     - React-logger (= 0.74.2)
     - React-perflogger (= 0.74.2)
     - React-utils (= 0.74.2)
-  - ReactNativeMediaPipe (0.3.0):
+  - ReactNativeMediaPipe (0.5.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1317,16 +1317,16 @@ PODS:
     - Yoga
   - SocketRocket (0.7.0)
   - TOCropViewController (2.7.4)
-  - VisionCamera (4.3.2):
-    - VisionCamera/Core (= 4.3.2)
-    - VisionCamera/FrameProcessors (= 4.3.2)
-    - VisionCamera/React (= 4.3.2)
-  - VisionCamera/Core (4.3.2)
-  - VisionCamera/FrameProcessors (4.3.2):
+  - VisionCamera (4.5.3):
+    - VisionCamera/Core (= 4.5.3)
+    - VisionCamera/FrameProcessors (= 4.5.3)
+    - VisionCamera/React (= 4.5.3)
+  - VisionCamera/Core (4.5.3)
+  - VisionCamera/FrameProcessors (4.5.3):
     - React
     - React-callinvoker
     - react-native-worklets-core
-  - VisionCamera/React (4.3.2):
+  - VisionCamera/React (4.5.3):
     - React-Core
     - VisionCamera/FrameProcessors
   - Yoga (0.0.0)
@@ -1600,7 +1600,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 56b642bf605ba5afa500d35790928fc1d51565ad
   React-utils: 4476b7fcbbd95cfd002f3e778616155241d86e31
   ReactCommon: ecad995f26e0d1e24061f60f4e5d74782f003f12
-  ReactNativeMediaPipe: 9fb6031b19069ff4fb115a804c2b309978e087a8
+  ReactNativeMediaPipe: f87bcbee9335fff9d2ca3088106df9bd91d3f7a5
   RNCPicker: b7873ba797dc586bfaf3307d737cbdc620a9ff3e
   RNImageCropPicker: 771e2ca319d2cf92e04ebf334ece892ee9a6728f
   RNReanimated: f9192536fa8a312c737eaf15c905f78831193ef1
@@ -1608,7 +1608,7 @@ SPEC CHECKSUMS:
   RNVectorIcons: 2a2f79274248390b80684ea3c4400bd374a15c90
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
-  VisionCamera: 9f7b70431c8662ff933e1ed66d074bdba3a63f7d
+  VisionCamera: 3b7cfecebbcb3871c4dd3fb47791b96a47fe5371
   Yoga: ae3c32c514802d30f687a04a6a35b348506d411f
 
 PODFILE CHECKSUM: be23dbddccbf073a228490eba31d93ec7f11cab7

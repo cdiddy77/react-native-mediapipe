@@ -4,7 +4,19 @@ import type {
   Orientation,
   ReadonlyFrameProcessor,
 } from "react-native-vision-camera";
-import type { Dims, Point, ResizeMode } from "./convert";
+
+export type Dims = { width: number; height: number };
+export type Point = { x: number; y: number };
+export type RectXYWH = { x: number; y: number; width: number; height: number };
+export type RectLTRB = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+};
+export type ResizeMode = "cover" | "contain";
+
+export type ImageOrientation = Orientation;
 
 export interface MediaPipeSolution {
   frameProcessor: ReadonlyFrameProcessor;

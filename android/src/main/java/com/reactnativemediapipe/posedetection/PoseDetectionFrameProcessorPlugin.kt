@@ -3,6 +3,7 @@ package com.reactnativemediapipe.posedetection
 import com.google.mediapipe.framework.image.MediaImageBuilder
 import com.mrousavy.camera.frameprocessors.Frame
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
+import com.reactnativemediapipe.shared.imageOrientation
 
 class PoseDetectionFrameProcessorPlugin() : FrameProcessorPlugin() {
 
@@ -13,9 +14,12 @@ class PoseDetectionFrameProcessorPlugin() : FrameProcessorPlugin() {
   override fun callback(frame: Frame, params: MutableMap<String, Any>?): Any? {
     val detectorHandle: Double = params!!["detectorHandle"] as Double
     val detector = PoseDetectorMap.detectorMap[detectorHandle.toInt()] ?: return false
+    val orientation = params["orientation"] as String
+    val mappedOrientation = imageOrientation(orientation)
+    mappedOrientation ?: return false
 
     val mpImage = MediaImageBuilder(frame.image).build()
-    detector.detectLiveStream(mpImage, frame.orientation)
+    detector.detectLiveStream(mpImage, mappedOrientation)
     // val bitmap = imageToBitmap(frame.imageProxy)
     // if (bitmap != null) {
     //   val rotated = rotateBitmap(bitmap, orientationToDegrees(frame.orientation).toFloat())

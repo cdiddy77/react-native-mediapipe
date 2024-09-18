@@ -73,12 +73,16 @@ export const CameraStream: React.FC<Props> = () => {
       const frameDims = vc.getFrameDims(results);
       const pts = results.results[0].landmarks[0] ?? [];
       const newLines: SkPoint[] = [];
-      for (const connection of KnownPoseLandmarkConnections) {
-        const [a, b] = connection;
-        const pt1 = vc.convertPoint(frameDims, pts[a]);
-        const pt2 = vc.convertPoint(frameDims, pts[b]);
-        newLines.push(vec(pt1.x, pt1.y));
-        newLines.push(vec(pt2.x, pt2.y));
+      if (pts.length === 0) {
+        // console.log("No landmarks detected");
+      } else {
+        for (const connection of KnownPoseLandmarkConnections) {
+          const [a, b] = connection;
+          const pt1 = vc.convertPoint(frameDims, pts[a]);
+          const pt2 = vc.convertPoint(frameDims, pts[b]);
+          newLines.push(vec(pt1.x, pt1.y));
+          newLines.push(vec(pt2.x, pt2.y));
+        }
       }
       connections.value = newLines;
     },
@@ -94,7 +98,11 @@ export const CameraStream: React.FC<Props> = () => {
     },
     RunningMode.LIVE_STREAM,
     `${settings.model}.task`,
-    { fpsMode: "none" } // supply a number instead to get a specific framerate
+    {
+      fpsMode: "none",
+      // forceOutputOrientation: "portrait-upside-down",
+      // forceCameraOrientation: "landscape-left",
+    } // supply a number instead to get a specific framerate
   );
 
   if (permsGranted.cam) {

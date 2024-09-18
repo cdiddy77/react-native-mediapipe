@@ -21,21 +21,21 @@ import com.mrousavy.camera.core.types.Orientation
 import com.reactnativemediapipe.shared.orientationToDegrees
 
 class PoseDetectorHelper(
-  var minPoseDetectionConfidence: Float = DEFAULT_POSE_DETECTION_CONFIDENCE,
-  var minPoseTrackingConfidence: Float = DEFAULT_POSE_TRACKING_CONFIDENCE,
-  var minPosePresenceConfidence: Float = DEFAULT_POSE_PRESENCE_CONFIDENCE,
-  var maxNumPoses: Int = DEFAULT_NUM_POSES,
-  var shouldOutputSegmentationMasks: Boolean = DEFAULT_SHOULD_OUTPUT_SEGMENTATION_MASKS,
-  var currentDelegate: Int = DELEGATE_CPU,
-  var currentModel: String,
-  var runningMode: RunningMode = RunningMode.IMAGE,
-  val context: Context,
-  // this listener is only used when running in RunningMode.LIVE_STREAM
-  var poseDetectorListener: DetectorListener? = null
+        var minPoseDetectionConfidence: Float = DEFAULT_POSE_DETECTION_CONFIDENCE,
+        var minPoseTrackingConfidence: Float = DEFAULT_POSE_TRACKING_CONFIDENCE,
+        var minPosePresenceConfidence: Float = DEFAULT_POSE_PRESENCE_CONFIDENCE,
+        var maxNumPoses: Int = DEFAULT_NUM_POSES,
+        var shouldOutputSegmentationMasks: Boolean = DEFAULT_SHOULD_OUTPUT_SEGMENTATION_MASKS,
+        var currentDelegate: Int = DELEGATE_CPU,
+        var currentModel: String,
+        var runningMode: RunningMode = RunningMode.IMAGE,
+        val context: Context,
+        // this listener is only used when running in RunningMode.LIVE_STREAM
+        var poseDetectorListener: DetectorListener? = null
 ) {
 
   // For this example this needs to be a var so it can be reset on changes.
-  // If the Face Landmarker will not change, a lazy val would be preferable.
+  // If the pose Landmarker will not change, a lazy val would be preferable.
   private var poseLandmarker: PoseLandmarker? = null
   private var imageRotation = 0
 
@@ -50,22 +50,22 @@ class PoseDetectorHelper(
     // it is not safe to close it. So a better solution might be to mark it and then when
     // processing is complete, cause it to be closed.
     Handler(Looper.getMainLooper())
-      .postDelayed(
-        {
-          poseLandmarker?.close()
-          poseLandmarker = null
-        },
-        100
-      )
+            .postDelayed(
+                    {
+                      poseLandmarker?.close()
+                      poseLandmarker = null
+                    },
+                    100
+            )
   }
 
-  // Initialize the Face landmarker using current settings on the
+  // Initialize the pose landmarker using current settings on the
   // thread that is using it. CPU can be used with Landmarker
   // that are created on the main thread and used on a background thread, but
   // the GPU delegate needs to be used on the thread that initialized the
   // Landmarker
   private fun setupPoseLandmarker() {
-    // Set general face landmarker options
+    // Set general pose landmarker options
     val baseOptionBuilder = BaseOptions.builder()
 
     // Use the specified hardware for running the model. Default to CPU
@@ -73,7 +73,6 @@ class PoseDetectorHelper(
       DELEGATE_CPU -> {
         baseOptionBuilder.setDelegate(Delegate.CPU)
       }
-
       DELEGATE_GPU -> {
         baseOptionBuilder.setDelegate(Delegate.GPU)
       }
@@ -86,11 +85,10 @@ class PoseDetectorHelper(
       RunningMode.LIVE_STREAM -> {
         if (poseDetectorListener == null) {
           throw IllegalStateException(
-            "poseDetectorListener must be set when runningMode is LIVE_STREAM."
+                  "poseDetectorListener must be set when runningMode is LIVE_STREAM."
           )
         }
       }
-
       else -> {
         // no-op
       }
@@ -99,23 +97,23 @@ class PoseDetectorHelper(
     try {
       val baseOptions = baseOptionBuilder.build()
       // Create an option builder with base options and specific
-      // options only use for Face Landmarker.
+      // options only use for pose Landmarker.
       val optionsBuilder =
-        PoseLandmarker.PoseLandmarkerOptions.builder()
-          .setBaseOptions(baseOptions)
-          .setMinPoseDetectionConfidence(minPoseDetectionConfidence)
-          .setMinTrackingConfidence(minPoseTrackingConfidence)
-          .setMinPosePresenceConfidence(minPosePresenceConfidence)
-          .setNumPoses(maxNumPoses)
-          .setOutputSegmentationMasks(shouldOutputSegmentationMasks)
-          .setRunningMode(runningMode)
+              PoseLandmarker.PoseLandmarkerOptions.builder()
+                      .setBaseOptions(baseOptions)
+                      .setMinPoseDetectionConfidence(minPoseDetectionConfidence)
+                      .setMinTrackingConfidence(minPoseTrackingConfidence)
+                      .setMinPosePresenceConfidence(minPosePresenceConfidence)
+                      .setNumPoses(maxNumPoses)
+                      .setOutputSegmentationMasks(shouldOutputSegmentationMasks)
+                      .setRunningMode(runningMode)
 
       // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
       if (runningMode == RunningMode.LIVE_STREAM) {
         optionsBuilder
-          .setRunningMode(runningMode)
-          .setResultListener(this::returnLivestreamResult)
-          .setErrorListener(this::returnLivestreamError)
+                .setRunningMode(runningMode)
+                .setResultListener(this::returnLivestreamResult)
+                .setErrorListener(this::returnLivestreamError)
       } else {
         optionsBuilder.setRunningMode(runningMode)
       }
@@ -124,16 +122,16 @@ class PoseDetectorHelper(
       poseLandmarker = PoseLandmarker.createFromOptions(context, options)
     } catch (e: IllegalStateException) {
       poseDetectorListener?.onError(
-        "Face Landmarker failed to initialize. See error logs for " + "details"
+              "Pose Landmarker failed to initialize. See error logs for " + "details"
       )
       Log.e(TAG, "MediaPipe failed to load the task with error: " + e.message)
     } catch (e: RuntimeException) {
       // This occurs if the model being used does not support GPU
       poseDetectorListener?.onError(
-        "Face Landmarker failed to initialize. See error logs for " + "details",
-        GPU_ERROR
+              "Pose Landmarker failed to initialize. See error logs for " + "details",
+              GPU_ERROR
       )
-      Log.e(TAG, "Face Landmarker failed to load model with error: " + e.message)
+      Log.e(TAG, "Pose Landmarker failed to load model with error: " + e.message)
     }
   }
 
@@ -142,13 +140,13 @@ class PoseDetectorHelper(
   }
 
   // Accepts the URI for a video file loaded from the user's gallery and attempts to run
-  // face landmarker inference on the video. This process will evaluate every
+  // pose landmarker inference on the video. This process will evaluate every
   // frame in the video and attach the results to a bundle that will be
   // returned.
   fun detectVideoFile(videoUri: Uri, inferenceIntervalMs: Long): ResultBundle? {
     if (runningMode != RunningMode.VIDEO) {
       throw IllegalArgumentException(
-        "Attempting to call detectVideoFile" + " while not using RunningMode.VIDEO"
+              "Attempting to call detectVideoFile" + " while not using RunningMode.VIDEO"
       )
     }
 
@@ -162,11 +160,11 @@ class PoseDetectorHelper(
 
     var didErrorOccurred = false
 
-    // Load frames from the video and run the face landmarker.
+    // Load frames from the video and run the pose landmarker.
     val retriever = MediaMetadataRetriever()
     retriever.setDataSource(context, videoUri)
     val videoLengthMs =
-      retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()
 
     // Note: We need to read width/height from frame instead of getting the width/height
     // of the video directly because MediaRetriever returns frames that are smaller than the
@@ -186,35 +184,36 @@ class PoseDetectorHelper(
       val timestampMs = i * inferenceIntervalMs // ms
 
       retriever.getFrameAtTime(
-        timestampMs * 1000, // convert from ms to micro-s
-        MediaMetadataRetriever.OPTION_CLOSEST
-      )
-        ?.let { frame ->
-          // Convert the video frame to ARGB_8888 which is required by the MediaPipe
-          val argb8888Frame =
-            if (frame.config == Bitmap.Config.ARGB_8888) frame
-            else frame.copy(Bitmap.Config.ARGB_8888, false)
-
-          // Convert the input Bitmap object to an MPImage object to run inference
-          val mpImage = BitmapImageBuilder(argb8888Frame).build()
-
-          // Run face landmarker using MediaPipe Face Landmarker API
-          poseLandmarker?.detectForVideo(mpImage, timestampMs)?.let { detectionResult ->
-            resultList.add(detectionResult)
-          }
-            ?: {
-              didErrorOccurred = true
-              poseDetectorListener?.onError(
-                "ResultBundle could not be returned" + " in detectVideoFile"
+                      timestampMs * 1000, // convert from ms to micro-s
+                      MediaMetadataRetriever.OPTION_CLOSEST
               )
-            }
-        }
-        ?: run {
-          didErrorOccurred = true
-          poseDetectorListener?.onError(
-            "Frame at specified time could not be" + " retrieved when detecting in video."
-          )
-        }
+              ?.let { frame ->
+                // Convert the video frame to ARGB_8888 which is required by the MediaPipe
+                val argb8888Frame =
+                        if (frame.config == Bitmap.Config.ARGB_8888) frame
+                        else frame.copy(Bitmap.Config.ARGB_8888, false)
+
+                // Convert the input Bitmap object to an MPImage object to run inference
+                val mpImage = BitmapImageBuilder(argb8888Frame).build()
+
+                // Run pose landmarker using MediaPipe pose Landmarker API
+                poseLandmarker?.detectForVideo(mpImage, timestampMs)?.let { detectionResult ->
+                  resultList.add(detectionResult)
+                }
+                        ?: {
+                          didErrorOccurred = true
+                          poseDetectorListener?.onError(
+                                  "ResultBundle could not be returned" + " in detectVideoFile"
+                          )
+                        }
+              }
+              ?: run {
+                didErrorOccurred = true
+                poseDetectorListener?.onError(
+                        "Frame at specified time could not be" +
+                                " retrieved when detecting in video."
+                )
+              }
     }
 
     retriever.release()
@@ -232,32 +231,33 @@ class PoseDetectorHelper(
   fun detectLiveStream(mpImage: MPImage, orientation: Orientation) {
     if (runningMode != RunningMode.LIVE_STREAM) {
       throw IllegalArgumentException(
-        "Attempting to call detectLiveStream" + " while not using RunningMode.LIVE_STREAM"
+              "Attempting to call detectLiveStream" + " while not using RunningMode.LIVE_STREAM"
       )
     }
     val frameTime = SystemClock.uptimeMillis()
     // this is a hack bc we use this in the callback and it might have changed
-    this.imageRotation = orientationToDegrees(orientation)
-//    this.imageRotation = 90
+//    this.imageRotation = orientationToDegrees(orientation)
+    this.imageRotation = orientationToDegrees(Orientation.PORTRAIT)
+    //    this.imageRotation = 90
     detectAsync(mpImage, frameTime, this.imageRotation)
   }
 
-  // Run face face landmark using MediaPipe Face Landmarker API
+  // Run face pose landmark using MediaPipe pose Landmarker API
   @VisibleForTesting
   fun detectAsync(mpImage: MPImage, frameTime: Long, imageRotation: Int) {
     val imageProcessingOptions =
-      ImageProcessingOptions.builder().setRotationDegrees(imageRotation).build()
+            ImageProcessingOptions.builder().setRotationDegrees(imageRotation).build()
     poseLandmarker?.detectAsync(mpImage, imageProcessingOptions, frameTime)
     // As we're using running mode LIVE_STREAM, the landmark result will
     // be returned in returnLivestreamResult function
   }
 
-  // Accepted a Bitmap and runs face landmarker inference on it to return
+  // Accepted a Bitmap and runs pose landmarker inference on it to return
   // results back to the caller
   fun detectImage(image: Bitmap): ResultBundle {
     if (runningMode != RunningMode.IMAGE) {
       throw IllegalArgumentException(
-        "Attempting to call detectImage" + " while not using RunningMode.IMAGE"
+              "Attempting to call detectImage" + " while not using RunningMode.IMAGE"
       )
     }
 
@@ -268,13 +268,13 @@ class PoseDetectorHelper(
     // Convert the input Bitmap object to an MPImage object to run inference
     val mpImage = BitmapImageBuilder(image).build()
 
-    // Run face landmarker using MediaPipe Face Landmarker API
+    // Run pose landmarker using MediaPipe pose Landmarker API
     poseLandmarker?.detect(mpImage)?.also { landmarkResult ->
       val inferenceTimeMs = SystemClock.uptimeMillis() - startTime
       return ResultBundle(listOf(landmarkResult), inferenceTimeMs, image.height, image.width)
     }
 
-    throw Exception("Face Landmarker failed to detect.")
+    throw Exception("pose Landmarker failed to detect.")
   }
 
   // Return the landmark result to this PoseDetectorHelper's caller
@@ -284,7 +284,7 @@ class PoseDetectorHelper(
       val inferenceTime = finishTimeMs - result.timestampMs()
 
       poseDetectorListener?.onResults(
-        ResultBundle(listOf(result), inferenceTime, input.height, input.width)
+              ResultBundle(listOf(result), inferenceTime, input.height, input.width)
       )
     } else {
       poseDetectorListener?.onEmpty()
@@ -312,10 +312,10 @@ class PoseDetectorHelper(
   }
 
   data class ResultBundle(
-    val results: List<PoseLandmarkerResult>,
-    val inferenceTime: Long,
-    val inputImageHeight: Int,
-    val inputImageWidth: Int,
+          val results: List<PoseLandmarkerResult>,
+          val inferenceTime: Long,
+          val inputImageHeight: Int,
+          val inputImageWidth: Int,
   )
 
   interface DetectorListener {

@@ -1,16 +1,18 @@
 import {
-  type Dims,
-  type Point,
-  type RectLTRB,
-  type RectXYWH,
   framePointToView,
   frameRectLTRBToView,
   frameRectXYWHToView,
   frameRectToView,
   ltrbToXywh,
   clampToDims,
-  type ResizeMode,
 } from "../shared/convert"; // Adjust the import path to where your module is located
+import {
+  type Dims,
+  type Point,
+  type RectLTRB,
+  type RectXYWH,
+  type ResizeMode,
+} from "../shared/types";
 
 describe("Image Frame Transformation Utilities", () => {
   describe("framePointToView", () => {

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 import type { RootTabParamList } from "./navigation";
 import ImagePicker from "react-native-image-crop-picker";
-import { useSettings } from "./app-settings";
 import { CustomColors } from "./colors";
 import {
   faceLandmarkDetectionModuleConstants,
@@ -25,7 +24,6 @@ export const Photo: React.FC<Props> = () => {
   const [screenState, setScreenState] = useState<
     "initial" | "selecting" | "inferring" | "completed" | "error"
   >("initial");
-  const { settings } = useSettings();
   const [imagePath, setImagePath] = useState<string>();
   const [faceLandmarks] = useState<
     FaceLandmarksModuleConstants["knownLandmarks"]
@@ -45,10 +43,6 @@ export const Photo: React.FC<Props> = () => {
         image.path,
         "face_landmarker.task"
       );
-      const frameSize = {
-        width: results.inputImageWidth,
-        height: results.inputImageHeight,
-      };
       if (results.results.length === 0) {
         setFaceSegments([]);
         return;
