@@ -12,7 +12,7 @@ class PoseDetectionFrameProcessorPlugin() : FrameProcessorPlugin() {
   }
 
   override fun callback(frame: Frame, params: MutableMap<String, Any>?): Any? {
-    val detectorHandle: Double = params!!["detectorHandle"] as Double
+    val detectorHandle = (params?.get("detectorHandle") as? Double) ?: return false
     val detector = PoseDetectorMap.detectorMap[detectorHandle.toInt()] ?: return false
     val orientation = params["orientation"] as String
     val mappedOrientation = imageOrientation(orientation)
