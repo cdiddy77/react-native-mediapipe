@@ -10,11 +10,7 @@ import {
   type Dims,
   faceLandmarkDetectionOnImage,
 } from "react-native-mediapipe";
-import {
-  FaceDrawFrame,
-  convertLandmarksToSegments,
-  type FaceSegment,
-} from "./Drawing";
+import { FaceDrawFrame } from "./Drawing";
 
 type Props = BottomTabScreenProps<RootTabParamList, "Photo">;
 
@@ -28,100 +24,10 @@ export const Photo: React.FC<Props> = () => {
   const [faceLandmarks] = useState<
     FaceLandmarksModuleConstants["knownLandmarks"]
   >(faceLandmarkDetectionModuleConstants().knownLandmarks);
-  const [faceSegments, setFaceSegments] = useState<FaceSegment[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>("");
 
   const onClickSelectPhoto = async () => {
-    setScreenState("selecting");
-    try {
-      const image = await ImagePicker.openPicker({
-        mediaType: "photo",
-        width: PHOTO_SIZE.width,
-        height: PHOTO_SIZE.height,
-      });
-      const results = await faceLandmarkDetectionOnImage(
-        image.path,
-        "face_landmarker.task"
-      );
-      if (results.results.length === 0) {
-        setFaceSegments([]);
-        return;
-      }
-      const firstResult = results.results[0];
-      const segments =
-        firstResult.faceLandmarks.length > 0
-          ? [
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.lips,
-                "FireBrick",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                PHOTO_SIZE
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.leftEye,
-                "ForestGreen",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                PHOTO_SIZE
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.rightEye,
-                "ForestGreen",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                PHOTO_SIZE
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.leftEyebrow,
-                "Coral",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                PHOTO_SIZE
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.rightEyebrow,
-                "Coral",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                PHOTO_SIZE
-              ),
-            ]
-          : [];
-
-      setFaceSegments(segments);
-      setImagePath(image.path);
-      setScreenState("completed");
-    } catch (e) {
-      console.error(e);
-      if (e instanceof Error) {
-        if (e.message.includes("User cancelled image selection")) {
-          setErrorMessage("User cancelled image selection.");
-        } else if (e.message.includes("Permissions")) {
-          setErrorMessage("Permission denied. Please allow access to photos.");
-        } else {
-          setErrorMessage("An unexpected error occurred.");
-        }
-      } else {
-        setErrorMessage("An unexpected error occurred.");
-      }
-      setScreenState("error");
-    }
+    console.log("adsf");
   };
 
   return (
@@ -135,11 +41,6 @@ export const Photo: React.FC<Props> = () => {
         <>
           <View style={styles.photoContainer}>
             <Image source={{ uri: imagePath }} style={styles.photo} />
-            <FaceDrawFrame
-              style={styles.objectsOverlay}
-              facePoints={[]}
-              faceSegments={faceSegments}
-            />
           </View>
           <Pressable style={styles.selectButton} onPress={onClickSelectPhoto}>
             <Text style={styles.selectButtonText}>Select a new photo</Text>

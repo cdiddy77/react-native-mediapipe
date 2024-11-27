@@ -14,9 +14,16 @@ public class FaceLandmarkDetectionFrameProcessorPlugin: FrameProcessorPlugin {
     super.init(proxy: proxy, options: options)
   }
 
-  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any
-  {
+  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any {
     guard let detectorHandleValue = arguments?["detectorHandle"] as? Double else {
+      return false
+    }
+    // get the orientation argument. If its nil, return false
+    guard let orientation = arguments?["orientation"] as? String else {
+      return false
+    }
+    // convert the orientation string to a UIImage.Orientation
+    guard let uiOrientation = uiImageOrientation(from: orientation) else {
       return false
     }
 
@@ -28,7 +35,7 @@ public class FaceLandmarkDetectionFrameProcessorPlugin: FrameProcessorPlugin {
     let buffer = frame.buffer
     detector.detectAsync(
       sampleBuffer: buffer,
-      orientation: frame.orientation,
+      orientation: uiOrientation,
       timeStamps: Int(Date().timeIntervalSince1970 * 1000))
     return true
   }

@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import {
   VisionCameraProxy,
+  runAtTargetFps,
   useFrameProcessor,
   type CameraDevice,
   type Orientation,
@@ -19,15 +20,20 @@ import {
   type MediaPipeSolution,
   type RunningMode,
   type TransformMatrix,
+  type DetectionCallbacks,
+  type DetectionCallbackState, // Add this import
+  type ResizeMode,
+  type ImageOrientation,
 } from "../shared/types";
-import { useSharedValue } from "react-native-worklets-core";
+import { BaseViewCoordinator } from "../shared/convert";
+import { useRunOnJS, useSharedValue } from "react-native-worklets-core";
 
 const { FaceLandmarkDetection } = NativeModules;
 const eventEmitter = new NativeEventEmitter(FaceLandmarkDetection);
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin(
   "faceLandmarkDetection",
-  {}
+  {},
 );
 if (!plugin) {
   throw new Error("Failed to initialize faceLandmarkDetection plugin");
@@ -41,7 +47,7 @@ interface FaceLandmarkDetectionModule {
     minTrackingConfidence: number,
     model: string,
     delegate: Delegate,
-    runningMode: RunningMode
+    runningMode: RunningMode,
   ) => Promise<number>;
   releaseDetector: (handle: number) => Promise<boolean>;
   detectOnImage: (
@@ -51,7 +57,7 @@ interface FaceLandmarkDetectionModule {
     minFacePresenceConfidence: number,
     minTrackingConfidence: number,
     model: string,
-    delegate: Delegate
+    delegate: Delegate,
   ) => Promise<FaceLandmarkDetectionResultBundle>;
 }
 
@@ -75,7 +81,6 @@ interface KnownLandmarks {
   tesselation: FaceLandmarkConnection[];
 }
 
-// Wraps the FaceLandmarks in a higher-level structure
 export interface FaceLandmarksModuleConstants {
   knownLandmarks: KnownLandmarks;
 }
@@ -99,29 +104,27 @@ export interface FaceLandmarkDetectionResultBundle {
   inferenceTime: number;
   inputImageHeight: number;
   inputImageWidth: number;
-  // inputImageRotation: number;
 }
 
-// Interface for the category, assuming this is part of the classifications
 interface Category {
   categoryName?: string;
   displayName?: string;
   score: number;
 }
 
-// Interface for classifications, which hold categories and additional metadata
 interface Classifications {
   headIndex: number;
-  headName?: string; // Optional as it might be uninitialized
+  headName?: string;
   categories: Category[];
 }
 
-// Interface for FaceLandmarkerResult
 export interface FaceLandmarkerResult {
   faceLandmarks: Landmark[][];
   faceBlendshapes: Classifications[];
   facialTransformationMatrixes: TransformMatrix[];
 }
+
+type FpsMode = "none" | number;
 
 export interface FaceLandmarkDetectionOptions {
   numFaces: number;
@@ -130,30 +133,26 @@ export interface FaceLandmarkDetectionOptions {
   minTrackingConfidence: number;
   delegate: Delegate;
   mirrorMode: "no-mirror" | "mirror" | "mirror-front-only";
+  forceOutputOrientation?: ImageOrientation;
+  forceCameraOrientation?: ImageOrientation;
+  fpsMode?: FpsMode;
 }
 
-export interface FaceLandmarkDetectionCallbacks {
-  onResults: (
-    result: FaceLandmarkDetectionResultBundle,
-    viewSize: Dims,
-    mirrored: boolean
-  ) => void;
-  onError: (error: DetectionError) => void;
-  viewSize: Dims;
-  mirrored: boolean;
-}
+const detectorMap = new Map<
+  number,
+  DetectionCallbackState<FaceLandmarkDetectionResultBundle>
+>();
 
-// TODO setup the general event callbacks
-const detectorMap: Map<number, FaceLandmarkDetectionCallbacks> = new Map();
 eventEmitter.addListener(
   "onResults",
   (args: { handle: number } & FaceLandmarkDetectionResultBundle) => {
     const callbacks = detectorMap.get(args.handle);
     if (callbacks) {
-      callbacks.onResults(args, callbacks.viewSize, callbacks.mirrored);
+      callbacks.onResults(args, callbacks.viewCoordinator);
     }
-  }
+  },
 );
+
 eventEmitter.addListener(
   "onError",
   (args: { handle: number } & DetectionError) => {
@@ -161,26 +160,31 @@ eventEmitter.addListener(
     if (callbacks) {
       callbacks.onError(args);
     }
-  }
+  },
 );
 
 export function useFaceLandmarkDetection(
-  onResults: FaceLandmarkDetectionCallbacks["onResults"],
-  onError: FaceLandmarkDetectionCallbacks["onError"],
+  callbacks: DetectionCallbacks<FaceLandmarkDetectionResultBundle>,
   runningMode: RunningMode,
   model: string,
-  options?: Partial<FaceLandmarkDetectionOptions>
+  options?: Partial<FaceLandmarkDetectionOptions>,
 ): MediaPipeSolution {
   const [detectorHandle, setDetectorHandle] = React.useState<
     number | undefined
   >();
-
   const [cameraViewDimensions, setCameraViewDimensions] = React.useState<{
     width: number;
     height: number;
   }>({ width: 1, height: 1 });
 
   const outputOrientation = useSharedValue<Orientation>("portrait");
+  const frameOrientation = useSharedValue<Orientation>("portrait");
+  const forceOutputOrientation = useSharedValue<ImageOrientation | undefined>(
+    undefined,
+  );
+  const forceCameraOrientation = useSharedValue<ImageOrientation | undefined>(
+    undefined,
+  );
 
   const cameraViewLayoutChangeHandler = React.useCallback(
     (event: LayoutChangeEvent) => {
@@ -189,43 +193,70 @@ export function useFaceLandmarkDetection(
         width: event.nativeEvent.layout.width,
       });
     },
-    []
+    [],
   );
+
+  React.useEffect(() => {
+    forceCameraOrientation.value = options?.forceCameraOrientation;
+    forceOutputOrientation.value = options?.forceOutputOrientation;
+  }, [
+    forceCameraOrientation,
+    forceOutputOrientation,
+    options?.forceCameraOrientation,
+    options?.forceOutputOrientation,
+  ]);
 
   const mirrorMode =
     options?.mirrorMode ??
     Platform.select({ android: "mirror-front-only", default: "no-mirror" });
+
   const [cameraDevice, setCameraDevice] = React.useState<
     CameraDevice | undefined
-  >(undefined);
+  >();
+  const [resizeMode, setResizeMode] = React.useState<ResizeMode>("cover");
+
   const mirrored = React.useMemo((): boolean => {
-    if (
+    return (
       (mirrorMode === "mirror-front-only" &&
         cameraDevice?.position === "front") ||
       mirrorMode === "mirror"
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }, [cameraDevice?.position, mirrorMode]);
-  // Remember the latest callback if it changes.
-  React.useLayoutEffect(() => {
+
+  const updateDetectorMap = React.useCallback(() => {
     if (detectorHandle !== undefined) {
-      detectorMap.set(detectorHandle, {
-        onResults,
-        onError,
-        viewSize: cameraViewDimensions,
+      const viewCoordinator = new BaseViewCoordinator(
+        cameraViewDimensions,
         mirrored,
+        forceCameraOrientation.value ?? frameOrientation.value,
+        forceOutputOrientation.value ?? outputOrientation.value,
+        resizeMode,
+      );
+      detectorMap.set(detectorHandle, {
+        onResults: callbacks.onResults,
+        onError: callbacks.onError,
+        viewCoordinator,
       });
     }
-  }, [onResults, onError, detectorHandle, cameraViewDimensions, mirrored]);
+  }, [
+    cameraViewDimensions,
+    detectorHandle,
+    forceCameraOrientation.value,
+    forceOutputOrientation.value,
+    frameOrientation.value,
+    mirrored,
+    callbacks.onError,
+    callbacks.onResults,
+    outputOrientation.value,
+    resizeMode,
+  ]);
+
+  React.useLayoutEffect(() => {
+    updateDetectorMap();
+  }, [updateDetectorMap]);
 
   React.useEffect(() => {
     let newHandle: number | undefined;
-    console.log(
-      `getFaceLandmarkDetectionModule: delegate = ${options?.delegate}, numFaces= ${options?.numFaces}, runningMode = ${runningMode}, model= ${model}`
-    );
     getFaceLandmarkDetectionModule()
       .createDetector(
         options?.numFaces ?? 1,
@@ -234,24 +265,13 @@ export function useFaceLandmarkDetection(
         options?.minTrackingConfidence ?? 0.5,
         model,
         options?.delegate ?? Delegate.GPU,
-        runningMode
+        runningMode,
       )
       .then((handle) => {
-        console.log(
-          "useFaceLandmarkDetection.createDetector",
-          runningMode,
-          model,
-          handle
-        );
         setDetectorHandle(handle);
         newHandle = handle;
       });
     return () => {
-      console.log(
-        "useFaceLandmarkDetection.useEffect.unsub",
-        "releaseDetector",
-        newHandle
-      );
       if (newHandle !== undefined) {
         getFaceLandmarkDetectionModule().releaseDetector(newHandle);
       }
@@ -265,23 +285,56 @@ export function useFaceLandmarkDetection(
     options?.minFacePresenceConfidence,
     options?.minTrackingConfidence,
   ]);
+
+  const updateDetectorMapFromWorklet = useRunOnJS(updateDetectorMap, [
+    updateDetectorMap,
+  ]);
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      // console.log(frame.orientation, frame.width, frame.height);
-      plugin?.call(frame, { detectorHandle });
+      if (frame.orientation !== frameOrientation.value) {
+        frameOrientation.value = frame.orientation;
+        updateDetectorMapFromWorklet();
+      }
+      const orientation: ImageOrientation =
+        forceOutputOrientation.value ?? outputOrientation.value;
+      const fpsMode = options?.fpsMode ?? "none";
+
+      if (fpsMode === "none") {
+        plugin?.call(frame, {
+          detectorHandle,
+          orientation,
+        });
+      } else {
+        runAtTargetFps(fpsMode, () => {
+          plugin?.call(frame, {
+            detectorHandle,
+            orientation,
+          });
+        });
+      }
     },
-    [detectorHandle]
+    [
+      detectorHandle,
+      forceOutputOrientation.value,
+      frameOrientation,
+      options?.fpsMode,
+      outputOrientation.value,
+      updateDetectorMapFromWorklet,
+    ],
   );
+
   return React.useMemo(
     (): MediaPipeSolution => ({
       cameraViewLayoutChangeHandler,
-      cameraDeviceChangeHandler: setCameraDevice,
+      cameraDeviceChangeHandler: (d) => {
+        setCameraDevice(d);
+      },
       cameraOrientationChangedHandler: (o) => {
         outputOrientation.value = o;
       },
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      resizeModeChangeHandler: () => {},
+      resizeModeChangeHandler: setResizeMode,
       cameraViewDimensions,
       frameProcessor,
     }),
@@ -290,14 +343,14 @@ export function useFaceLandmarkDetection(
       cameraViewLayoutChangeHandler,
       frameProcessor,
       outputOrientation,
-    ]
+    ],
   );
 }
 
 export function faceLandmarkDetectionOnImage(
   imagePath: string,
   model: string,
-  options?: Partial<FaceLandmarkDetectionOptions>
+  options?: Partial<FaceLandmarkDetectionOptions>,
 ): Promise<FaceLandmarkDetectionResultBundle> {
   return getFaceLandmarkDetectionModule().detectOnImage(
     imagePath,
@@ -306,6 +359,6 @@ export function faceLandmarkDetectionOnImage(
     options?.minFacePresenceConfidence ?? 0.5,
     options?.minTrackingConfidence ?? 0.5,
     model,
-    options?.delegate ?? Delegate.GPU
+    options?.delegate ?? Delegate.GPU,
   );
 }
