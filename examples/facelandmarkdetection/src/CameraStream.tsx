@@ -1,39 +1,36 @@
 import * as React from "react";
-
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
   MediapipeCamera,
   RunningMode,
-  faceLandmarkDetectionModuleConstants,
   useFaceLandmarkDetection,
-  type FaceLandmarksModuleConstants,
+  faceLandmarkDetectionModuleConstants,
+  type DetectionError,
+  type FaceLandmarkDetectionResultBundle,
+  type ViewCoordinator,
 } from "react-native-mediapipe";
 
 import {
   useCameraPermission,
-  useMicrophonePermission,
   type CameraPosition,
 } from "react-native-vision-camera";
 import type { RootTabParamList } from "./navigation";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useSettings } from "./app-settings";
-import {
-  FaceDrawFrame,
-  convertLandmarksToSegments,
-  type FaceSegment,
-} from "./Drawing";
+import { FaceDrawFrame } from "./Drawing";
+import { useSharedValue } from "react-native-reanimated";
+import { vec, type SkPoint } from "@shopify/react-native-skia";
 
 type Props = BottomTabScreenProps<RootTabParamList, "CameraStream">;
+const MINIMUM_CONFIDENCE = 0.5; // Adjust this threshold as needed
 
 export const CameraStream: React.FC<Props> = () => {
-  // TODO : implement settings for face landmark detection
   const { settings } = useSettings();
   const camPerm = useCameraPermission();
-  const micPerm = useMicrophonePermission();
   const [permsGranted, setPermsGranted] = React.useState<{
     cam: boolean;
-    mic: boolean;
-  }>({ cam: camPerm.hasPermission, mic: micPerm.hasPermission });
+  }>({ cam: camPerm.hasPermission });
+
   const askForPermissions = React.useCallback(() => {
     if (camPerm.hasPermission) {
       setPermsGranted((prev) => ({ ...prev, cam: true }));
@@ -42,113 +39,135 @@ export const CameraStream: React.FC<Props> = () => {
         setPermsGranted((prev) => ({ ...prev, cam: granted }));
       });
     }
-    if (micPerm.hasPermission) {
-      setPermsGranted((prev) => ({ ...prev, mic: true }));
-    } else {
-      micPerm.requestPermission().then((granted) => {
-        setPermsGranted((prev) => ({ ...prev, mic: granted }));
-      });
-    }
-  }, [camPerm, micPerm]);
+  }, [camPerm]);
 
   const [active, setActive] = React.useState<CameraPosition>("front");
   const setActiveCamera = () => {
     setActive((currentCamera) =>
-      currentCamera === "front" ? "back" : "front"
+      currentCamera === "front" ? "back" : "front",
     );
   };
-  const [faceLandmarks] = React.useState<
-    FaceLandmarksModuleConstants["knownLandmarks"]
-  >(faceLandmarkDetectionModuleConstants().knownLandmarks);
 
-  const [faceSegments, setFaceSegments] = React.useState<FaceSegment[]>([
-    {
-      startPoint: { x: 0, y: 0 },
-      endPoint: { x: 100, y: 100 },
-      color: "Coral",
+  const faceConnections = useSharedValue<SkPoint[]>([]);
+  const isProcessing = useSharedValue(false);
+  const { knownLandmarks } = faceLandmarkDetectionModuleConstants();
+
+  // Memoize the connections array to avoid recreating it on every render
+  const allConnections = React.useMemo(
+    () => [
+      ...knownLandmarks.lips,
+      ...knownLandmarks.leftEye,
+      ...knownLandmarks.rightEye,
+      ...knownLandmarks.leftEyebrow,
+      ...knownLandmarks.rightEyebrow,
+      ...knownLandmarks.faceOval,
+    ],
+    [knownLandmarks],
+  );
+
+  const updateFaceConnections = React.useCallback(
+    (newPoints: SkPoint[]) => {
+      "worklet";
+      faceConnections.value = newPoints;
     },
-  ]);
+    [faceConnections],
+  );
 
-  const faceDetection = useFaceLandmarkDetection(
-    (results, viewSize, mirrored) => {
-      if (results.results.length === 0) {
-        setFaceSegments([]);
+  const processFaceLandmarks = React.useCallback(
+    (landmarks: any[], frameDims: any, vc: ViewCoordinator) => {
+      if (isProcessing.value) {
         return;
       }
-      const firstResult = results.results[0];
-      const segments =
-        firstResult.faceLandmarks.length > 0
-          ? [
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.lips,
-                "FireBrick",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                viewSize,
-                mirrored
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.leftEye,
-                "ForestGreen",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                viewSize,
-                mirrored
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.rightEye,
-                "ForestGreen",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                viewSize,
-                mirrored
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.leftEyebrow,
-                "Coral",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                viewSize,
-                mirrored
-              ),
-              ...convertLandmarksToSegments(
-                firstResult.faceLandmarks[0],
-                faceLandmarks.rightEyebrow,
-                "Coral",
-                {
-                  width: results.inputImageWidth,
-                  height: results.inputImageHeight,
-                },
-                viewSize,
-                mirrored
-              ),
-            ]
-          : [];
 
-      setFaceSegments(segments);
+      try {
+        isProcessing.value = true;
+        const newLines: SkPoint[] = [];
+
+        for (const { start, end } of allConnections) {
+          if (null === landmarks[start] || null === landmarks[end]) {
+            continue;
+          }
+
+          if (
+            (landmarks[start].presence ?? 1) < MINIMUM_CONFIDENCE ||
+            (landmarks[end].presence ?? 1) < MINIMUM_CONFIDENCE
+          ) {
+            continue;
+          }
+
+          const pt1 = vc.convertPoint(frameDims, landmarks[start]);
+          const pt2 = vc.convertPoint(frameDims, landmarks[end]);
+
+          if (
+            !Number.isFinite(pt1.x) ||
+            !Number.isFinite(pt1.y) ||
+            !Number.isFinite(pt2.x) ||
+            !Number.isFinite(pt2.y)
+          ) {
+            continue;
+          }
+
+          newLines.push(vec(pt1.x, pt1.y));
+          newLines.push(vec(pt2.x, pt2.y));
+        }
+
+        updateFaceConnections(newLines);
+      } finally {
+        isProcessing.value = false;
+      }
     },
-    (error) => {
-      console.error(`onError: ${error}`);
+    [allConnections, updateFaceConnections, isProcessing],
+  );
+
+  const onResults = React.useCallback(
+    (results: FaceLandmarkDetectionResultBundle, vc: ViewCoordinator): void => {
+      if (isProcessing.value) {
+        return;
+      }
+
+      const frameDims = vc.getFrameDims(results);
+      const landmarks = results.results[0]?.faceLandmarks[0] ?? [];
+
+      if (landmarks.length > 0) {
+        processFaceLandmarks(landmarks, frameDims, vc);
+      } else {
+        updateFaceConnections([]);
+      }
+    },
+    [isProcessing, processFaceLandmarks, updateFaceConnections],
+  );
+
+  const onError = React.useCallback(
+    (error: DetectionError): void => {
+      console.error(`Face detection error: ${JSON.stringify(error)}`);
+      isProcessing.value = false;
+    },
+    [isProcessing],
+  );
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      faceConnections.value = [];
+      isProcessing.value = false;
+    };
+  }, [faceConnections, isProcessing]);
+
+  const faceDetection = useFaceLandmarkDetection(
+    {
+      onResults,
+      onError,
     },
     RunningMode.LIVE_STREAM,
     "face_landmarker.task",
     {
+      fpsMode: 30,
       delegate: settings.processor,
-    }
+      mirrorMode: "no-mirror",
+    },
   );
-  if (permsGranted.cam && permsGranted.mic) {
+
+  if (permsGranted.cam) {
     return (
       <View style={styles.container}>
         <MediapipeCamera
@@ -157,12 +176,7 @@ export const CameraStream: React.FC<Props> = () => {
           activeCamera={active}
           resizeMode="cover"
         />
-
-        <FaceDrawFrame
-          style={styles.box}
-          facePoints={[]}
-          faceSegments={faceSegments}
-        />
+        <FaceDrawFrame connections={faceConnections} style={styles.box} />
         <Pressable style={styles.cameraSwitchButton} onPress={setActiveCamera}>
           <Text style={styles.cameraSwitchButtonText}>Switch Camera</Text>
         </Pressable>
@@ -179,11 +193,9 @@ const NeedPermissions: React.FC<{ askForPermissions: () => void }> = ({
   return (
     <View style={styles.container}>
       <View style={styles.permissionsBox}>
-        <Text style={styles.noPermsText}>
-          Allow App to use your Camera and Microphone
-        </Text>
+        <Text style={styles.noPermsText}>Allow App to use your Camera</Text>
         <Text style={styles.permsInfoText}>
-          App needs access to your camera in order for Object Detection to work.
+          App needs access to your camera in order for Face Detection to work.
         </Text>
       </View>
       <Pressable style={styles.permsButton} onPress={askForPermissions}>
