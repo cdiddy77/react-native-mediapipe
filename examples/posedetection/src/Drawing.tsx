@@ -52,4 +52,4 @@ const COLOR_NAMES = [
   "Violet",
 ] as const;
 
-type ColorName = (typeof COLOR_NAMES)[number];
+export type ColorName = (typeof COLOR_NAMES)[number];

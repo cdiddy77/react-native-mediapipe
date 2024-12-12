@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, forwardRef } from "react";
 import { type ViewStyle, Text } from "react-native";
 import {
   Camera,
@@ -12,50 +12,54 @@ export type MediapipeCameraProps = {
   style: ViewStyle;
   solution: MediaPipeSolution;
   activeCamera?: CameraPosition;
-  // orientation?: Orientation;
   resizeMode?: CameraProps["resizeMode"];
 };
 
-export const MediapipeCamera: React.FC<MediapipeCameraProps> = ({
-  style,
-  solution: {
-    cameraDeviceChangeHandler,
-    cameraViewLayoutChangeHandler,
-    cameraOrientationChangedHandler,
-    resizeModeChangeHandler,
-    frameProcessor,
-  },
-  activeCamera = "front",
-  resizeMode = "cover",
-}) => {
-  const device = useCameraDevice(activeCamera);
-  React.useEffect(() => {
-    console.log(
-      `camera device change. sensorOrientation:${device?.sensorOrientation}`
+export const MediapipeCamera = forwardRef<Camera, MediapipeCameraProps>(
+  (
+    {
+      style,
+      solution: {
+        cameraDeviceChangeHandler,
+        cameraViewLayoutChangeHandler,
+        cameraOrientationChangedHandler,
+        resizeModeChangeHandler,
+        frameProcessor,
+      },
+      activeCamera = "front",
+      resizeMode = "cover",
+    },
+    ref
+  ) => {
+    const device = useCameraDevice(activeCamera);
+
+    useEffect(() => {
+      if (device) {
+        cameraDeviceChangeHandler(device);
+      }
+    }, [cameraDeviceChangeHandler, device]);
+
+    useEffect(() => {
+      resizeModeChangeHandler(resizeMode);
+    }, [resizeModeChangeHandler, resizeMode]);
+
+    if (device == null) {
+      return <Text>Loading...</Text>;
+    }
+
+    return (
+      <Camera
+        ref={ref}
+        resizeMode={resizeMode}
+        style={style}
+        device={device}
+        pixelFormat="rgb"
+        isActive={true}
+        frameProcessor={frameProcessor}
+        onLayout={cameraViewLayoutChangeHandler}
+        onOutputOrientationChanged={cameraOrientationChangedHandler}
+        photo={true}
+      />
     );
-
-    cameraDeviceChangeHandler(device);
-  }, [cameraDeviceChangeHandler, device]);
-  React.useEffect(() => {
-    resizeModeChangeHandler(resizeMode);
-  }, [resizeModeChangeHandler, resizeMode]);
-
-  return device !== undefined ? (
-    <Camera
-      resizeMode={resizeMode}
-      style={style}
-      device={device}
-      pixelFormat={"rgb"}
-      outputOrientation="preview"
-      isActive={true}
-      frameProcessor={frameProcessor}
-      onLayout={cameraViewLayoutChangeHandler}
-      onOutputOrientationChanged={(o) => {
-        console.log(`output orientation change:${o}`);
-        cameraOrientationChangedHandler(o);
-      }}
-    />
-  ) : (
-    <Text>no device</Text>
-  );
-};
+  }
+);
