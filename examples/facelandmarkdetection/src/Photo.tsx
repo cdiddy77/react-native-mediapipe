@@ -7,10 +7,8 @@ import { CustomColors } from "./colors";
 
 // Prefix unused imports with underscore to indicate intentional non-usage
 import {
-  _useFaceLandmarkDetection as useFaceLandmarkDetection,
   faceLandmarkDetectionModuleConstants,
   faceLandmarkDetectionOnImage,
-  type _DetectionError as DetectionError,
   type FaceLandmarkDetectionResultBundle,
   type ViewCoordinator,
   BaseViewCoordinator,

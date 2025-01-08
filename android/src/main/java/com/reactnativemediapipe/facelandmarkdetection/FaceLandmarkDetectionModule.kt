@@ -10,6 +10,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.reactnativemediapipe.shared.loadBitmapFromPath
+import com.reactnativemediapipe.shared.orientationToDegrees
 
 object FaceLandmarkDetectorMap {
   internal val detectorMap = mutableMapOf<Int, FaceLandmarkDetectorHelper>()
@@ -81,6 +82,10 @@ class FaceLandmarkDetectionModule(reactContext: ReactApplicationContext) :
     override fun onResults(resultBundle: FaceLandmarkDetectorHelper.ResultBundle) {
       module.sendResultsEvent(handle, resultBundle)
     }
+
+    override fun onEmpty() {
+      // Handle empty detection results if needed
+    }
   }
 
   @ReactMethod
@@ -145,9 +150,9 @@ class FaceLandmarkDetectionModule(reactContext: ReactApplicationContext) :
               context = reactApplicationContext.applicationContext,
               faceLandmarkDetectorListener = FaceLandmarkDetectorListener(this, 0)
           )
-      val bundle = helper.detectImage(loadBitmapFromPath(imagePath))
+      val bitmap = loadBitmapFromPath(imagePath)
+      val bundle = helper.detectImage(bitmap)
       val resultArgs = convertResultBundleToWritableMap(bundle)
-
       promise.resolve(resultArgs)
     } catch (e: Exception) {
       promise.reject(e)
@@ -155,25 +160,13 @@ class FaceLandmarkDetectionModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun detectOnVideo(
-      videoPath: String,
-      threshold: Float,
-      maxResults: Int,
-      delegate: Int,
-      model: String,
-      promise: Promise
-  ) {
-    promise.reject(UnsupportedOperationException("detectOnVideo not yet implemented"))
-  }
-
-  @ReactMethod
   fun addListener(eventName: String?) {
-    /* Required for RN built-in Event Emitter Calls. */
+    // Required for RN built-in Event Emitter Calls
   }
 
   @ReactMethod
   fun removeListeners(count: Int?) {
-    /* Required for RN built-in Event Emitter Calls. */
+    // Required for RN built-in Event Emitter Calls
   }
 
   private fun sendErrorEvent(handle: Int, message: String, code: Int) {
