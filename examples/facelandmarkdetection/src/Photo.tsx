@@ -204,7 +204,7 @@ export const Photo: React.FC<Props> = () => {
       setScreenState("error");
     }
   };
-  // Rest of your render code remains the same, just remove unused styles
+
   return (
     <View style={styles.root}>
       {screenState === "initial" && (
@@ -239,7 +239,6 @@ export const Photo: React.FC<Props> = () => {
 };
 
 const styles = StyleSheet.create({
-  // Remove unused objectsOverlay style
   root: {
     flex: 1,
     alignItems: "center",

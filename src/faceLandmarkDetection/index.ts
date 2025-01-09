@@ -21,7 +21,7 @@ import {
   type RunningMode,
   type TransformMatrix,
   type DetectionCallbacks,
-  type DetectionCallbackState, // Add this import
+  type DetectionCallbackState,
   type ResizeMode,
   type ImageOrientation,
 } from "../shared/types";
