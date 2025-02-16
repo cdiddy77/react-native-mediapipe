@@ -23,7 +23,7 @@ class FaceLandmarkDetectorHelper: NSObject {
   private var minTrackingConfidence: Float
   private var optionsDelegate: Delegate
   var modelPath: String
-  
+
   let handle: Int
 
   // this is an unfortunate hack : we need to provide the client with the size of the
@@ -73,6 +73,7 @@ class FaceLandmarkDetectorHelper: NSObject {
     faceLandmarkerOptions.minTrackingConfidence = self.minTrackingConfidence
     faceLandmarkerOptions.baseOptions.modelAssetPath = self.modelPath
     faceLandmarkerOptions.baseOptions.delegate = self.optionsDelegate
+    faceLandmarkerOptions.outputFaceBlendshapes = true
     if runningMode == .liveStream {
       faceLandmarkerOptions.faceLandmarkerLiveStreamDelegate = self
     }
