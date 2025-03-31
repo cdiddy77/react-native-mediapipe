@@ -285,6 +285,7 @@ export class BaseViewCoordinator implements ViewCoordinator {
     console.log(
       "BaseViewCoordinator.constructor",
       JSON.stringify({
+        mirrored: this.mirrored,
         orientation: this.orientation,
         rotation: this.rotation,
         sensorOrientation,

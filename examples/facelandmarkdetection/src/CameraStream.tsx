@@ -8,6 +8,8 @@ import {
   type DetectionError,
   type FaceLandmarkDetectionResultBundle,
   type ViewCoordinator,
+  type Landmark,
+  type Dims,
 } from "react-native-mediapipe";
 
 import {
@@ -44,7 +46,7 @@ export const CameraStream: React.FC<Props> = () => {
   const [active, setActive] = React.useState<CameraPosition>("front");
   const setActiveCamera = () => {
     setActive((currentCamera) =>
-      currentCamera === "front" ? "back" : "front",
+      currentCamera === "front" ? "back" : "front"
     );
   };
 
@@ -62,7 +64,7 @@ export const CameraStream: React.FC<Props> = () => {
       ...knownLandmarks.rightEyebrow,
       ...knownLandmarks.faceOval,
     ],
-    [knownLandmarks],
+    [knownLandmarks]
   );
 
   const updateFaceConnections = React.useCallback(
@@ -70,11 +72,11 @@ export const CameraStream: React.FC<Props> = () => {
       "worklet";
       faceConnections.value = newPoints;
     },
-    [faceConnections],
+    [faceConnections]
   );
 
   const processFaceLandmarks = React.useCallback(
-    (landmarks: any[], frameDims: any, vc: ViewCoordinator) => {
+    (landmarks: Landmark[], frameDims: Dims, vc: ViewCoordinator) => {
       if (isProcessing.value) {
         return;
       }
@@ -84,7 +86,8 @@ export const CameraStream: React.FC<Props> = () => {
         const newLines: SkPoint[] = [];
 
         for (const { start, end } of allConnections) {
-          if (null === landmarks[start] || null === landmarks[end]) {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (landmarks[start] === null || landmarks[end] === null) {
             continue;
           }
 
@@ -116,7 +119,7 @@ export const CameraStream: React.FC<Props> = () => {
         isProcessing.value = false;
       }
     },
-    [allConnections, updateFaceConnections, isProcessing],
+    [allConnections, updateFaceConnections, isProcessing]
   );
 
   const onResults = React.useCallback(
@@ -134,7 +137,7 @@ export const CameraStream: React.FC<Props> = () => {
         updateFaceConnections([]);
       }
     },
-    [isProcessing, processFaceLandmarks, updateFaceConnections],
+    [isProcessing, processFaceLandmarks, updateFaceConnections]
   );
 
   const onError = React.useCallback(
@@ -142,7 +145,7 @@ export const CameraStream: React.FC<Props> = () => {
       console.error(`Face detection error: ${JSON.stringify(error)}`);
       isProcessing.value = false;
     },
-    [isProcessing],
+    [isProcessing]
   );
 
   // Cleanup on unmount
@@ -164,7 +167,7 @@ export const CameraStream: React.FC<Props> = () => {
       fpsMode: 30,
       delegate: settings.processor,
       mirrorMode: "no-mirror",
-    },
+    }
   );
 
   if (permsGranted.cam) {
