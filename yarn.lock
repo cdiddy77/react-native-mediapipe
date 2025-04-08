@@ -12270,12 +12270,11 @@ __metadata:
   linkType: hard
 
 "estree-util-value-to-estree@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "estree-util-value-to-estree@npm:3.0.1"
+  version: 3.3.3
+  resolution: "estree-util-value-to-estree@npm:3.3.3"
   dependencies:
     "@types/estree": ^1.0.0
-    is-plain-obj: ^4.0.0
-  checksum: 7ab89084aa2c5677aeb0d7350ff21e71c9bbc424dc872a55bb4f25f63a7fd99fc7861626dd89b5544db3d3696212154bcf2b12b63ecd5a59dbfd07915c88aee4
+  checksum: 73851f26715300046228cf8a36986c101d6741d7a2b024f684675e75d1191bc07b0dc069926876729efd5650343d23bffe76104221b7dc862965632302b05524
   languageName: node
   linkType: hard
 
