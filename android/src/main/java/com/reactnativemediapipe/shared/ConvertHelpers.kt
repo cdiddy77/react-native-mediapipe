@@ -13,6 +13,15 @@ fun normalizedLandmarkToWritableMap(landmark: NormalizedLandmark): WritableMap {
   map.putDouble("x", landmark.x().toDouble())
   map.putDouble("y", landmark.y().toDouble())
   map.putDouble("z", landmark.z().toDouble())
+  val visibility: Optional<Float> = landmark.visibility()
+  if (visibility.isPresent) {
+    map.putDouble("visibility", visibility.get().toDouble())
+  }
+  
+  val presence: Optional<Float> = landmark.presence()
+  if (presence.isPresent) {
+    map.putDouble("presence", presence.get().toDouble())
+  }
   return map
 }
 
@@ -21,6 +30,15 @@ fun landmarkToWritableMap(landmark: Landmark): WritableMap {
   map.putDouble("x", landmark.x().toDouble())
   map.putDouble("y", landmark.y().toDouble())
   map.putDouble("z", landmark.z().toDouble())
+  val visibility: Optional<Float> = landmark.visibility()
+  if (visibility.isPresent) {
+    map.putDouble("visibility", visibility.get().toDouble())
+  }
+  
+  val presence: Optional<Float> = landmark.presence()
+  if (presence.isPresent) {
+    map.putDouble("presence", presence.get().toDouble())
+  }
   return map
 }
 
