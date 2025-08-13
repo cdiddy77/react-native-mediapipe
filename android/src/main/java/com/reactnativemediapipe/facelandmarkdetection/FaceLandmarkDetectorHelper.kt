@@ -2,6 +2,8 @@ package com.reactnativemediapipe.facelandmarkdetection
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -17,7 +19,6 @@ import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarkerResult
 import com.mrousavy.camera.core.types.Orientation
 import com.reactnativemediapipe.shared.orientationToDegrees
-import java.io.ByteArrayOutputStream
 
 class FaceLandmarkDetectorHelper(
     var minFaceDetectionConfidence: Float = DEFAULT_FACE_DETECTION_CONFIDENCE,
@@ -33,7 +34,6 @@ class FaceLandmarkDetectorHelper(
 
   private var faceLandmarker: FaceLandmarker? = null
   private var imageRotation = 0
-  private var currentBitmap: Bitmap? = null // 현재 처리 중인 비트맵을 저장
 
   init {
     setupFaceLandmarker()
@@ -41,7 +41,6 @@ class FaceLandmarkDetectorHelper(
 
   fun clearFaceLandmarker() {
     faceLandmarkDetectorListener = null
-    currentBitmap = null
     Handler(Looper.getMainLooper())
         .postDelayed(
             {
@@ -142,21 +141,15 @@ class FaceLandmarkDetectorHelper(
     throw Exception("Face Landmarker failed to detect.")
   }
 
-  // 기존 메서드 (하위 호환성 유지)
   fun detectLiveStream(mpImage: MPImage, orientation: Orientation) {
-    detectLiveStream(mpImage, orientation, null)
-  }
-
-  // 비트맵을 함께 전달하는 새로운 메서드
-  fun detectLiveStream(mpImage: MPImage, orientation: Orientation, sourceBitmap: Bitmap?) {
     if (runningMode != RunningMode.LIVE_STREAM) {
       throw IllegalArgumentException(
           "Attempting to call detectLiveStream while not using RunningMode.LIVE_STREAM"
       )
     }
     val frameTime = SystemClock.uptimeMillis()
+    //this.imageRotation = orientationToDegrees(orientation)
     this.imageRotation = orientationToDegrees(Orientation.PORTRAIT)
-    this.currentBitmap = sourceBitmap // 비트맵 저장 (null일 수 있음)
     detectAsync(mpImage, frameTime, this.imageRotation)
   }
 
@@ -169,62 +162,9 @@ class FaceLandmarkDetectorHelper(
   }
 
   private fun returnLivestreamResult(result: FaceLandmarkerResult, input: MPImage) {
-    if (result.faceLandmarks().isNotEmpty()) {
+    if (result.faceLandmarks().size > 0) {
       val finishTimeMs = SystemClock.uptimeMillis()
       val inferenceTime = finishTimeMs - result.timestampMs()
-
-      var croppedFrameByteArray: ByteArray? = null
-      
-      // currentBitmap이 있을 때만 크롭 작업 수행
-      currentBitmap?.let { sourceBitmap ->
-        try {
-          var minX = 1.0f
-          var minY = 1.0f
-          var maxX = 0.0f
-          var maxY = 0.0f
-          result.faceLandmarks()[0].forEach { landmark ->
-              minX = minOf(minX, landmark.x())
-              minY = minOf(minY, landmark.y())
-              maxX = maxOf(maxX, landmark.x())
-              maxY = maxOf(maxY, landmark.y())
-          }
-
-          val cropX = (minX * sourceBitmap.width).toInt()
-          val cropY = (minY * sourceBitmap.height).toInt()
-          val cropWidth = ((maxX - minX) * sourceBitmap.width).toInt()
-          val cropHeight = ((maxY - minY) * sourceBitmap.height).toInt()
-
-          // 크롭할 크기가 유효한지 확인하는 안전장치
-          if (cropWidth > 0 && cropHeight > 0 && 
-              cropX >= 0 && cropY >= 0 && 
-              cropX + cropWidth <= sourceBitmap.width && 
-              cropY + cropHeight <= sourceBitmap.height) {
-              
-              val croppedBitmap = Bitmap.createBitmap(
-                  sourceBitmap,
-                  cropX,
-                  cropY,
-                  cropWidth,
-                  cropHeight
-              )
-
-              val resizedBitmap = Bitmap.createScaledBitmap(
-                  croppedBitmap, 192, 192, true
-              )
-
-              val stream = ByteArrayOutputStream()
-              resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-              croppedFrameByteArray = stream.toByteArray()
-              
-              // 메모리 해제
-              croppedBitmap.recycle()
-              resizedBitmap.recycle()
-          }
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to crop and resize frame: " + e.message)
-        }
-      }
 
       faceLandmarkDetectorListener?.onResults(
           ResultBundle(
@@ -232,8 +172,7 @@ class FaceLandmarkDetectorHelper(
               inferenceTime = inferenceTime,
               inputImageHeight = input.height,
               inputImageWidth = input.width,
-              inputImageRotation = imageRotation,
-              croppedFrame = croppedFrameByteArray
+              inputImageRotation = imageRotation
           )
       )
     } else {
@@ -264,8 +203,7 @@ class FaceLandmarkDetectorHelper(
       val inferenceTime: Long,
       val inputImageHeight: Int,
       val inputImageWidth: Int,
-      val inputImageRotation: Int = 0,
-      val croppedFrame: ByteArray? = null
+      val inputImageRotation: Int = 0
   )
 
   interface DetectorListener {
