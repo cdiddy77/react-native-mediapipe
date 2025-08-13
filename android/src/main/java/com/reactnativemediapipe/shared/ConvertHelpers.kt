@@ -6,6 +6,7 @@ import com.facebook.react.bridge.WritableNativeMap
 import com.google.mediapipe.tasks.components.containers.Landmark
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.mrousavy.camera.core.types.Orientation
+import java.util.Optional
 
 // Converts NormalizedLandmark to WritableMap
 fun normalizedLandmarkToWritableMap(landmark: NormalizedLandmark): WritableMap {
