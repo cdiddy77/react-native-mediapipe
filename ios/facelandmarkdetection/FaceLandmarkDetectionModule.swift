@@ -11,7 +11,7 @@ import React
 
 @objc(FaceLandmarkDetectionModule)
 class FaceLandmarkDetectionModule: RCTEventEmitter {
-  private static var nextId = 22  // Equivalent to Kotlin's starting point
+  private static var nextId = 24  // Equivalent to Kotlin's starting point
   static var detectorMap = [Int: FaceLandmarkDetectorHelper]()  // Maps to the Kotlin detectorMap
 
   override func supportedEvents() -> [String]! {

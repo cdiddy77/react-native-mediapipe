@@ -11,7 +11,7 @@ import React
 
 @objc(PoseDetectionModule)
 class PoseDetectionModule: RCTEventEmitter {
-  private static var nextId = 22  // Equivalent to Kotlin's starting point
+  private static var nextId = 23  // Equivalent to Kotlin's starting point
   static var detectorMap = [Int: PoseDetectorHelper]()  // Maps to the Kotlin detectorMap
 
   override func supportedEvents() -> [String]! {

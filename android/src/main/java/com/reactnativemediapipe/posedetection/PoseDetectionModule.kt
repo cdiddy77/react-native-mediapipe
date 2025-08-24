@@ -16,7 +16,7 @@ object PoseDetectorMap {
 class PoseDetectionModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
-  private var nextId = 22 // just not zero
+  private var nextId = 23 // just not zero
 
   override fun getName(): String {
     return "PoseDetection"
