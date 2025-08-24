@@ -19,7 +19,7 @@ object FaceLandmarkDetectorMap {
 class FaceLandmarkDetectionModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
-  private var nextId = 22 // just not zero
+  private var nextId = 24 // just not zero
 
   override fun getName(): String {
     return "FaceLandmarkDetection"
