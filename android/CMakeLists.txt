@@ -5,6 +5,7 @@ set (PACKAGE_NAME "ResizeConvertLib")
 set (BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 set (CMAKE_VERBOSE_MAKEFILE ON)
 set (CMAKE_CXX_STANDARD 17)
+set (ANDROID_STL c++_shared)
 
 # Third party libraries (Prefabs)
 find_package(fbjni REQUIRED CONFIG)
@@ -34,3 +35,7 @@ target_link_libraries(
         fbjni::fbjni                        # <-- fbjni
         yuv                                 # <-- libyuv
 )
+
+# Add 16KB page size support
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=0x4000")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,max-page-size=0x4000")
